@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>租赁合同审批 AI 助手 Demo</title>
+    <link rel="stylesheet" href="./styles.css?v=20260528-2" />
+  </head>
+  <body>
+    <input id="fileInput" class="global-file-input" type="file" accept=".pdf,.doc,.docx,.txt" />
+    <div class="host-shell hc-shell">
+      <aside class="host-nav" aria-label="产品导航">
+        <div class="cloud-logo"><span>明源云</span></div>
+        <nav class="hc-nav">
+          <button class="nav-item" type="button">首页</button>
+          <button class="nav-item has-children is-open" type="button" data-nav-toggle="housing">
+            房源管理
+            <span class="nav-arrow">⌃</span>
+          </button>
+          <div class="nav-sub is-open" data-nav-panel="housing">
+            <button type="button">房源列表</button>
+            <button type="button">房源地图</button>
+          </div>
+          <button class="nav-item has-children is-open" type="button" data-nav-toggle="contract">
+            合同管理
+            <span class="nav-arrow">⌃</span>
+          </button>
+          <div class="nav-sub is-open" data-nav-panel="contract">
+            <button class="is-active" type="button">合同列表</button>
+            <button type="button">续签管理</button>
+            <button type="button">到期提醒</button>
+          </div>
+          <button class="nav-item" type="button">租户管理</button>
+          <button class="nav-item has-children" type="button" data-nav-toggle="bill">
+            账单管理
+            <span class="nav-arrow">⌄</span>
+          </button>
+          <div class="nav-sub" data-nav-panel="bill">
+            <button type="button">账单列表</button>
+            <button type="button">收款记录</button>
+            <button type="button">欠费催收</button>
+          </div>
+          <button class="nav-item" type="button">工单管理</button>
+        </nav>
+      </aside>
+
+      <main class="host-main">
+        <header class="host-topbar">
+          <div>
+            <h1>租赁合同管理</h1>
+          </div>
+          <button id="aiEntryBtn" class="ai-entry" type="button" aria-label="打开合同审批助手">
+            <img class="ai-entry-icon" src="./aui-assistant-icon.svg?v=20260528-3" alt="" />
+            AI 助手
+          </button>
+        </header>
+
+        <section class="todo-strip">
+          <article>
+            <span>在租合同</span>
+            <strong>86</strong>
+            <p>本月新增 7 份</p>
+          </article>
+          <article>
+            <span>待审批合同</span>
+            <strong class="danger">3</strong>
+            <p>含高风险 1 份</p>
+          </article>
+          <article>
+            <span>近 30 天到期</span>
+            <strong>9</strong>
+            <p>需跟进续租</p>
+          </article>
+          <article>
+            <span>本年租金金额</span>
+            <strong>3,842万</strong>
+            <p>同比增长 12%</p>
+          </article>
+        </section>
+
+        <section class="contract-layout">
+          <div class="contract-main">
+            <section class="card filter-card">
+              <div class="filter-row">
+                <label><span>合同名称</span><input type="text" value="星河中心" /></label>
+                <label><span>合同状态</span><select><option>全部状态</option><option selected>审批中</option></select></label>
+                <label><span>出租方</span><input type="text" value="深圳市星河商业管理有限公司" /></label>
+                <label><span>租赁区域</span><select><option selected>华南区域</option><option>华东区域</option></select></label>
+              </div>
+            </section>
+
+            <section class="card contract-table-card">
+              <div class="section-head">
+                <div class="view-tabs" aria-label="合同状态视图">
+                  <button class="view-tab on" type="button">全部</button>
+                  <button class="view-tab" type="button">履约中</button>
+                  <button class="view-tab" type="button">审批中</button>
+                  <button class="view-tab" type="button">即将到期</button>
+                  <button class="view-tab" type="button">已终止</button>
+                </div>
+                <div class="table-title-actions">
+                  <button type="button">导入合同</button>
+                  <button type="button">导出台账</button>
+                  <button class="primary-lite" type="button">新建租赁合同</button>
+                </div>
+              </div>
+              <div class="contract-table">
+                <div class="table-row table-head">
+                  <span>合同名称</span><span>出租方</span><span>租赁位置</span><span>金额</span><span>期限</span><span>状态</span>
+                </div>
+                <button class="table-row is-selected" type="button">
+                  <span>星河中心 3F 商铺租赁合同</span><span>星河商业管理</span><span>3F-302</span><span>1,286,400</span><span>2026-07-01 至 2029-06-30</span><span class="status warning">审批中</span>
+                </button>
+                <button class="table-row" type="button">
+                  <span>万象天地办公区续租合同</span><span>华润置地商业</span><span>T2-1806</span><span>936,000</span><span>2026-04-01 至 2028-03-31</span><span class="status pass">已生效</span>
+                </button>
+                <button class="table-row" type="button">
+                  <span>前海创新园展厅租赁合同</span><span>前海园区运营</span><span>A1-101</span><span>488,000</span><span>2026-09-01 至 2027-08-31</span><span class="status">草稿</span>
+                </button>
+                <button class="table-row" type="button">
+                  <span>宝安仓储临租协议</span><span>深业物流</span><span>B 区 12 栋</span><span>318,000</span><span>2026-06-01 至 2026-12-31</span><span class="status risk">待补充</span>
+                </button>
+              </div>
+              <div class="pagination">
+                <span>共 86 条</span>
+                <div>
+                  <button type="button">上一页</button>
+                  <button class="on" type="button">1</button>
+                  <button type="button">2</button>
+                  <button type="button">3</button>
+                  <button type="button">下一页</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="aiDrawer" class="ai-drawer" aria-hidden="true" aria-label="合同审批助手">
+      <section class="drawer-panel">
+        <header class="drawer-header">
+          <div class="header-capsule" aria-label="会话操作">
+            <button type="button" title="历史">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v6h6M12 7v5l3 2" /></svg>
+            </button>
+            <button id="newChatBtn" type="button" title="新建">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </button>
+          </div>
+          <strong id="drawerTitle" class="drawer-title is-hidden">合同审批助手</strong>
+          <div class="drawer-actions">
+            <button id="maximizeDrawerBtn" type="button" title="最大化">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" /></svg>
+            </button>
+            <button id="closeDrawerBtn" type="button" title="关闭">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="drawer-body">
+          <section id="assistantHome" class="assistant-home">
+            <div class="welcome-card">
+              <div class="home-identity">
+                <img class="agent-avatar" src="./avatar-ai-1.png" alt="" />
+                <div>
+                  <h2>合同审批助手</h2>
+                  <p>我是合同审批助手，可以帮您快速理解租赁合同内容，识别审批风险，并生成可直接使用的审批意见。</p>
+                </div>
+              </div>
+              <div class="question-head">
+                <span>或者还可以这样问我</span>
+                <button id="refreshQuestionsBtn" type="button">换一换</button>
+              </div>
+              <div id="defaultQuestions" class="default-questions"></div>
+            </div>
+          </section>
+
+          <section id="assistantChat" class="assistant-chat is-hidden" aria-live="polite"></section>
+        </div>
+
+        <footer class="drawer-composer">
+          <textarea id="drawerInput" placeholder="请输入您的问题"></textarea>
+          <div class="composer-footer">
+            <button id="drawerUploadBtn" type="button" title="上传附件">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 1 1-2.83-2.83l8.49-8.48" /></svg>
+            </button>
+            <button id="drawerSendBtn" class="send-btn" type="button" title="发送">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+            </button>
+          </div>
+        </footer>
+      </section>
+    </aside>
+
+    <div id="riskOverlay" class="risk-overlay is-hidden">
+      <section class="risk-panel">
+        <header class="risk-header">
+          <div>
+            <h2>风险明细</h2>
+            <p>AI 生成，仅供审批参考</p>
+          </div>
+          <button id="closeRiskPanelBtn" type="button" title="关闭">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </header>
+        <div id="riskTabs" class="tabs"></div>
+        <div id="filterChips" class="filter-chips"></div>
+        <div id="riskList" class="risk-list"></div>
+      </section>
+    </div>
+
+    <div id="confirmModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <h2 id="modalTitle">确认退回修改？</h2>
+        <p id="modalDesc">本次动作将退回至经办人李若琳，AI 审批意见将同步至审批记录。</p>
+        <div class="modal-summary">
+          <span>高风险 3</span>
+          <span>需关注 5</span>
+          <span>下一节点：经办修改</span>
+        </div>
+        <div class="modal-actions">
+          <button id="cancelModalBtn" type="button">取消</button>
+          <button id="confirmActionBtn" class="primary-btn" type="button">确认提交</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status"></div>
+    <script src="./script.js?v=20260528-2"></script>
+  </body>
+</html>
