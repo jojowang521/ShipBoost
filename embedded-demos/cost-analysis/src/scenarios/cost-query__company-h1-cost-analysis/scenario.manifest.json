@@ -1,0 +1,10 @@
+{
+  "agentId": "cost-query",
+  "agentName": "成本问数",
+  "agentDescription": "专注公司、项目、业态、科目等多维成本数据分析，帮助快速生成经营洞察。",
+  "avatarKey": "avatar-ai-1",
+  "scenarioName": "公司上半年成本分析",
+  "shortcutLabel": "上半年成本分析",
+  "shortcutOrder": 1,
+  "dataScope": "scenario-only"
+}

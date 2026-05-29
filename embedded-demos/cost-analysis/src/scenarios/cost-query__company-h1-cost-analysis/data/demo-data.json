@@ -1,0 +1,83 @@
+{
+  "scenarioId": "cost-query__company-h1-cost-analysis",
+  "agentName": "成本问数",
+  "scenarioName": "公司上半年成本分析",
+  "analysisRequest": "公司上半年成本分析",
+  "selectedDimension": "按科目穿透",
+  "selectedMetric": "建面单方",
+  "costSummary": {
+    "totalAmountWan": 739397,
+    "buildingUnitCost": 10664,
+    "mainCostRatio": "98.2%",
+    "mainCostCategory": "建筑安装工程费"
+  },
+  "levelOneSubjects": [
+    {
+      "subject": "建筑安装工程费",
+      "amountWan": 725741,
+      "unitCost": 10783,
+      "ratio": "98.2%"
+    },
+    {
+      "subject": "基础设施费",
+      "amountWan": 11342,
+      "unitCost": 23,
+      "ratio": "1.5%"
+    },
+    {
+      "subject": "公共配套设施费",
+      "amountWan": 2057,
+      "unitCost": 4,
+      "ratio": "0.3%"
+    },
+    {
+      "subject": "开发间接费",
+      "amountWan": 119,
+      "unitCost": 0.4,
+      "ratio": "0.02%"
+    },
+    {
+      "subject": "前期工程费",
+      "amountWan": 39,
+      "unitCost": 0.12,
+      "ratio": "0.01%"
+    }
+  ],
+  "constructionInstallSubjects": [
+    {
+      "subject": "土建工程费",
+      "amountWan": 641759,
+      "unitCost": 9536,
+      "ratio": "88.4%"
+    },
+    {
+      "subject": "安装工程费",
+      "amountWan": 37877,
+      "unitCost": 684,
+      "ratio": "5.2%"
+    },
+    {
+      "subject": "公共部位精装修",
+      "amountWan": 23699,
+      "unitCost": 480,
+      "ratio": "3.3%"
+    },
+    {
+      "subject": "基础工程费",
+      "amountWan": 15957,
+      "unitCost": 288,
+      "ratio": "2.2%"
+    },
+    {
+      "subject": "室内精装修",
+      "amountWan": 6449,
+      "unitCost": 131,
+      "ratio": "0.9%"
+    }
+  ],
+  "dataNotes": [
+    "当前数据为全部历史数据汇总，未按上半年进行时间筛选。",
+    "土地成本科目存在但无数据，可能单独核算或未纳入成本系统。",
+    "前期工程费仅 39 万元，约 0.12 元/平方米，明显偏低。"
+  ]
+}
