@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>物业租赁合同</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #fff;
+      color: #000;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .doc-page {
+      position: relative;
+      width: 1354px;
+      min-height: 1510px;
+      margin: 0 auto 48px;
+      padding: 86px 150px 96px 154px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .watermark {
+      position: absolute;
+      inset: -70px -90px;
+      z-index: 0;
+      opacity: .52;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(
+          -14deg,
+          transparent 0 110px,
+          rgba(182, 188, 194, .17) 110px 141px,
+          transparent 141px 252px
+        );
+    }
+
+    .watermark::before,
+    .watermark::after {
+      content: "系统管理员(2026-05-29 11:08)";
+      position: absolute;
+      width: 1720px;
+      height: 1720px;
+      color: rgba(151, 157, 164, .2);
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 156px;
+      transform: rotate(-14deg);
+      word-spacing: 58px;
+      letter-spacing: .3px;
+      text-shadow:
+        0 156px currentColor,
+        0 312px currentColor,
+        0 468px currentColor,
+        0 624px currentColor,
+        0 780px currentColor,
+        0 936px currentColor,
+        0 1092px currentColor,
+        0 1248px currentColor,
+        0 1404px currentColor;
+    }
+
+    .watermark::before {
+      top: 0;
+      left: -70px;
+    }
+
+    .watermark::after {
+      top: 78px;
+      left: 250px;
+      color: rgba(151, 157, 164, .19);
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      width: 1048px;
+    }
+
+    .contract-code {
+      margin: 20px 10px 78px 0;
+      text-align: right;
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .contract-code span {
+      display: inline-block;
+      padding-bottom: 2px;
+      border-bottom: 3px solid #111;
+    }
+
+    .contract-title {
+      margin: 0 0 70px;
+      text-align: center;
+      font-size: 50px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .party-lines {
+      width: 957px;
+      margin: 0 auto 15px;
+      font-size: 28px;
+      line-height: 1.9;
+      font-weight: 800;
+    }
+
+    .party-line {
+      display: grid;
+      grid-template-columns: 395px 1fr;
+      align-items: end;
+      min-height: 59px;
+    }
+
+    .party-value {
+      padding-left: 28px;
+      border-bottom: 3px solid #111;
+      line-height: 1.25;
+    }
+
+    .party-value.wrap {
+      display: inline-block;
+      padding-top: 9px;
+    }
+
+    .body-copy {
+      width: 1034px;
+      margin: 8px auto 0;
+      font-size: 29px;
+      line-height: 1.95;
+      font-weight: 800;
+    }
+
+    .body-copy p {
+      margin: 0;
+      text-indent: 2em;
+    }
+
+    .body-copy .article {
+      margin-top: 8px;
+      text-indent: 0;
+      font-weight: 900;
+    }
+
+    .underline {
+      border-bottom: 3px solid #111;
+      padding: 0 3px 2px;
+    }
+
+    .clause-highlight {
+      animation: pulse 1.6s ease-out 1;
+      background: rgba(255, 236, 153, .78);
+      box-shadow: 0 0 0 8px rgba(255, 236, 153, .35);
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 214, 10, .65);
+      }
+
+      100% {
+        box-shadow: 0 0 0 12px rgba(255, 214, 10, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="doc-page">
+    <div class="watermark"></div>
+    <div class="content">
+      <div class="contract-code">合同编号： <span>${租赁中心_新签合同文本.合同编号}</span></div>
+      <h1 class="contract-title">物业租赁合同</h1>
+
+      <div class="party-lines">
+        <div class="party-line">
+          <div>出租方（以下简称“甲方”）：</div>
+          <div class="party-value">金发科技股份有限公司</div>
+        </div>
+        <div class="party-line">
+          <div>承租方（以下简称“乙方”）：</div>
+          <div class="party-value wrap">${租赁中心_新签合同文本.承租方名称} ${租赁中心_新签合同文本.承租方.证件号}</div>
+        </div>
+      </div>
+
+      <div class="body-copy">
+        <p>甲、乙双方在平等、自愿、协商一致的基础上，就乙方承租甲方之物业有关事宜，达成如下合同条款:</p>
+        <p class="article">第一条&nbsp;&nbsp;&nbsp;租赁物业</p>
+        <p>甲方同意：将位于广州市<span class="underline">${租赁中心_新签合同文本.资产单元-位置信息（详细地址）}</span>物业（具体位置参见本合同附件一《物业使用平面图》）出租给乙方。</p>
+        <p>乙方明确：其在签订本合同前，已对上述物业的权属状况、配套设施进行了充分的尽职调查，并对物业的现状、实际使用面积进行了实地勘察和测量，均予以认可；</p>
+        <p>若乙方的经营项目对租赁物业有特别要求，则甲方无义务为满足该等要求而采取任何行动，乙方将自行完成相关事宜（包括但不限于完成相关工程、办理相关手续等）以适应该等要求。现乙方同意按现状承租上述物业。</p>
+        <p data-clause="deposit">第五条 第1款（3）：履约保证金在租赁期届满、合同解除或合同终止之日，在乙方结清各项费用并将租赁物业按约交付给甲方，经审查通过后，甲方在20个工作日内一次性、全额无息退还。</p>
+        <p data-clause="rent">第五条 第2款：租金按计租面积按月计收，并按合同约定的日期和幅度进行复式递增。</p>
+        <p data-clause="electricity">第五条 第3款（2）电费：乙方电费=乙方自用电费+基本电费分摊费+乙方用电损耗费+公共设备用电分摊费；其中用电损耗费=乙方用电量×峰平谷平均电价×0.06。</p>
+        <p data-clause="sublease">第七条 第11款：未经甲方的书面同意，乙方不得将承租的物业进行转租或分租。</p>
+        <p data-clause="default">第十一条 违约责任：乙方逾期缴纳费用或违反合同约定的，需按合同承担相应违约责任。</p>
+      </div>
+    </div>
+  </article>
+  <script>
+    function ensureHostClauseHighlightStyle() {
+      if (document.getElementById('host-clause-highlight-style')) return;
+      var style = document.createElement('style');
+      style.id = 'host-clause-highlight-style';
+      style.textContent = '.host-clause-highlight{background:rgba(38,110,255,.14)!important;box-shadow:0 0 0 4px rgba(38,110,255,.16)!important;border-radius:2px;}';
+      document.head.appendChild(style);
+    }
+
+    window.addEventListener('message', function(event) {
+      var data = event.data || {};
+      if (data.type !== 'locate-clause' || !data.selector) return;
+      ensureHostClauseHighlightStyle();
+      document.querySelectorAll('.host-clause-highlight').forEach(function(node) {
+        node.classList.remove('host-clause-highlight');
+      });
+      var target = document.querySelector(data.selector);
+      if (!target) return;
+      target.classList.add('host-clause-highlight');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  </script>
+</body>
+</html>

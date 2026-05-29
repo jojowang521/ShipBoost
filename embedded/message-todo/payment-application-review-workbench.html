@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>付款申请管理</title>
+<style>
+:root{
+  --blue:#1677FF;--blue-600:#0F67E8;--blue-50:#EBF2FF;--bg:#F0F2F5;
+  --text:#1F2937;--sub:#667085;--muted:#98A2B3;--line:#E4EAF3;--line2:#EDF1F6;
+  --green:#16A35F;--green-bg:#EAF8F0;--orange:#E56524;--orange-bg:#FFF2E8;--purple:#7B61FF;--purple-bg:#F2EFFF;
+  --white:#fff;--cg0:#fff;--cg25:#FAFAFA;--cg50:#F5F5F5;--cg100:#F0F0F0;--cg300:#D9D9D9;--ctt:#8C8C8C;--cts:#595959;--ctp:#262626;--ff:-apple-system,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{height:100vh;overflow:hidden;background:var(--bg);font-family:var(--ff);color:var(--text);font-size:14px}
+button,input,select{font:inherit}
+.app{height:100vh;display:grid;grid-template-columns:208px 1fr;grid-template-rows:48px 1fr;transition:grid-template-columns .18s ease}
+.app.nav-collapsed{grid-template-columns:56px 1fr}
+.top{grid-column:1/-1;background:var(--blue);display:grid;grid-template-columns:208px 1fr;color:#fff;box-shadow:0 2px 8px rgba(22,119,255,.24);transition:grid-template-columns .18s ease}
+.app.nav-collapsed .top{grid-template-columns:56px 1fr}
+.top-brand{height:48px;display:flex;align-items:center;padding:0 16px;border-right:1px solid rgba(255,255,255,.18);gap:16px;overflow:hidden}
+.logo{font-size:22px;font-weight:800;font-style:italic;letter-spacing:.5px}.hamb{width:24px;height:24px;border:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1}
+.refresh svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app.nav-collapsed .top-brand{justify-content:center;padding:0}.app.nav-collapsed .logo{display:none}
+.top-main{display:flex;align-items:center;padding:0 24px}.page-title{font-size:16px;font-weight:500;letter-spacing:.2px}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:14px}.top-ic{position:relative;height:28px;padding:0 6px;border:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px}
+.badge{position:absolute;right:-4px;top:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:10px;background:#FF4D4F;color:#fff;border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.avatar{width:26px;height:26px;border-radius:50%;background:#F2F7FF;color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}.user{font-size:14px}
+.sn{grid-row:2;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.sn-head{height:48px;padding:0 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sn-title{font-size:16px;font-weight:600;color:#1F2937;white-space:nowrap}.sn-collapse{width:20px;height:20px;border:0;background:transparent;color:#344054;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1}
+.sn-body{flex:1;overflow:auto;padding:8px 0}.sn-body::-webkit-scrollbar{display:none}.nl,.nsl{list-style:none;margin:0;padding:0}
+.ni{min-height:44px;padding:13px 20px;display:flex;align-items:center;gap:16px;color:#667085;font-size:14px;line-height:18px;cursor:pointer;position:relative}
+.ni:hover,.nsi:hover{background:#F7FAFF}.ni.on,.ni.open{color:#1F2937;font-weight:600}.ni.active{background:var(--blue-50);color:var(--blue);font-weight:600}.ni.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.ni-ic{width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.ni-img{width:16px;height:16px;display:block;opacity:.82}.ni:hover .ni-img,.ni.on .ni-img,.ni.open .ni-img,.ni.active .ni-img{opacity:1}
+.ni-lb{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ni-arrow{width:14px;height:14px;display:flex;align-items:center;justify-content:center;opacity:.65;transition:transform .18s ease;font-size:13px;line-height:1}.ni.open .ni-arrow{transform:rotate(180deg)}
+.nsl{display:none}.nsl.open{display:block}.nsi{height:34px;padding:9px 20px 9px 52px;display:flex;align-items:center;color:#667085;font-size:13px;line-height:16px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nsi.active{background:var(--blue-50);color:var(--blue);font-weight:600}
+.app.nav-collapsed .sn-head{padding:0;justify-content:center}.app.nav-collapsed .sn-title,.app.nav-collapsed .ni-lb,.app.nav-collapsed .ni-arrow,.app.nav-collapsed .nsl{display:none!important}.app.nav-collapsed .ni{padding:14px 20px;justify-content:center;gap:0}.app.nav-collapsed .ni.active::before{width:3px}
+.main{grid-row:2;min-width:0;display:flex;flex-direction:column;gap:12px;padding:12px;background:var(--bg);overflow:hidden}
+.fc{background:#fff;border-radius:4px;border:none;padding:0;box-shadow:0 0 3px rgba(0,0,0,.04);flex-shrink:0}
+.fr{min-height:56px;padding:12px 20px;display:flex;align-items:flex-start;gap:12px 20px;flex-wrap:wrap}
+.fr-fields{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;min-width:0;flex:1 1 auto}
+.fi{display:flex;flex-direction:row;align-items:center;gap:8px;min-width:0;flex-shrink:0}.fi.lg{width:260px}
+.fl{font-size:13px;color:var(--ctt);font-weight:400;white-space:nowrap}
+.inp,.sel{height:32px;border:1px solid var(--cg300);border-radius:4px;background:#fff;color:var(--ctp);font-size:13px;outline:none}
+.inp{padding:0 12px}.sel{width:140px;padding:0 8px 0 12px}
+.inp:focus,.sel:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(22,119,255,.12)}.inp::placeholder{color:#BFBFBF}
+.iw{position:relative;width:100%}.iw .inp{width:100%}
+.tc{background:#fff;border:1px solid #E8E8E8;border-radius:4px;overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column}
+.tt{height:56px;padding:12px 20px;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0}
+.tt-l{display:flex;align-items:center;min-width:0}.tt-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.view-tabs{display:flex;align-items:stretch;background:#F5F5F5;border-radius:4px;padding:3px;height:32px;flex-shrink:0}
+.view-tab{display:flex;align-items:center;justify-content:center;gap:0;padding:2px 10px;border-radius:3px;cursor:pointer;color:#666;background:transparent;border:0;font-size:13px;font-weight:400;white-space:nowrap;transition:all .15s;position:relative;line-height:22px}.view-tab:hover{color:var(--blue)}.view-tab.on{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.view-tab .vt-div{position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:16px;background:#EAEAEA}.view-tab.on+.view-tab .vt-div,.view-tab:hover .vt-div{display:none}
+.btn{height:32px;padding:0 16px;border-radius:4px;border:1px solid transparent;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;white-space:nowrap;cursor:pointer;color:var(--ctp)}
+.btn-p{background:var(--blue);border-color:var(--blue);color:#fff}.btn-p:hover{background:var(--blue-600);border-color:var(--blue-600)}
+.btn-d{border-color:var(--cg300);color:var(--cts)}.btn-d:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-50)}
+.tw{flex:1;min-height:0;overflow:auto}table{width:100%;min-width:1280px;border-collapse:collapse}thead tr{background:#FAFAFA}th{height:40px;padding:0 16px;border-bottom:1px solid #E8E8E8;text-align:left;color:var(--ctp);font-size:13px;font-weight:600;white-space:nowrap}
+td{height:48px;padding:0 16px;border-bottom:1px solid #F5F5F5;font-size:13px;color:var(--ctp);white-space:nowrap;vertical-align:middle}tbody tr:hover{background:#FAFAFA}
+.link{color:var(--blue);cursor:pointer;max-width:320px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle}.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#667085}.num{text-align:right}
+.tag{height:24px;padding:2px 6px;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;white-space:nowrap;border:1px solid transparent}.tag.blue{background:var(--blue-50);color:var(--blue);border-color:#D0E4FF}.tag.green{background:#F6FFED;color:#389E0D;border-color:#B7EB8F}.tag.orange{background:#FFF7E6;color:#D48806;border-color:#FFD591}.tag.purple{background:#F9F0FF;color:#722ED1;border-color:#D3ADF7}
+.op{height:28px;padding:0 8px;color:var(--blue);background:transparent;border:0;font-size:13px;cursor:pointer}.op:hover{text-decoration:underline}
+.pgn{height:56px;padding:12px 24px;border-top:1px solid #E8E8E8;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.pgn-info{font-size:14px;color:var(--ctt)}.pgn-size{display:flex;align-items:center;gap:16px}.pgn-pages{display:flex;align-items:center;gap:4px}.pgn-btn{min-width:32px;height:32px;padding:0 10px;border:1px solid var(--cg300);border-radius:4px;background:#fff;color:var(--cts);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px}.pgn-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-50)}.pgn-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}.pgn-size .sel{width:96px}
+.toast{position:fixed;left:50%;top:82px;transform:translateX(-50%) translateY(-12px);min-width:180px;height:36px;padding:0 16px;border-radius:4px;background:rgba(15,23,42,.84);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0;pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1440px){.main{padding:12px}}
+/* —— AI 联动新增视图 —— */
+.view{display:none;flex:1;min-height:0;flex-direction:column;gap:12px;overflow:hidden}
+.view.on{display:flex}
+.crumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub)}
+.crumb a{color:var(--blue);cursor:pointer}
+.crumb a:hover{text-decoration:underline}
+.detail-card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px 20px;overflow:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:18px}
+.detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.detail-head h2{font-size:18px;font-weight:600;color:var(--ctp)}
+.detail-head .meta{color:var(--sub);font-size:13px;margin-top:4px}
+.detail-head .ai-pill{padding:4px 10px;border-radius:999px;background:#FFF1F0;color:#CF1322;font-size:12px;font-weight:600;border:1px solid #FFCCC7}
+.detail-section h3{font-size:14px;font-weight:600;margin-bottom:10px;color:var(--ctp);display:flex;align-items:center;gap:8px}
+.detail-section h3::before{content:"";width:3px;height:14px;background:var(--blue);border-radius:2px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 24px;font-size:13px}
+.detail-grid .row{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed #EEF2F7}
+.detail-grid .row .k{color:var(--sub);min-width:96px}
+.detail-grid .row .v{color:var(--ctp);font-weight:500}
+.detail-grid .row .v.bad{color:#CF1322;font-weight:600}
+.detail-grid .row .v.warn{color:#D48806;font-weight:600}
+.detail-conclusion{padding:12px 14px;border-radius:6px;background:#FFF1F0;border:1px solid #FFCCC7;color:#5C0011;font-size:13px;line-height:22px}
+.detail-conclusion b{color:#CF1322}
+.attach-frame{background:#fff;border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.attach-bar{height:44px;border-bottom:1px solid var(--line);padding:0 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--cts)}
+.attach-bar .name{font-weight:600;color:var(--ctp)}
+.attach-bar .actions{display:flex;gap:8px}
+.attach-body{flex:1;min-height:0;overflow:auto;background:#F5F7FB;padding:24px;display:flex;justify-content:center}
+.invoice{width:780px;max-width:100%;background:#fff;border:1px solid #d0d7e2;border-radius:4px;padding:24px 28px;font-size:13px;color:#1F2937;position:relative;box-shadow:0 4px 16px rgba(15,23,42,.08)}
+.invoice header{text-align:center;border-bottom:2px solid #c8102e;padding-bottom:12px;color:#c8102e}
+.invoice header .title{font-size:22px;font-weight:700;letter-spacing:4px}
+.invoice header .sub{font-size:12px;margin-top:6px;letter-spacing:2px}
+.invoice .code{display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:#374151}
+.invoice table{width:100%;margin-top:14px;border-collapse:collapse;font-size:12px}
+.invoice table th,.invoice table td{border:1px solid #d0d7e2;padding:8px 10px;text-align:left}
+.invoice table th{background:#fafafa;font-weight:600}
+.invoice .totals{margin-top:14px;display:flex;justify-content:flex-end;gap:24px;font-size:13px}
+.invoice .totals b{color:#c8102e}
+.invoice .stamp{position:absolute;right:48px;bottom:60px;width:120px;height:120px;border:2px solid #c8102e;border-radius:50%;color:#c8102e;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;transform:rotate(-12deg);opacity:.85}
+.invoice .stamp .top{font-size:13px;letter-spacing:1px}
+.invoice .stamp .bot{font-size:18px;letter-spacing:2px;margin-top:4px}
+.invoice .void{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-22deg);font-size:96px;letter-spacing:14px;color:rgba(200,16,46,.18);font-weight:900;pointer-events:none}
+.invoice-row{transition:background-color .4s ease,box-shadow .4s ease;padding:2px 4px;border-radius:3px}
+.invoice-row.is-highlight{background:#FFF5A8;box-shadow:0 0 0 2px #FADB14;animation:hlPulse 1.6s ease 0s 2}
+@keyframes hlPulse{0%,100%{background:#FFF5A8}50%{background:#FFE58F}}
+/* 工程量明细表 */
+.qty-table-wrap{background:#fff;border:1px solid #EDF1F7;border-radius:6px;padding:8px 10px 10px}
+.qty-table{width:100%;min-width:0;border-collapse:collapse;font-size:12.5px}
+.qty-table thead tr{background:#FAFBFE}
+.qty-table th{padding:6px 8px;text-align:left;border-bottom:1px solid #EDF1F7;font-weight:600;color:#1F2937;font-size:12.5px;height:auto}
+.qty-table td{padding:6px 8px;border-bottom:1px solid #F4F6FA;font-size:12.5px;color:#1F2937;height:auto;white-space:nowrap}
+.qty-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.qty-note{margin:8px 0 0;font-size:12px;color:#6B7280;line-height:18px}
+.qty-row-flag{transition:background-color .4s ease,box-shadow .4s ease}
+.qty-row-flag.is-highlight td{background:#FFF5A8}
+.qty-row-flag.is-highlight{box-shadow:inset 0 0 0 2px #FADB14;animation:hlPulse 1.6s ease 0s 2}
+
+/* —— 付款申请表单（仿真表单视图） —— */
+.form-card{flex:1;min-height:0;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:0 24px 24px;display:flex;flex-direction:column;gap:18px}
+.form-title{position:sticky;top:0;background:#fff;padding:16px 0 12px;font-size:16px;font-weight:600;color:#1F2937;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F4F9;z-index:2}
+.form-readonly-pill{font-size:12px;padding:2px 8px;border-radius:999px;background:#FFF7E6;color:#D46B08;border:1px solid #FFD591;font-weight:500}
+.form-block{display:flex;flex-direction:column;gap:10px}
+.form-block-title{font-size:14px;font-weight:600;color:#1F2937;display:flex;align-items:center;gap:8px}
+.form-block-title i{width:3px;height:14px;background:var(--blue);border-radius:2px;display:inline-block}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 32px}
+.ff{display:flex;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px dashed #EEF2F7;min-height:36px;transition:background-color .4s ease,box-shadow .4s ease;border-radius:3px}
+.ff label{flex:0 0 132px;color:var(--sub);font-size:13px}
+.ff-val{flex:1 1 auto;color:#1F2937;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.ff-val-num{font-family:ui-monospace,Menlo,Consolas,monospace}
+.ff-val-link{color:var(--blue);cursor:pointer}
+.ff-val-bad{color:#CF1322;font-weight:700}
+.ff-val-mute{color:#6B7280;font-weight:400}
+.ff-help{flex:0 0 100%;color:#9CA3AF;font-size:11.5px;margin-left:140px;margin-top:2px}
+.ff-full{grid-column:1/-1}
+.ff.is-highlight{background:#FFF5A8;box-shadow:0 0 0 2px #FADB14}
+
+/* Tab */
+.form-tabs{display:flex;align-items:center;gap:0;border-bottom:1px solid #E4EAF3;flex-wrap:wrap}
+.form-tab{height:36px;padding:0 14px;border:0;background:transparent;font-size:13px;color:#6B7280;cursor:pointer;border-bottom:2px solid transparent;font-weight:500}
+.form-tab:hover{color:var(--blue)}
+.form-tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.form-tab.is-highlight{background:#FFF5A8;box-shadow:inset 0 0 0 2px #FADB14;border-radius:4px}
+.form-tab-pane{display:none;padding:12px 0 4px}
+.form-tab-pane.on{display:block}
+
+.form-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.form-table thead tr{background:#FAFBFE}
+.form-table th,.form-table td{padding:8px 10px;border-bottom:1px solid #F1F4F9;text-align:left;white-space:nowrap}
+.form-table th{font-weight:600;color:#1F2937;font-size:12.5px}
+.form-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.form-row-flag{transition:background-color .4s ease,box-shadow .4s ease}
+.form-row-flag.is-highlight td{background:#FFF5A8}
+.form-row-flag.is-highlight{box-shadow:inset 0 0 0 2px #FADB14;animation:hlPulse 1.6s ease 0s 2}
+
+.tag-bad{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;background:#FFF1F0;color:#CF1322;border:1px solid #FFCCC7;font-size:12px;font-weight:600}
+.form-empty{padding:24px;text-align:center;color:#9CA3AF;font-size:13px;background:#FAFBFE;border:1px dashed #E4EAF3;border-radius:6px}
+.form-note{margin:10px 0 0;font-size:12px;color:#6B7280}
+
+.form-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #F1F4F9;margin-top:6px}
+.form-footer-tip{font-size:12px;color:#9CA3AF}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="top-brand"><div class="logo">明源云</div><button class="hamb" onclick="toggleSidebar()" aria-label="展开收起导航">☰</button></div>
+    <div class="top-main">
+      <div class="page-title">付款申请</div>
+      <div class="top-actions">
+        <button class="top-ic">消息</button>
+        <button class="top-ic">通知<span class="badge">3</span></button>
+        <div class="avatar">管</div><div class="user">管理员</div>
+      </div>
+    </div>
+  </header>
+  <aside class="sn" id="sn">
+    <div class="sn-head">
+      <div class="sn-title">成本管理</div>
+      <button class="sn-collapse" onclick="toggleSidebar()" aria-label="展开收起导航">‹</button>
+    </div>
+    <div class="sn-body">
+      <ul class="nl">
+        <li class="ni" data-page="home">
+          <span class="ni-ic"><img class="ni-img" src="icons/navigation/home.svg" alt=""></span>
+          <span class="ni-lb">首页</span>
+        </li>
+        <li class="ni open" onclick="toggleNav(this)">
+          <span class="ni-ic"><img class="ni-img" src="icons/navigation/contract.svg" alt=""></span>
+          <span class="ni-lb">合同管理</span>
+          <span class="ni-arrow" aria-hidden="true">⌄</span>
+        </li>
+        <ul class="nsl open">
+          <li class="nsi" data-page="contract-register">合同登记</li>
+          <li class="nsi" data-page="contract-settle">合同结算</li>
+          <li class="nsi" data-page="contract-supplement">补充协议</li>
+        </ul>
+        <li class="ni open" onclick="toggleNav(this)">
+          <span class="ni-ic"><img class="ni-img" src="icons/navigation/payment.svg" alt=""></span>
+          <span class="ni-lb">付款管理</span>
+          <span class="ni-arrow" aria-hidden="true">⌄</span>
+        </li>
+        <ul class="nsl open">
+          <li class="nsi active" data-page="payment-apply">付款申请</li>
+          <li class="nsi" data-page="payment-approve">付款审批</li>
+          <li class="nsi" data-page="payment-ledger">付款台账</li>
+        </ul>
+        <li class="ni" data-page="supplier">
+          <span class="ni-ic"><img class="ni-img" src="icons/navigation/supplier.svg" alt=""></span>
+          <span class="ni-lb">供应商协同</span>
+        </li>
+      </ul>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="view on" id="view-list">
+    <section class="fc">
+      <div class="fr">
+        <div class="fr-fields">
+          <div class="fi"><label class="fl">所属项目</label><select class="sel"><option>全部项目</option><option>南开区新裕里</option><option>武汉青山云境</option><option>江岸滨江府</option></select></div>
+          <div class="fi"><label class="fl">付款类别</label><select class="sel"><option>全部</option><option>工程类</option><option>材料类</option><option>设备类</option><option>服务类</option></select></div>
+          <div class="fi lg"><div class="iw"><input class="inp" placeholder="输入申请名称/编号"></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="tc">
+      <div class="tt">
+        <div class="tt-l">
+          <div class="view-tabs">
+            <button class="view-tab on" onclick="switchView(this)">全部<span>168</span></button>
+            <button class="view-tab" onclick="switchView(this)"><span class="vt-div"></span>未审核<span>24</span></button>
+            <button class="view-tab" onclick="switchView(this)"><span class="vt-div"></span>审核中<span>18</span></button>
+            <button class="view-tab" onclick="switchView(this)"><span class="vt-div"></span>已审核<span>126</span></button>
+          </div>
+        </div>
+        <div class="tt-r">
+          <button class="btn btn-p" onclick="toast('新增付款申请')">新增</button>
+          <button class="btn btn-d" onclick="toast('AI 付款申请录入')">AI 付款录入</button>
+          <button class="btn btn-d" onclick="toast('更多操作')">更多操作</button>
+          <button class="btn btn-d" onclick="toast('已刷新')">刷新</button>
+        </div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>超支预警</th><th>申请名称</th><th>付款类别</th><th>申请编号</th><th>收款单位</th><th class="num">申请金额</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>黄色预警</td><td><span class="link">南开区新裕里片区棚户改造项目工程进度款第 5 期</span></td><td><span class="tag blue">工程类</span></td><td><span class="code">FK-2026-0856</span></td><td>七冶建设集团有限责任公司</td><td class="num">1,856,420.00</td><td><span class="tag orange">未审核</span></td><td><button class="op" onclick="toast('查看申请')">查看</button></td></tr>
+            <tr><td>绿色预警</td><td><span class="link">武汉青山云境项目门窗栏杆采购付款申请</span></td><td><span class="tag green">材料类</span></td><td><span class="code">FK-2026-0849</span></td><td>湖北恒立门窗工程有限公司</td><td class="num">486,000.00</td><td><span class="tag orange">未审核</span></td><td><button class="op" onclick="toast('查看申请')">查看</button></td></tr>
+            <tr><td>灰色预警</td><td><span class="link">江岸滨江府项目电梯设备采购及安装付款</span></td><td><span class="tag orange">设备类</span></td><td><span class="code">FK-2026-0836</span></td><td>通力电梯有限公司武汉分公司</td><td class="num">2,240,000.00</td><td><span class="tag green">已审核</span></td><td><button class="op" onclick="toast('查看申请')">查看</button></td></tr>
+            <tr><td>绿色预警</td><td><span class="link">观澜云庭二期全过程造价咨询服务付款</span></td><td><span class="tag purple">服务类</span></td><td><span class="code">FK-2026-0827</span></td><td>中竞发工程管理咨询有限公司</td><td class="num">318,000.00</td><td><span class="tag green">已审核</span></td><td><button class="op" onclick="toast('查看申请')">查看</button></td></tr>
+            <tr><td>黄色预警</td><td><span class="link">保利花园三期弱电分包合同会签付款</span></td><td><span class="tag blue">工程类</span></td><td><span class="code">FK-2026-0819</span></td><td>上海智造科技有限公司</td><td class="num">3,920,000.00</td><td><span class="tag blue">审核中</span></td><td><button class="op" onclick="toast('查看申请')">查看</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pgn">
+        <div class="pgn-info">共 <b>168</b> 条</div>
+        <div class="pgn-size">
+          <div class="pgn-pages"><button class="pgn-btn">‹</button><button class="pgn-btn on">1</button><button class="pgn-btn">2</button><button class="pgn-btn">3</button><button class="pgn-btn">...</button><button class="pgn-btn">9</button><button class="pgn-btn">›</button></div>
+          <select class="sel"><option>20 条/页</option><option>50 条/页</option><option>100 条/页</option></select>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div class="view" id="view-detail">
+      <div class="crumb"><a onclick="showView('list')">付款申请</a><span>›</span><span>编辑合同付款申请 · FK-2026-0856</span></div>
+      <div class="form-card">
+        <div class="form-title">编辑合同付款申请<span class="form-readonly-pill">审核视图 · 只读</span></div>
+
+        <!-- 1. 合同基本信息 -->
+        <div class="form-block">
+          <div class="form-block-title"><i></i>合同基本信息</div>
+          <div class="form-grid">
+            <div class="ff"><label>合同名称</label><div class="ff-val ff-val-link">保利花园三期主体施工合同</div></div>
+            <div class="ff"><label>合同编号</label><div class="ff-val">BLHY-3Q-2025-068</div></div>
+            <div class="ff"><label>乙方单位</label><div class="ff-val">北京建工第三建筑工程有限公司</div></div>
+            <div class="ff"><label>调整后合同金额 (E)</label><div class="ff-val">¥218,000,000.00</div></div>
+            <div class="ff"><label>调整后合同净值 (F)</label><div class="ff-val">¥218,000,000.00</div></div>
+            <div class="ff"><label>累计审定产值 (G)</label><div class="ff-val ff-val-num">¥175,360,000.00</div></div>
+            <div class="ff"><label>累计应付进度款 (H)</label><div class="ff-val">¥140,288,000.00</div></div>
+            <div class="ff"><label>累计申请金额 (I)</label><div class="ff-val">¥171,500,000.00</div></div>
+            <div class="ff"><label>累计扣款金额 (J)</label><div class="ff-val">¥0.00</div></div>
+            <div class="ff"><label>累计可冲账金额 (K)</label><div class="ff-val">¥0.00</div></div>
+            <div class="ff"><label>累计实付金额 (L)</label><div class="ff-val">¥171,500,000.00</div></div>
+            <div class="ff" id="field-ratio-m">
+              <label>累计实付比例 (M)</label>
+              <div class="ff-val ff-val-bad">78.67%</div>
+              <div class="ff-help">M = (L + J + K − O) / F</div>
+            </div>
+            <div class="ff"><label>未付金额 (N)</label><div class="ff-val">¥46,500,000.00</div></div>
+            <div class="ff"><label>累计收款金额 (O)</label><div class="ff-val">¥0.00</div></div>
+            <div class="ff"><label>付款预警比例</label><div class="ff-val">80.00%</div></div>
+          </div>
+        </div>
+
+        <!-- 2. 申请信息 -->
+        <div class="form-block">
+          <div class="form-block-title"><i></i>申请信息</div>
+          <div class="form-grid">
+            <div class="ff"><label>主题</label><div class="ff-val">保利花园三期主体施工 · 进度款第 5 期</div></div>
+            <div class="ff"><label>申请编号</label><div class="ff-val">FK-2026-0856</div></div>
+            <div class="ff"><label>付款计划</label><div class="ff-val">2026 年 5 月进度款</div></div>
+            <div class="ff"><label>计划金额</label><div class="ff-val">¥1,744,000.00</div></div>
+            <div class="ff"><label>款项名称</label><div class="ff-val">工程款 - 进度款</div></div>
+            <div class="ff"><label>付款审批类型</label><div class="ff-val">进度款</div></div>
+            <div class="ff" id="field-apply-amount-a">
+              <label>申请金额 (A)</label>
+              <div class="ff-val ff-val-bad">¥1,856,420.00</div>
+            </div>
+            <div class="ff"><label>扣款金额 (B)</label><div class="ff-val">¥0.00</div></div>
+            <div class="ff"><label>冲账金额 (C)</label><div class="ff-val">¥0.00</div></div>
+            <div class="ff" id="field-payable-d">
+              <label>应付金额 (D)</label>
+              <div class="ff-val">¥1,856,420.00</div>
+              <div class="ff-help">D = A − B − C</div>
+            </div>
+            <div class="ff"><label>付款单位</label><div class="ff-val">保利（北京）房地产开发有限公司</div></div>
+            <div class="ff"><label>申请人 / 部门</label><div class="ff-val">王磊 / 成本管理部</div></div>
+            <div class="ff"><label>申请日期</label><div class="ff-val">2026-05-22</div></div>
+            <div class="ff ff-full"><label>申请说明</label><div class="ff-val ff-val-mute">本期为保利花园三期 5-8 层主体结构施工进度款，监理已签认形象进度。</div></div>
+          </div>
+        </div>
+
+        <!-- 3. 明细 Tab -->
+        <div class="form-block">
+          <div class="form-tabs">
+            <button class="form-tab on" onclick="switchFormTab(this,'pay-detail')">付款明细</button>
+            <button class="form-tab" onclick="switchFormTab(this,'penalty')">奖罚扣款明细</button>
+            <button class="form-tab" onclick="switchFormTab(this,'agent')">代付代扣明细</button>
+            <button class="form-tab" onclick="switchFormTab(this,'retention')">质保金扣款明细</button>
+            <button class="form-tab" onclick="switchFormTab(this,'offset')">冲账明细</button>
+            <button class="form-tab" onclick="switchFormTab(this,'cost')">成本归集</button>
+            <button class="form-tab" id="tab-invoice" onclick="switchFormTab(this,'invoice')">发票信息</button>
+            <button class="form-tab" onclick="switchFormTab(this,'attach')">相关附件</button>
+          </div>
+
+          <div class="form-tab-pane on" data-pane="pay-detail">
+            <table class="form-table">
+              <thead><tr><th>序号</th><th>收款单位</th><th>开户银行</th><th>银行账号</th><th>款项名称</th><th class="num">申请金额</th><th class="num">扣款金额</th><th class="num">应付金额</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>北京建工第三建筑工程有限公司</td>
+                  <td>中国建设银行 北京分行</td>
+                  <td>11050168×××××5489</td>
+                  <td>工程款 - 进度款</td>
+                  <td class="num">1,856,420.00</td>
+                  <td class="num">0.00</td>
+                  <td class="num"><b>1,856,420.00</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="form-tab-pane" data-pane="penalty"><div class="form-empty">本期无奖罚扣款</div></div>
+          <div class="form-tab-pane" data-pane="agent"><div class="form-empty">本期无代付代扣</div></div>
+          <div class="form-tab-pane" data-pane="retention"><div class="form-empty">本期无质保金扣款（按合同第 4.3 条结算时一次性预留 3%）</div></div>
+          <div class="form-tab-pane" data-pane="offset"><div class="form-empty">本期无冲账</div></div>
+          <div class="form-tab-pane" data-pane="cost">
+            <table class="form-table">
+              <thead><tr><th>归集科目</th><th>科目编码</th><th>归集项目</th><th class="num">归集金额</th><th>占比</th></tr></thead>
+              <tbody>
+                <tr><td>建安成本 - 土建工程</td><td>1001-02-01</td><td>保利花园三期</td><td class="num">1,856,420.00</td><td>100%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="form-tab-pane" data-pane="invoice">
+            <table class="form-table">
+              <thead><tr><th>序号</th><th>发票号码</th><th>发票代码</th><th>开票日期</th><th>开票方</th><th>税率</th><th class="num">价税合计</th></tr></thead>
+              <tbody>
+                <tr class="form-row-flag" id="row-invoice-04412378">
+                  <td>1</td>
+                  <td><b>04412378</b></td>
+                  <td>011002000211</td>
+                  <td>2026-05-22</td>
+                  <td>北京建工第三建筑工程有限公司</td>
+                  <td>9%</td>
+                  <td class="num">1,856,420.00</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="form-note">提示：本 Tab 仅展示经办人填报的发票信息，国税查验状态需在外部发票查验平台核实。</p>
+          </div>
+          <div class="form-tab-pane" data-pane="attach"><div class="form-empty">已上传 4 个附件（监理签认表、计量表、进场签收单、施工日志）</div></div>
+        </div>
+
+        <div class="form-footer">
+          <span class="form-footer-tip">审核视图为只读，如需修改请由经办人在前端表单进行调整。</span>
+          <button class="btn btn-d" onclick="showView('list')">返回列表</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-attachment">
+      <div class="crumb"><a onclick="showView('list')">付款申请</a><span>›</span><a onclick="showView('detail')">FK-2026-0856 详情</a><span>›</span><span>附件预览 · 增值税专用发票_3张.pdf</span></div>
+      <div class="attach-frame">
+        <div class="attach-bar">
+          <div class="name">增值税专用发票_3张.pdf · 第 2 页 / 共 3 页 · 第 4 行高亮</div>
+          <div class="actions">
+            <button class="btn btn-d" onclick="toast('已下载')">下载</button>
+            <button class="btn btn-d" onclick="toast('已复制链接')">复制链接</button>
+          </div>
+        </div>
+        <div class="attach-body">
+          <div class="invoice">
+            <div class="void">已作废</div>
+            <header>
+              <div class="title">增值税专用发票</div>
+              <div class="sub">JIN SHUI YIN ZHI · 北京市国家税务局监制</div>
+            </header>
+            <div class="code">
+              <span>发票代码：011002000211</span>
+              <span id="row-04412378" class="invoice-row">发票号码：<b style="color:#c8102e">04412378</b></span>
+              <span>开票日期：2026-05-22</span>
+            </div>
+            <table>
+              <tr><th style="width:80px">购买方</th><td>保利（北京）房地产开发有限公司</td><th style="width:80px">纳税人识别号</th><td>91110000××××××</td></tr>
+              <tr><th>销售方</th><td>北京建工第三建筑工程有限公司</td><th>纳税人识别号</th><td>91110000××××××</td></tr>
+            </table>
+            <table>
+              <tr><th>项目名称</th><th>规格型号</th><th>数量</th><th>单价</th><th>金额</th><th>税率</th><th>税额</th></tr>
+              <tr><td>建筑服务费 · 保利花园三期主体施工 进度款第 5 期</td><td>—</td><td>1</td><td>1,703,137.61</td><td>1,703,137.61</td><td>9%</td><td>153,282.39</td></tr>
+              <tr><td colspan="4" style="text-align:right">价税合计（大写）</td><td colspan="3"><b>壹佰捌拾伍万陆仟肆佰贰拾元整 (¥1,856,420.00)</b></td></tr>
+            </table>
+            <div class="totals"><span>金额：¥1,703,137.61</span><span>税额：¥153,282.39</span><span>价税合计：<b>¥1,856,420.00</b></span></div>
+            <div class="stamp"><span class="top">国家税务总局</span><span class="bot">发票专用章</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast" class="toast">操作已完成</div>
+<script>
+function toast(message){
+  var el=document.getElementById('toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(function(){el.classList.remove('show')},1500);
+}
+function switchView(btn){
+  btn.closest('.view-tabs').querySelectorAll('.view-tab').forEach(function(item){item.classList.remove('on')});
+  btn.classList.add('on');
+}
+function toggleSidebar(){
+  document.querySelector('.app').classList.toggle('nav-collapsed');
+}
+function toggleNav(ni){
+  if(document.querySelector('.app').classList.contains('nav-collapsed')) return;
+  var sub=ni.nextElementSibling;
+  if(sub&&sub.classList.contains('nsl')){
+    var open=sub.classList.toggle('open');
+    ni.classList.toggle('open',open);
+  }
+}
+function initNav(){
+  var active=document.querySelector('.nsi.active');
+  var parent=active&&active.parentElement&&active.parentElement.previousElementSibling;
+  if(parent&&parent.classList.contains('ni')){
+    active.parentElement.classList.add('open');
+    parent.classList.add('open');
+  }
+}
+initNav();
+function showView(name){
+  var keys=['list','detail','attachment'];
+  keys.forEach(function(k){
+    var el=document.getElementById('view-'+k);
+    if(!el) return;
+    el.classList.toggle('on', k===name);
+  });
+  var titleEl=document.querySelector('.page-title');
+  if(titleEl){
+    titleEl.textContent = name==='detail' ? '付款申请详情' : name==='attachment' ? '附件预览' : '付款申请';
+  }
+}
+function switchFormTab(btn, paneKey){
+  document.querySelectorAll('.form-tab').forEach(function(t){t.classList.remove('on')});
+  if(btn) btn.classList.add('on');
+  document.querySelectorAll('.form-tab-pane').forEach(function(p){
+    p.classList.toggle('on', p.getAttribute('data-pane')===paneKey);
+  });
+}
+// 高亮某个锚点元素，并做合理的"环境恢复"——
+// - 命中表行：先把对应 form-tab 切到激活态
+// - 命中表单字段：默认所在 block 可见就行，直接滚
+function highlightElement(el){
+  if(!el) return;
+  document.querySelectorAll('.is-highlight').forEach(function(n){n.classList.remove('is-highlight')});
+  // 如果命中行在某个 form-tab-pane 里，先把对应 tab 激活
+  var pane=el.closest && el.closest('.form-tab-pane');
+  if(pane){
+    var key=pane.getAttribute('data-pane');
+    var tabBtn=document.querySelector('.form-tab[onclick*="'+key+'"]');
+    switchFormTab(tabBtn, key);
+  }
+  // 如果命中本身就是一个 form-tab 按钮，切到该按钮对应的 pane
+  if(el.classList && el.classList.contains('form-tab')){
+    var onclickAttr=el.getAttribute('onclick')||'';
+    var match=onclickAttr.match(/switchFormTab\(this,\s*'([^']+)'\)/);
+    if(match) switchFormTab(el, match[1]);
+  }
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  requestAnimationFrame(function(){ el.classList.add('is-highlight'); });
+  clearTimeout(window.__hlTimer);
+  window.__hlTimer=setTimeout(function(){el.classList.remove('is-highlight')},5000);
+}
+window.addEventListener('message', function(ev){
+  var data=ev && ev.data;
+  if(!data || data.type!=='host:navigate') return;
+  var t=String(data.target||'');
+  // 支持 "detail#field-xxx" / "attachment#row-xxx"
+  var hashIdx=t.indexOf('#');
+  var view=hashIdx>=0?t.slice(0,hashIdx):t;
+  var anchor=hashIdx>=0?t.slice(hashIdx+1):'';
+  if(view==='detail') showView('detail');
+  else if(view==='attachment') showView('attachment');
+  else if(view==='list') showView('list');
+  if(anchor){
+    // 等视图切换的下一帧再去高亮
+    setTimeout(function(){ highlightElement(document.getElementById(anchor)); },80);
+  }
+});
+</script>
+</body>
+</html>
