@@ -237,14 +237,14 @@ function withFreshParam(rawUrl: string): string {
 function App() {
   const [activeAssistantName, setActiveAssistantName] = useState(() => {
     const assistantFromUrl = new URLSearchParams(window.location.search).get('assistant')
-    return directoryAssistants.some(assistant => assistant.name === assistantFromUrl)
+    return allAssistants.some(assistant => assistant.name === assistantFromUrl)
       ? assistantFromUrl as string
       : directoryAssistants[0].name
   })
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   const activeAssistant = useMemo(
-    () => directoryAssistants.find(item => item.name === activeAssistantName) || directoryAssistants[0],
+    () => allAssistants.find(item => item.name === activeAssistantName) || directoryAssistants[0],
     [activeAssistantName]
   )
 
