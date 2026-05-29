@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "pages:build": "node scripts/deploy-pages-build.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "aui:validate": "python3 scripts/aui_tools.py validate-isolation",
