@@ -1,235 +1,598 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>物业租赁合同</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Author" content="林津津">
+  <meta name="LastAuthor" content="明源云·王继昌">
+  <meta name="CreationTime" content="2021-07-07T15:52:00Z">
+  <meta name="ModificationTime" content="2021-07-07T15:52:00Z">
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    html, body {
       margin: 0;
       min-height: 100%;
       background: #fff;
       color: #000;
-      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
       overflow-y: auto;
       overflow-x: hidden;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
     }
 
-    .doc-page {
-      position: relative;
+    body {
       width: 1354px;
       min-height: 1510px;
-      margin: 0 auto 48px;
+      margin: 0 auto;
       padding: 86px 150px 96px 154px;
-      overflow: hidden;
       background: #fff;
     }
 
-    .watermark {
-      position: absolute;
-      inset: -70px -90px;
-      z-index: 0;
-      opacity: .52;
-      pointer-events: none;
-      background-image:
-        repeating-linear-gradient(
-          -14deg,
-          transparent 0 110px,
-          rgba(182, 188, 194, .17) 110px 141px,
-          transparent 141px 252px
-        );
+    table {
+      max-width: 100%;
     }
 
-    .watermark::before,
-    .watermark::after {
-      content: "系统管理员(2026-05-29 11:08)";
-      position: absolute;
-      width: 1720px;
-      height: 1720px;
-      color: rgba(151, 157, 164, .2);
-      font-size: 22px;
-      font-weight: 600;
-      line-height: 156px;
-      transform: rotate(-14deg);
-      word-spacing: 58px;
-      letter-spacing: .3px;
-      text-shadow:
-        0 156px currentColor,
-        0 312px currentColor,
-        0 468px currentColor,
-        0 624px currentColor,
-        0 780px currentColor,
-        0 936px currentColor,
-        0 1092px currentColor,
-        0 1248px currentColor,
-        0 1404px currentColor;
-    }
-
-    .watermark::before {
-      top: 0;
-      left: -70px;
-    }
-
-    .watermark::after {
-      top: 78px;
-      left: 250px;
-      color: rgba(151, 157, 164, .19);
-    }
-
-    .content {
-      position: relative;
-      z-index: 1;
-      width: 1048px;
-    }
-
-    .contract-code {
-      margin: 20px 10px 78px 0;
-      text-align: right;
-      font-size: 28px;
-      line-height: 1.2;
-      font-weight: 800;
-    }
-
-    .contract-code span {
-      display: inline-block;
-      padding-bottom: 2px;
-      border-bottom: 3px solid #111;
-    }
-
-    .contract-title {
-      margin: 0 0 70px;
-      text-align: center;
-      font-size: 50px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: 0;
-    }
-
-    .party-lines {
-      width: 957px;
-      margin: 0 auto 15px;
-      font-size: 28px;
-      line-height: 1.9;
-      font-weight: 800;
-    }
-
-    .party-line {
-      display: grid;
-      grid-template-columns: 395px 1fr;
-      align-items: end;
-      min-height: 59px;
-    }
-
-    .party-value {
-      padding-left: 28px;
-      border-bottom: 3px solid #111;
-      line-height: 1.25;
-    }
-
-    .party-value.wrap {
-      display: inline-block;
-      padding-top: 9px;
-    }
-
-    .body-copy {
-      width: 1034px;
-      margin: 8px auto 0;
-      font-size: 29px;
-      line-height: 1.95;
-      font-weight: 800;
-    }
-
-    .body-copy p {
-      margin: 0;
-      text-indent: 2em;
-    }
-
-    .body-copy .article {
-      margin-top: 8px;
-      text-indent: 0;
-      font-weight: 900;
-    }
-
-    .underline {
-      border-bottom: 3px solid #111;
-      padding: 0 3px 2px;
-    }
-
-    .clause-highlight {
-      animation: pulse 1.6s ease-out 1;
-      background: rgba(255, 236, 153, .78);
-      box-shadow: 0 0 0 8px rgba(255, 236, 153, .35);
-    }
-
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(255, 214, 10, .65);
-      }
-
-      100% {
-        box-shadow: 0 0 0 12px rgba(255, 214, 10, 0);
-      }
-    }
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Times New Roman'; color: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 36.0px 'Times New Roman'; min-height: 42.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 36.0px 'Times New Roman'}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 16.0px 'Times New Roman'; min-height: 18.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 16.0px; line-height: 50.0px; font: 16.0px Times}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 16.0px; line-height: 50.0px; font: 16.0px 'Times New Roman'}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 16.0px; line-height: 50.0px; font: 16.0px 'Times New Roman'; color: #000000}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 48.0px; line-height: 17.0px; font: 16.0px 'Times New Roman'; color: #000000; min-height: 18.0px}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 16.0px; line-height: 17.0px; font: 16.0px 'Times New Roman'; color: #000000}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; line-height: 17.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; line-height: 17.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 17.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 17.0px; font: 12.0px Times}
+    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; line-height: 14.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; line-height: 17.0px; font: 12.0px Times; color: #000000}
+    p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 17.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 14.0px; font: 12.0px Times}
+    p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 17.0px; font: 12.0px Times}
+    p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 17.0px; font: 12.0px Times; color: #000000}
+    p.p21 {margin: 0.0px 0.0px 0.0px 0.1px; text-align: justify; text-indent: -0.1px; line-height: 17.0px; font: 12.0px Times}
+    p.p22 {margin: 0.0px 0.0px 0.0px 11.9px; text-align: justify; text-indent: 11.9px; line-height: 17.0px; font: 12.0px Times}
+    p.p23 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 10.6px; line-height: 17.0px; font: 10.5px Times}
+    p.p24 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; line-height: 17.0px; font: 10.5px Times}
+    p.p25 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.5px Times}
+    p.p26 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 11.0px Times; color: #000000}
+    p.p27 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.5px Times; min-height: 13.0px}
+    p.p28 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 11.0px Times; color: #000000; min-height: 13.0px}
+    p.p29 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 14.0px; font: 14.0px 'Times New Roman'; min-height: 16.0px}
+    p.p30 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 12.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p31 {margin: 0.0px 0.0px 0.0px 24.0px; text-align: justify; line-height: 17.0px; font: 12.0px Times}
+    p.p32 {margin: 0.0px 0.0px 0.0px 24.0px; text-align: justify; text-indent: 36.1px; line-height: 17.0px; font: 12.0px Times}
+    p.p33 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 60.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p34 {margin: 0.0px 0.0px 0.0px 24.0px; text-align: justify; text-indent: 36.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p35 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 23.9px; line-height: 17.0px; font: 12.0px Times}
+    p.p36 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 18.0px; font: 12.0px Times}
+    p.p37 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 17.0px; font: 12.0px Times; color: #000000}
+    p.p38 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 22.7px; line-height: 17.0px; font: 12.0px Times}
+    p.p39 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times}
+    p.p40 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 21.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p41 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 18.0px; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p42 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 18.0px; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p43 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.1px; line-height: 18.0px; font: 12.0px Times; color: #000000}
+    p.p44 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; line-height: 18.0px; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p45 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p46 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 24.0px; font: 12.0px Times; color: #000000}
+    p.p47 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times; min-height: 14.0px}
+    p.p48 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 24.0px; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p49 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 18.0px Times; min-height: 23.0px}
+    p.p50 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times; color: #000000}
+    p.p51 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 22.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p52 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 24.1px; line-height: 22.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p53 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times; color: #000000; min-height: 14.0px}
+    p.p54 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 12.0px Times}
+    p.p55 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 22.0px Times}
+    p.p56 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 24.0px; line-height: 17.0px; font: 12.0px Times}
+    p.p57 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 27.0px; font: 16.0px Times}
+    p.p58 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 32.0px; line-height: 27.0px; font: 16.0px Times}
+    p.p59 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 24.0px; line-height: 27.0px; font: 12.0px Times}
+    p.p60 {margin: 0.0px 0.0px 0.0px 0.0px; text-indent: 24.0px; font: 12.0px Times}
+    p.p61 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 36.1px; line-height: 14.0px; font: 18.0px Times; min-height: 23.0px}
+    p.p62 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 27.0px; font: 16.0px Times}
+    p.p63 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 27.0px; font: 16.0px Times; min-height: 19.0px}
+    p.p64 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 27.0px; font: 12.0px Times; min-height: 14.0px}
+    p.p65 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; text-indent: 28.0px; line-height: 14.0px; font: 14.0px 'Times New Roman'; min-height: 16.0px}
+    p.p66 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; line-height: 27.0px; font: 12.0px Times}
+    p.p67 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: justify; font: 10.5px 'Times New Roman'; min-height: 11.0px}
+    p.p68 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.5px 'Times New Roman'}
+    span.s1 {text-decoration: underline}
+    span.s2 {font: 16.0px 'Times New Roman'}
+    span.s3 {font: 16.0px 'Times New Roman'; text-decoration: underline}
+    span.s4 {font: 16.0px Times; text-decoration: underline}
+    span.s5 {color: #000000}
+    span.s6 {background-color: #ffff00}
+    span.s7 {font: 18.0px Times; color: #000000}
+    span.s8 {font: 16.0px Times}
+    span.s9 {font: 12.0px Times}
+    table.t1 {border-collapse: collapse}
+    td.td1 {min-width: 36.3px; min-height: 29.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td2 {min-width: 124.5px; min-height: 29.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td3 {min-width: 79.8px; min-height: 29.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td4 {min-width: 120.8px; min-height: 29.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td5 {min-width: 60.2px; min-height: 29.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td6 {min-width: 36.3px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td7 {min-width: 124.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td8 {min-width: 79.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td9 {min-width: 120.8px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td10 {min-width: 60.2px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td11 {min-width: 36.3px; min-height: 4.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td12 {min-width: 124.5px; min-height: 4.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td13 {min-width: 79.8px; min-height: 4.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td14 {min-width: 120.8px; min-height: 4.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
+    td.td15 {min-width: 60.2px; min-height: 4.5px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #bfbfbf #bfbfbf #bfbfbf #bfbfbf; padding: 0.0px 5.0px 0.0px 5.0px}
   </style>
 </head>
 <body>
-  <article class="doc-page">
-    <div class="watermark"></div>
-    <div class="content">
-      <div class="contract-code">合同编号： <span>${租赁中心_新签合同文本.合同编号}</span></div>
-      <h1 class="contract-title">物业租赁合同</h1>
-
-      <div class="party-lines">
-        <div class="party-line">
-          <div>出租方（以下简称“甲方”）：</div>
-          <div class="party-value">金发科技股份有限公司</div>
-        </div>
-        <div class="party-line">
-          <div>承租方（以下简称“乙方”）：</div>
-          <div class="party-value wrap">${租赁中心_新签合同文本.承租方名称} ${租赁中心_新签合同文本.承租方.证件号}</div>
-        </div>
-      </div>
-
-      <div class="body-copy">
-        <p>甲、乙双方在平等、自愿、协商一致的基础上，就乙方承租甲方之物业有关事宜，达成如下合同条款:</p>
-        <p class="article">第一条&nbsp;&nbsp;&nbsp;租赁物业</p>
-        <p>甲方同意：将位于广州市<span class="underline">${租赁中心_新签合同文本.资产单元-位置信息（详细地址）}</span>物业（具体位置参见本合同附件一《物业使用平面图》）出租给乙方。</p>
-        <p>乙方明确：其在签订本合同前，已对上述物业的权属状况、配套设施进行了充分的尽职调查，并对物业的现状、实际使用面积进行了实地勘察和测量，均予以认可；</p>
-        <p>若乙方的经营项目对租赁物业有特别要求，则甲方无义务为满足该等要求而采取任何行动，乙方将自行完成相关事宜（包括但不限于完成相关工程、办理相关手续等）以适应该等要求。现乙方同意按现状承租上述物业。</p>
-        <p data-clause="deposit">第五条 第1款（3）：履约保证金在租赁期届满、合同解除或合同终止之日，在乙方结清各项费用并将租赁物业按约交付给甲方，经审查通过后，甲方在20个工作日内一次性、全额无息退还。</p>
-        <p data-clause="rent">第五条 第2款：租金按计租面积按月计收，并按合同约定的日期和幅度进行复式递增。</p>
-        <p data-clause="electricity">第五条 第3款（2）电费：乙方电费=乙方自用电费+基本电费分摊费+乙方用电损耗费+公共设备用电分摊费；其中用电损耗费=乙方用电量×峰平谷平均电价×0.06。</p>
-        <p data-clause="sublease">第七条 第11款：未经甲方的书面同意，乙方不得将承租的物业进行转租或分租。</p>
-        <p data-clause="default">第十一条 违约责任：乙方逾期缴纳费用或违反合同约定的，需按合同承担相应违约责任。</p>
-      </div>
-    </div>
-  </article>
-  <script>
-    function ensureHostClauseHighlightStyle() {
-      if (document.getElementById('host-clause-highlight-style')) return;
-      var style = document.createElement('style');
-      style.id = 'host-clause-highlight-style';
-      style.textContent = '.host-clause-highlight{background:rgba(38,110,255,.14)!important;box-shadow:0 0 0 4px rgba(38,110,255,.16)!important;border-radius:2px;}';
-      document.head.appendChild(style);
-    }
-
-    window.addEventListener('message', function(event) {
-      var data = event.data || {};
-      if (data.type !== 'locate-clause' || !data.selector) return;
-      ensureHostClauseHighlightStyle();
-      document.querySelectorAll('.host-clause-highlight').forEach(function(node) {
-        node.classList.remove('host-clause-highlight');
-      });
-      var target = document.querySelector(data.selector);
-      if (!target) return;
-      target.classList.add('host-clause-highlight');
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-  </script>
+<p class="p1"><b><span class="Apple-converted-space">                 </span>合同编号：</b><span class="s1"><b> CFSG-2025-410-ZL<span class="Apple-converted-space">           </span></b></span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">老鸦冲商铺租赁合同</p>
+<p class="p4"><b><span class="Apple-converted-space">   </span></b></p>
+<p class="p5"><span class="s2"><b>甲<span class="Apple-converted-space">    </span>方：</b></span><span class="s1"><b>长沙市城市建设投资开发集团有限公司</b></span><span class="s3"><b><span class="Apple-converted-space"> </span></b></span></p>
+<p class="p6"><b>乙<span class="Apple-converted-space">    </span>方：</b><span class="s1"><b> <span class="Apple-converted-space">   </span></b></span><span class="s4"><b> <span class="Apple-converted-space">  </span>苏德 <span class="Apple-converted-space"> </span></b></span><span class="s1"><b> <span class="Apple-converted-space">                   </span></b></span></p>
+<p class="p6"><b>丙<span class="Apple-converted-space">    </span>方：</b><span class="s1"><b>长沙城发商业管理有限公司<span class="Apple-converted-space">           </span></b><b></b></span></p>
+<p class="p7"><span class="s5"><b>签订日期：</b></span><span class="s1"><b> <span class="Apple-converted-space">    </span>2025 <span class="Apple-converted-space">  </span>年<span class="Apple-converted-space">    </span>月<span class="Apple-converted-space">      </span>日<span class="Apple-converted-space">   </span></b></span></p>
+<p class="p8"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p9"><b>签订地点：</b><span class="s1"><b><span class="Apple-converted-space">      </span>谷山庭苑办公室 <span class="Apple-converted-space">               </span></b><b></b></span></p>
+<p class="p10"><span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-converted-space">   </span></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p11"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p13"><b>甲方(出租方）：长沙市城市建设投资开发集团有限公司</b><b></b></p>
+<p class="p14">法定代表人： 杨云峰</p>
+<p class="p14">联系负责人： 黄玉婷</p>
+<p class="p14">联系电话：13007317070<span class="Apple-converted-space">               </span></p>
+<p class="p14">通信地址：长沙市天心区书院南路73号城发集团二办 <span class="Apple-converted-space">                 </span></p>
+<p class="p14">电子邮箱： /<span class="Apple-converted-space">                       </span></p>
+<p class="p11"><span class="Apple-converted-space"> </span></p>
+<p class="p11"><span class="Apple-converted-space">                        </span></p>
+<p class="p11"><span class="Apple-converted-space"> </span></p>
+<p class="p15"><br></p>
+<p class="p15"><br></p>
+<p class="p13"><b>乙方（承租方）：苏德<span class="Apple-converted-space">  </span></b><span class="s5"><b><span class="Apple-converted-space"> </span></b><b></b></span></p>
+<p class="p16">身份证号码：430527198007263932<span class="Apple-converted-space">       </span></p>
+<p class="p16">联系负责人：苏德 <span class="Apple-converted-space">                 </span></p>
+<p class="p16">联系电话：15773178076<span class="Apple-converted-space"> </span></p>
+<p class="p16">通信地址：老鸦冲商业网点105号门面 <span class="Apple-converted-space">   </span></p>
+<p class="p14"><span class="s5">电子邮箱</span>：<span class="Apple-converted-space">  </span>/<span class="Apple-converted-space">               </span></p>
+<p class="p17"><b><span class="Apple-converted-space">   </span></b><span class="s5"><b><span class="Apple-converted-space"> </span></b><b></b></span></p>
+<p class="p11"><span class="Apple-converted-space">                 </span></p>
+<p class="p11"><span class="Apple-converted-space"> </span></p>
+<p class="p15"><br></p>
+<p class="p13"><b>丙方（运营管理方）：长沙城发商业管理有限公司 <span class="Apple-converted-space"> </span></b></p>
+<p class="p18"><b>法定代表人：许伟云</b><b></b></p>
+<p class="p16">联系负责人：林津津 <span class="Apple-converted-space">       </span></p>
+<p class="p14">联系电话：13974825470</p>
+<p class="p14">通信地址：长沙市天心区劳动路348号新世纪体育文化中心东广场先导贺龙童心Mall-T002号</p>
+<p class="p11"><span class="Apple-converted-space"> </span></p>
+<p class="p14">鉴于：</p>
+<p class="p14">a) 甲方享有本合同所述之商业门店的出租权，愿意将该物业租赁给乙方；</p>
+<p class="p14">b) 乙方是合法成立并有效存续的独立法人/其他组织/具有完全民事行为能力的自然人，愿意承租本合同所述之商业门店用于本租赁合同所述之用途。</p>
+<p class="p14">c）丙方受甲方委托,根据本合同负责对乙方进行履约及现场各项管理,提供项目运营管理服务。</p>
+<p class="p14">据此，甲、乙、丙三方经友好协商，达成如下协议，以兹共同遵守(下文中甲方、乙方、丙方合称为“三方”)。</p>
+<p class="p13"><b>第一条<span class="Apple-converted-space">  </span>商业门店基本情况<span class="Apple-converted-space"> </span></b><b></b></p>
+<p class="p14"><span class="s5">1、</span>商业门店（以下简称：该商业门店或租赁物业）位于【<span class="s1"><span class="Apple-converted-space">  </span>老鸦冲商业网点</span>】房屋、内部<span class="s5">编号</span>【<span class="s1">105</span>】<span class="s5">，</span>租赁面积为【<span class="s1">19.61</span>】平方米。</p>
+<p class="p14">2、乙方在本合同签署前，已现场查看过该商业门店及该商业门店周边环境，对于租赁物业的现状(包括但不限于：租赁物业本身的自然物理状况，租赁物业内的附属物、添附物、公用设施、配套设施的状况，租赁物业的周边环境及相邻物业的情况，租赁物业的法律状况等)无异议。</p>
+<p class="p13"><b>第二条<span class="Apple-converted-space">  </span>商业门店用途<span class="Apple-converted-space"> </span></b></p>
+<p class="p14">1、该商业门店的用途限于商业经营：<span class="s1">业态【快剪】品牌【 <span class="Apple-converted-space">  </span>/ <span class="Apple-converted-space">  </span>】</span>。</p>
+<p class="p13"><b>2、乙方将租赁物业从事上一款所述之用途时，所需重新办理或变更办理的相关政府许可手续(包括但不限于：规划许可、消防许可、环评许可、从事经营所需的营业证照等一切合法证件)，均由乙方自行负责，并自担费用，甲方及丙方全力配合；乙方承诺不得以前述相关政府许可手续无法办理或者迟滞办理为由主张降低、迟延或拒绝支付租赁费用、水电费或不履行其在本合同项下的其他义务。</b></p>
+<p class="p14">3、乙方应在本合同签订前向丙方及物业服务公司提供与上述经营品牌、经营项目涉及的有关的营业执照、许可证书、商号商标授权经营等证明文件,并提交复印件作为附件给丙方；如乙方经营餐饮，则还应提供餐饮服务许可证、员工健康证等证件，并提交复印件作为附件给丙方；如当地政府主管部门对所需证照另有要求的，乙方需积极配合提供；乙方不得拒绝或拖延提供上述文件证照。乙方保证对约定经营品牌及项目享有持续合法经营权，如乙方在开业日前仍未能提供前述合法有效的证明文件，或在租赁期内没有提供已过期或即将过期相关证明文件的有效续展证明文件，则甲方有权解除本合同，且无需向乙方承担任何责任。</p>
+<p class="p19">4、该商业门店的经营由乙方自行负责、自负盈亏。包括但不限于：乙方自行承担经营费用及缴纳税费及其他费用等</p>
+<p class="p13"><b>第三条<span class="Apple-converted-space">  </span>租赁期限</b></p>
+<p class="p14">1、租赁期限：本合同租赁期限为【<span class="s1">2</span>】年，从【<span class="s1">2025</span>】年【<span class="s1">8</span>】月【<span class="s1">1</span>】日起至【<span class="s1">2027</span>】年【<span class="s1">7</span>月【<span class="s1">31</span>】日止。</p>
+<p class="p16">2、租赁期满，本合同到期后自然终止，乙方应按照本合同第六条约定将租赁物业交还于丙方。在本合同到期前45天，丙方可以进行招商前的各项准备工作，包括介绍、展示该商业门店，乙方应予以配合。</p>
+<p class="p16">3、租赁期满，若乙方有意续租的，应在合同到期日前提前60日书面通知甲方、丙方，甲方、丙方有权选择是否与乙方续签租赁合同。</p>
+<p class="p20"><span class="Apple-converted-space">    </span><b>第四条<span class="Apple-converted-space">  </span>租赁费用（租赁费用的70%为租金，租赁费用的30%为运营管理费）缴纳方式、标准及缴纳时间、履约保证金</b><b></b></p>
+<p class="p21"><span class="Apple-converted-space">    </span>1、缴纳方式：租赁费用按照【<span class="s1"> 半年 </span>】度支付，采用先付费后使用的原则交纳。</p>
+<p class="p22">2、租赁费用标准：该商业门店第一、二年度的租赁费用均为【<span class="s1"> 2765.01 </span>】元/月（其中包含运营管理费为【<span class="s1">829.50</span>】元/月）。除特别说明的外，本合同中的“租赁费用”均含30%运营管理费。</p>
+<table cellspacing="0" cellpadding="0" class="t1">
+  <tbody>
+    <tr>
+      <td valign="top" class="td1">
+        <p class="p23"><b>期数</b></p>
+      </td>
+      <td valign="top" class="td2">
+        <p class="p23"><b>租赁期间</b></p>
+      </td>
+      <td valign="top" class="td3">
+        <p class="p23"><b>租赁费用</b></p>
+        <p class="p24"><b>单价（元）</b></p>
+      </td>
+      <td valign="top" class="td4">
+        <p class="p24"><b>租赁费用总金额</b></p>
+        <p class="p24"><b>（元）</b></p>
+      </td>
+      <td valign="top" class="td5">
+        <p class="p24"><b>备注</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td6">
+        <p class="p25">1</p>
+      </td>
+      <td valign="top" class="td7">
+        <p class="p25">2025.8.1-2026.1.31</p>
+      </td>
+      <td valign="top" class="td8">
+        <p class="p26">141</p>
+      </td>
+      <td valign="middle" class="td9">
+        <p class="p26">16590.06</p>
+      </td>
+      <td valign="top" class="td10">
+        <p class="p27"><br></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td11">
+        <p class="p25">2</p>
+      </td>
+      <td valign="top" class="td12">
+        <p class="p25">2026.2.1-2026.7.31</p>
+      </td>
+      <td valign="top" class="td13">
+        <p class="p26">141</p>
+      </td>
+      <td valign="middle" class="td14">
+        <p class="p26">16590.06</p>
+      </td>
+      <td valign="top" class="td15">
+        <p class="p27"><br></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td6">
+        <p class="p25">3</p>
+      </td>
+      <td valign="top" class="td7">
+        <p class="p25">2026.8.1-2027.1.31</p>
+      </td>
+      <td valign="top" class="td8">
+        <p class="p26">141</p>
+      </td>
+      <td valign="middle" class="td9">
+        <p class="p26">16590.06</p>
+      </td>
+      <td valign="top" class="td10">
+        <p class="p27"><br></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td6">
+        <p class="p25">4</p>
+      </td>
+      <td valign="top" class="td7">
+        <p class="p25">2027.10.1.-2027.7.31</p>
+      </td>
+      <td valign="top" class="td8">
+        <p class="p26">141</p>
+      </td>
+      <td valign="middle" class="td9">
+        <p class="p26">16590.06</p>
+      </td>
+      <td valign="top" class="td10">
+        <p class="p27"><br></p>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="td6">
+        <p class="p27"><br></p>
+      </td>
+      <td valign="top" class="td7">
+        <p class="p25">合计</p>
+      </td>
+      <td valign="top" class="td8">
+        <p class="p28"><br></p>
+      </td>
+      <td valign="middle" class="td9">
+        <p class="p26">66360.24</p>
+      </td>
+      <td valign="top" class="td10">
+        <p class="p27"><br></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p class="p29"><br></p>
+<p class="p21"><span class="Apple-converted-space">   </span>3、缴纳时间:乙方应于本合同签订之日缴纳【<span class="s1"> 2025 </span>】年【<span class="s1"> 8 </span>】月【<span class="s1"> 1 </span>】日至【<span class="s1"> 2026 </span>】年【<span class="s1"> 1</span>】月【<span class="s1"> 31</span>】日的租赁费用总计【<span class="s1"> 16590.06</span>】元（大写人民币<span class="s1">壹万陆仟伍佰玖拾元零陆分 </span>），以后每【<span class="s1">半年</span>】度的租赁费用应在上一【<span class="s1"> 半年 </span>】度期限届满前提前10日内预交给甲方。</p>
+<p class="p19"><span class="Apple-converted-space">   </span>4、履约保证金：</p>
+<p class="p30">（1）乙方应在本合同签订之日向丙方交纳履约保证金【<span class="s1">5530.02</span>】元（大写：【人民币<span class="s1">伍仟伍佰叁拾肆元零贰分</span>】）。</p>
+<p class="p30">（2）乙方未按本合同约定逾期交纳租赁费用或有关费用的，丙方可以扣留全部或部分履约保证金冲抵，其冲抵金额相当于乙方的前述欠费，冲抵后乙方应在收到丙方书面通知后【3】日内将履约保证金补足。</p>
+<p class="p30">（3）本合同终止后，若乙方完全履行本合同约定的各项义务，丙方应在乙方按本合同约定返还丙方租赁物业后【30】日内将履约保证金无息退还给乙方。</p>
+<p class="p30"><span class="Apple-converted-space">  </span>5、其他费用</p>
+<p class="p14">乙方经营所产生的任何费用（包括但不限于水电费、物业管理费、装修费、各项行政收费、乙方申请安装的座机电话、网络光纤使用费、刷卡机、有线电视费及各项成本），由乙方自行承担支付。</p>
+<p class="p13"><b>6、租赁期内，甲方有权按照本合同的约定向乙方收取运营管理费（已包含在本合同第四条约定的租赁费用中），乙方不得以甲方或丙方未提供运营管理服务或其他为由主张拒绝、迟延或减少支付运营管理费。</b></p>
+<p class="p14">7、收款账户信息</p>
+<p class="p31"><b>（1） </b>甲方指定的租赁费用收款账户信息如下：</p>
+<p class="p32"><b>转账方式付款</b></p>
+<p class="p33">户名：长沙市城市建设投资开发集团有限公司<span class="Apple-converted-space">                   </span></p>
+<p class="p34"><span class="s6">账号：431614000010149002724</span><span class="Apple-converted-space">                             </span></p>
+<p class="p34">开户行：交行长沙芙蓉南路支行</p>
+<p class="p32"><b>刷卡、微信及支付宝方式付款</b></p>
+<p class="p34">户名：长沙市城市建设投资开发集团有限公司</p>
+<p class="p34">开户行：建行长沙五一大道支行</p>
+<p class="p34"><span class="s6">账号：430015300061050000306</span></p>
+<p class="p19">丙方指定的履约保证金收款账户信息如下：</p>
+<p class="p31"><span class="Apple-converted-space">      </span>户名：长沙城发商业管理有限公司</p>
+<p class="p31"><span class="Apple-converted-space">      </span><span class="s6">账号：368200100100133825</span></p>
+<p class="p31"><span class="Apple-converted-space">      </span>开户行：兴业银行股份有限公司长沙河西支行</p>
+<p class="p13"><b>第五条<span class="Apple-converted-space">  </span>商业门店的交付、进场及开业</b></p>
+<p class="p35">1、乙方对于租赁物业的现状（包括但不限于：租赁物业本身的自然物理状况，租赁物业内的附属物、添附物、公用设施、配套设施的状况，租赁物业的周边环境及相邻物业的情况，租赁物业的法律状况等）无异议。</p>
+<p class="p35">2、租赁物业的移交为现状移交，乙方确认在本合同签署前已通过各种方式详细了解租赁物业各方面的状况，对于租赁物业的现状(包括但不限于：租赁物业本身的自然物理状况，租赁物业内的附属物、添附物、公用设施、配套设施的状况，租赁物业的周边环境及相邻物业的情况，租赁物业的法律状况等)无异议。</p>
+<p class="p35">3、乙方申明：乙方完全认可以上移交方式。在移交后，乙方不得以任何理由声称甲方或丙方未向其移交租赁物业、或拒绝支付本合同第四条约定的租赁费用及其他费用、或拒绝履行本合同项下的任何义务。</p>
+<p class="p13"><b><span class="Apple-converted-space"> </span>清场与退租</b></p>
+<p class="p14"><span class="Apple-converted-space"> </span>1、本合同所指之“清场”，系指乙方按照本合同约定向丙方交还租赁物业；本合同所指之“退租”，系指本合同解除、终止。</p>
+<p class="p14">2、本合同无论因何种原因终止或解除，乙方均应按下列约定履行清场退租义务：</p>
+<p class="p14">（1）乙方应在本合同终止或解除之日起<span class="s5">【5】</span>日内完成清场，并退出租赁物业。届时，乙方的装修遵循来装去丢原则，租赁物业上的装修、添附物、附着物、以及水电等公用设施 (无论该公用设施是否为乙方自费添加)，均归甲方所有，乙方不得拆除、破坏，且甲方及丙方无需对此给予乙方任何补偿；届时，三方办理交接（包括但不限于对该商业门店状况的检查、钥匙的移交、甲方设备设施的清点），并签署书面交接文件。</p>
+<p class="p14">（2）如乙方未在本合同终止或解除之日起<span class="s5">【5】</span>日内完成清场，则视为乙方已放弃留存在租赁物业内的所有物品、设施，丙方有权自行进行处置(包括但不限于：搬动、迁移、拆除、丢弃或拍卖变卖)，处置如有所得，归丙方所有；丙方有权但无义务单方聘请公证机关或其他第三方机构对处置行为进行证据保全。</p>
+<p class="p14">（3）如乙方违反本合同第14条第4款约定，导致本合同终止解除的，乙方应在本合同终止解除之日起<span class="s5">【5】</span>日内负责清退租赁物业的实际占有使用人（包含但不限于次承租方），因清退实际占有使用人而引发的责任概由乙方承担，包括但不限于：向实际占有使用人退还租赁费用、保证金、补偿装修、赔偿损失等。逾期未能清退，则视为乙方未能向丙方交还租赁物业。</p>
+<p class="p14">（4）乙方应在本合同终止或解除后，自行及时妥善解决租赁物业所产生的全部债务。包括但不限于：对施工单位、供货商等的债务、对所聘用员工的辞退及补偿。如因乙方未能及时妥善解决上述问题，而发生乙方的债权人或乙方员工围堵、破坏甲方所有的任何房屋、场地、设备设施等情形而给甲方造成任何损失，均由乙方负责赔偿。</p>
+<p class="p14">乙方应在本合同终止或解除之日起<span class="s5">【5】</span>日内付清所有欠付费用以及应由乙方承担的公用事业及配套设施费用(包括但不限于：水、电等)；并且，除非事先征得丙方书面同意，否则乙方不得要求以租赁物业内的装修、添附物、附着物、设施设备、物品等用来作价冲抵欠租或欠付的费用；</p>
+<p class="p14">乙方不按时向丙方交还租赁物业的，每逾期<span class="s5">【1】</span>日，应按照当年日租赁费用（当年该租赁物业年租赁费用总额除以12再除以30）的壹倍向甲方支付场地占有使用费，直至乙方交还租赁物业或甲方将乙方遗留物品处置完毕;若给甲方造成损失的，还应赔偿甲方的全部损失。</p>
+<p class="p36"><b>第七条 <span class="Apple-converted-space"> </span></b><span class="s5"><b> 拆迁</b></span></p>
+<p class="p14">因政府政策原因（包括但不限于政策的调整、新法令或禁令的颁布、政府为了公共利益或社会管理的需要而采取的行为、征用或拆迁等），需提前终止合同的，在甲方向乙方发出通知后，本合同自通知载明的日期解除；乙方在收到通知后【5】个工作日内，将租赁物业清场并交还给甲方，但已支付而未使用的租赁费用，甲方应在乙方交还租赁物业后5日内无息退还乙方；因拆迁所产生的相关补偿费，依照我国相关法律规定，归属于甲方的由甲方享有，归属于乙方的由乙方享有，除政府因此直接明确给予乙方赔偿或补偿，甲方无须向乙方承担任何赔偿或补偿责任。</p>
+<p class="p13"><b>第八条<span class="Apple-converted-space">  </span>商业门店的经营使用</b></p>
+<p class="p14"><b>1、乙方自行办理经营、设计、装修所需的或可能发生的涉及规划、环保、水、电 (包括水、电增容) 、通讯、消防（包括二次消防）、教育、卫生、市场监督、城管等的申请报批手续并自行负责实施到位且须符合政府相关职能部门及国家相关法律法规要求的标准，产生的相关费用全部由乙方承担（包含但不限于设计费、勘察费、材料设施设备采购费、施工费等所有费用）；同时，乙方承诺不得以前述事项未完成或者迟滞完成为由主张降低、迟延或拒绝支付租金、水电费或不履行其在本合同项下的其他义务。</b></p>
+<p class="p14">2、乙方经营运作而产生或引起的一切债权债务或各类经营纠纷或安全责任事故，乙方自行承担全部责任。</p>
+<p class="p14">3、乙方应保证按本合同规定的用途合理使用租赁物业，保护好租赁物业及附属设备设施，应当按照安全规范的要求使用水、电、气，并经常检查供水、供电、供气的设施、设备，加强防水、防盗、防火，消除安全隐患。由于违反安全使用规程或使用、保管、防范不当，给乙方造成的损失由乙方自行承担，给甲方造成的损失，应由乙方负责赔偿。</p>
+<p class="p14">4、乙方租赁区域内应按国家标准保证其经营区域及产品，符合国家卫生安全标准，如出现因其违法违规生产经营，或产品的质量、卫生、安全等负面事件由乙方自行承担。</p>
+<p class="p14">5、租赁物业的消防安全责任，自丙方向乙方移交租赁物业之日起，到丙方收回租赁物业之日止，由乙方承担；且甲乙双方应在本合同签订之同时另行签订附件《安全责任书》。</p>
+<p class="p14">6、租赁期内，租赁物业内所有设备设施(包括但不限于：丙方移交的消防设备及防火设施、电梯等、以及乙方自行添置设备设施等)的维护、保养、运作、年检等由乙方负责，费用由乙方承担。乙方有义务保证上述设备设施在租赁期限内处于良好和适用的状态，并通过主管部门的安检、年检等。对于丙方移交给乙方租赁物业内的设备及管道、电线等设备设施，乙方有义务不定期地进行检查，一旦发现任何危险或隐患，应及时予以排除并通知丙方。在本租赁合同终止或解除时，乙方交回租赁物业时，必须保证所有设备设施运转正常、年检、安检有效。</p>
+<p class="p14">7、租赁期内，如因乙方的责任或过错导致甲方或丙方或任何其他第三方遭受的任何损失，或人身伤害(包括但不限于：租赁物业内发生火灾，从乙方租赁物业内的任何地方向甲方或丙方或第三方的区域内溢水或漏水，爆炸，乙方租赁物业内的害虫或有害等)，均全部由乙方负责赔偿。</p>
+<p class="p14">8、乙方如需在租赁物业的任何部位(包括但不限于：外墙、顶端等)、或与租赁物业相连或周边的公用场地、附属设施、相邻建筑物上设置店铺招牌或广告的，不得影响相邻或周边其他业主、承租户的正常经营，且使用区域须报经丙方书面同意。相关政府审批、备案手续以及与相邻或周边其他业主、承租户的关系协调等由乙方自行负责。乙方需确保招牌或广告架设合理、安置稳固、电路安全，如发生招牌或广告坠落或电路起火或其他任何安全事故，一切责任均由乙方承担。</p>
+<p class="p14">9、租赁物业周边道路交通、相邻关系、政府大型活动征用、市政工程等原因导致乙方停业、歇业、交通不便等现象，由乙方自行协调相关部门解决，甲方及丙方概不负责。</p>
+<p class="p14">10、租赁物业内如有疏散通道，如遇到相关情况(如：大型活动、或其他情况)政府要求提供疏散通道或临时关门歇业时，乙方必须无条件服从政府要求，立即腾出相应的位置、面积、空间作为疏散用途或临时关门。乙方不得因此要求甲方减免费用、给予赔偿或补偿、或提出任何其他要求：但乙方在装修及经营时即应自行充分注意上述情况的存在，并自行采取妥善措施以便及时应对政府要求的疏散之需。</p>
+<p class="p14">11、租赁期内，为确保乙方对租赁物业的安全使用，避免租赁物业及进入租赁物业的第三人因乙方的过错行为而遭受损失、伤害，乙方有义务足额投保相应的保险，并自行承担保险费用，并且及时将保险单原件交丙方验证，并留存保险单复印件以供丙方备案。保险单的赔偿范围包括但不限于乙方责任、人身侵害、客人财产、急救责任、广告设备等相关条款。发生意外时，若因乙方未购买前述保险或投保金额不足，所产生的一切损失（包括前述保险单赔偿范围内的损失）及责任均由乙方承担。</p>
+<p class="p13"><b>第九条<span class="Apple-converted-space">  </span>安全经营约定</b></p>
+<p class="p14">1、自丙方向乙方移交租赁物业之日起，到丙方收回租赁物业之日止，乙方为经营场所安全第一责任人，对所租赁的房屋的消防、治安、安全生产工作负完全的管理责任，对承租范围内所从事的安全生产、经营、消防安全管理工作和人员承担一切法律责任。乙丙双方应在本合同签订之同时另行签订《安全责任书》，《安全责任书》作为本合同附件附于本合同之后。</p>
+<p class="p14">乙方建立健全安全工作机制，设置专人负责安全宣传教育、安全检查、安全隐患的排查、整改等工作，确保安全工作有组织、有制度、有落实；定期演练紧急状态下的安全预案，接到安全报警后，在向公安消防等相关机构准确报警的同时，应迅速启用安全预案和进行自救、人员疏散，防止重大火灾和人员伤亡事故的发生。具体约定见附件《安全责任书》。</p>
+<p class="p14">3、乙方必须遵守丙方的安全生产管理规定，接受丙方的监督检查，按时按质完成丙方提出的安全生产整改要求，如乙方拒绝完成丙方提出的整改要求，甲方有权解除本合同，乙方承担由此产生的一切经济责任。</p>
+<p class="p14">4、在发生消防、安保或其他紧急事项危及其他业主或第三人利益的情况下，甲方或丙方及其代表有权未经乙方许可而进入该商业门店。</p>
+<p class="p13"><b>第十条 税费</b></p>
+<p class="p14">1、本合同签署、履行中所发生的费用，以及租赁期内与租赁物业有关的一切税费，皆按现行有效之法律、法规规定，由相应的纳税/缴费义务人自行承担；法律，法规未规定的，由乙方承担。</p>
+<p class="p14">2、本合同中的租赁费用为含税价格，发票种类为增值税普通发票。</p>
+<p class="p13"><b>第十一条 租赁物业的转让、抵押</b></p>
+<p class="p14">1、租赁期内，甲方有权将租赁物业的全部或部分产权转让予第三方，但应提前两个月书面通知乙方。</p>
+<p class="p14">2、租赁期内，如甲方将租赁物业的全部产权或部分产权转让予第三方，乙方在同等条件下享有优先购买权。但乙方应在收到甲方发出的，关于是否行使租赁物业转让优先购买权的通知之日起壹个月内，以书面方式表明是否行使同等条件下的优先购买权；逾期未予书面答复的，视为放弃同等条件下的优先购买权。</p>
+<p class="p14">3、租赁期内，除非甲方已向乙方发出书面通知，告知其：甲方决定与乙方解除本合同，否则，乙方不得以甲方已经或将要与第三方就租赁物业的转让事宜进行接洽、协商、谈判、签约为由，而要求解除本合同，亦不得以此为由拒付、延付费用或不予履行／拖延履行本合同项下的其他任何义务。</p>
+<p class="p14">4、租赁期内，甲方有权将租赁物业的全部产权或部分产权抵押予第三方，而无须事先告知乙方。</p>
+<p class="p14">5. 乙方不得以租赁物业对外实施任何形式的融资、担保等为租赁物业设置权利障碍的行为。</p>
+<p class="p13"><b>第十二条 保密</b></p>
+<p class="p14">1、在本合同中，除非文意另有所指，否则“保密信息”指：（i）一方不论在本合同生效之前或之后就本项目以口头、书面、电子版本或其他形式直接或间接地提供予对方的信息、文件、协议等资料，包括但不限于有关业务、运营、财务、人事、交易、资产、负债、董事、股东、产品、技术数据、专有技术、商业活动和/或计划等资料；及（ii）双方就本项目进行的讨论及磋商内容；但不包括本条第3款所述的信息。</p>
+<p class="p14">2、本合同各方承诺所有保密信息仅作本项目之用，并对所有保密信息保守秘密；一方可将有关保密信息提供给其所有参与本项目的工作人员作本项目之用，但需各自确保其工作人员应对一切保密信息按本保密条款予以保密，并只能将保密信息用于本项目之用途，未经事先书面同意不得使用、复制或向除其工作人员以外的任何人披露保密资料。本合同各方各自对所有参与本项目的工作人员使用或处置保密信息的所有行为承担连带责任。上述工作人员应包括本合同各方的董事、员工、顾问、代理人及因其他合理原因而获悉保密信息的第三方。</p>
+<p class="p14">3、本合同各方对以下信息不承担保密责任：</p>
+<p class="p14">（1）非因违背本合同条款，且经合法方式为公众所知的资讯；</p>
+<p class="p14">（2）任一方在对方提供前已经合法拥有的资讯；</p>
+<p class="p14">（3）任一方独自通过有合法披露资格或没有任何披露限制的第三方获取的资讯；</p>
+<p class="p14">（4）任一方不基于保密信息而独立开发的资讯或信息；</p>
+<p class="p14">（5）任一方使用或披露己方保密信息。</p>
+<p class="p14">4、如果任何适用的法律法规或根据司法管辖权的法院的命令规定或任何有关监管机构（包括证券交易所）或执法机关要求本合同的一方（“披露方”）必须对本合同的剩余各方（“被披露方”）提供的保密信息或保密信息得出的任何意见、判断或推荐作出披露时，披露方将仅提供适用的法律法规要求提供的最小范围保密信息，并在情况许可下尽其最大努力要求接受有关保密信息的一方（包括上述的有关监管机构）对该保密信息予以保密；披露方并同意在适用的法律法规许可下在作出有关披露前书面通知被披露方。</p>
+<p class="p14">5、各方应尽最大努力防止保密信息的泄露。若一方违反本合同的保密义务，违约方应当向守约方赔偿相当于合同总金额20%的违约金，若违约金不足以弥补守约方的损失，则违约方应当继续赔偿守约方因此所遭受的全部损失，赔偿范围包括但不限于：不论是直接或间接（无论是引致或以其他方式）造成的，或与该违约而发生的任何费用，索赔，要求，损失，损害，或责任（包括但不限于诉讼费、律师费、保全费、鉴定费、差旅费及其他合理费用）。</p>
+<p class="p14">6、以上保密义务不因本合同的终止或解除而失效或被免除。</p>
+<p class="p13"><b>第十三条<span class="Apple-converted-space">  </span>甲方的权利和义务</b></p>
+<p class="p19"><span class="Apple-converted-space">    </span>1、在合同期内，甲方应保证乙方对该商业门店享有的独家使用权。</p>
+<p class="p19"><span class="Apple-converted-space">    </span>2、在发生消防、保安等危及其他业主或其他第三人利益的情况下，甲方或其代表有权未经乙方许可而进入乙方该商业门店。</p>
+<p class="p14">3、甲方同时享有本合同其他条款约定的权利，并需承担本合同其他条款约定的义务。</p>
+<p class="p13"><b>第十四条<span class="Apple-converted-space">  </span>乙方的权利和义务</b></p>
+<p class="p35">1、乙方享有合同租赁期内该商业门店的自主经营的权利。</p>
+<p class="p14">2、租赁期内，该商业门店内的消防、综合治理及安全保卫、卫生等工作由乙方自行负责，且乙方承诺不在门店内使用明火。</p>
+<p class="p14">3、未经丙方书面同意，乙方不得擅自改变该商业门店的用途或者改变经确定的名称、品牌、业态；</p>
+<p class="p14">4、未经丙方书面同意，乙方不得擅自将租赁物业转租、分租、转借、转让给第三人或以合伙、合作、联营等形式变相转租、分租、转借、转让该租赁物业。</p>
+<p class="p16">5、乙方在本合同租赁期限届满后不再承租租赁物业（或合同提前解除）的，乙方应于本合同终止或提前解除之日起5日内，办理营业执照变更或注销登记手续。</p>
+<p class="p16">6、乙方同时享有本合同其他条款约定的权利，并需承担本合同其他条款约定的义务。</p>
+<p class="p37"><b>第十五条 <span class="Apple-converted-space">  </span>丙方的权利与义务</b></p>
+<p class="p16">1、丙方受甲方委托,根据本协议负责对乙方进行履约及现场各项管理,提供项目管理服务。</p>
+<p class="p16">2、甲、乙、丙三方共同确认并同意，丙方基于甲方的授权，行使甲方在本协议中的权利，代甲方向乙方催缴本协议项下包括但不限于租赁费用、履约保证金等费用，丙方所发函件及采取的相关措施手段均代表甲方，与甲方的行为具有同等法律效力，甲方均予以认可。</p>
+<p class="p16">3、丙方有权利对乙方的生产经营进行巡查，如发现有违反本协议约定的行为，丙方有权要求乙方进行整改。<span class="Apple-converted-space"> </span></p>
+<p class="p16">4、如乙方有违约或违法行为（包括但不限于受到执法部门查封、扣押、行政处罚、刑事责任追究等），丙方有权责令限期纠正，如乙方该等违约或违法行为导致合同目的无法实现的，甲方有权解除合同。因乙方的违法行为产生的法律责任均由乙方承担。</p>
+<p class="p13"><b>第十六条<span class="Apple-converted-space">  </span>合同终止或解除</b></p>
+<p class="p14">1、本合同因合同期限届满而终止。</p>
+<p class="p14">2、在本合同有效期内，乙方可提前【30】日向甲方或丙方提出书面解约申请，经甲乙丙三方协商一致，可以通过签订书面协议，提前解除本合同，乙方缴纳的履约保证金（在扣除乙方应付费用后如有剩余）及已付但未使用的租金（如有）及运营管理费（如有）可按照本合同约定无息退还，清场退租事宜按本合同第六条处理。</p>
+<p class="p14">3、甲乙丙任何一方因本合同第18条约定的不可抗力造成不能实现本合同之目的，或因此无法继续履行本合同，则该遭受不可抗力的一方，有权书面通知对方解除本合同，在此情形下，各方互不承担违约责任。</p>
+<p class="p14">4、除本合同另有约定外，甲乙丙任何一方发生依本合同约定对方可解除本合同的违约情形时，另一方根据本合同赋予的解除合同的权利，按本合同第22条规定的通知方式，书面通知对方解除本合同，并以书面通知送达对方之次日为本合同解除之日。</p>
+<p class="p38"><b>第十七条 违约责任</b></p>
+<p class="p38">1、如因乙方延迟支付本合同项下的租赁费用或其他费用的，甲方及丙方有权停止水、电等的供应，乙方还应按下列方式承担违约责任：</p>
+<p class="p38">（1）每逾期一日，按逾期金额万分之五的标准支付违约金；</p>
+<p class="p38">（2）乙方逾期支付超过30天或累计超过4次或逾期支付租赁费用或其他费用累计金额超过<span class="s5">【5530.02】</span>元的，甲方有权在以下两种方式中任择其一：</p>
+<p class="p38">A、继续履行本合同，乙方应按上一款约定支付违约金；</p>
+<p class="p38">B、甲方有权单方面解除本合同，乙方应按上一款约定支付违约金并于本合同解除之日起<span class="s5">【5】</span>日内搬离并按照本合同约定向丙方交还租赁物业，乙方缴纳的履约保证金及已缴纳未使用的租赁费用（如有）转为违约金不予退还，甲方及丙方无需向乙方支付任何形式的赔偿、补偿。相关清场退租事宜按本合同第六条处理。</p>
+<p class="p38">2、除本合同另有约定外，乙方具有下列情形之一的，构成根本违约，甲方及丙方有权停止水、电等的供应，有权解除本合同且无需向乙方支付任何形式的赔偿、补偿；乙方缴纳的履约保证金及已缴纳未使用的租赁费用（如有）转为违约金不予退还，前述违约不足以弥补甲方及丙方实际损失的，甲方及丙方可要求乙方补足或向乙方追偿，清场退租事宜按本合同第六条处理：</p>
+<p class="p14">（1）乙方利用租赁物业从事违法犯罪活动，或进行非法经营，或利用租赁物业存放危险物品(包括不限于：储放易燃、易爆、有毒、放射、腐蚀等危险物品)的；</p>
+<p class="p38">（2）乙方违反本合同约定，擅自改变该商业门店的用途或者改变经确定的名称、品牌、业态；</p>
+<p class="p38">（3）未经丙方书面同意，乙方擅自对租赁物业进行装饰装修、改扩建，或未按照丙方书面同意的装修方案、乙方承诺书进行装修，或没有达到丙方招商文件中对装修的有关要求，或实施改变/影响租赁物业主体结构的其他装修行为，或对于需报政府主管部门许可的施工项目未经政府有关部门许可即擅自施工的；</p>
+<p class="p38">（4）乙方在对租赁物业的装修及使用中，因装修行为、经营行为或乙方的其他行为，而对租赁物业内或租赁物业周边的公共事业或配套设施造成破坏，或造成租赁物业周边的环境污染(包括但不限于：油烟、污水、粉尘、嗓音、垃圾、废弃物等)，经丙方书面催告，在5日内未予纠正的；</p>
+<p class="p38">（5）如乙方在对租赁物业的装修或经营使用中，因自身过错行为而给租赁物业本身或相邻业主、承租户、周边居民等造成严重安全事故，或形成严重安全隐患或健康隐患的；</p>
+<p class="p38">（6）乙方违反本合同约定，擅自将租赁物业转租、分租、转借、转让给第三人或以合伙、合作、联营等形式变相转租、分租、转借、转让该租赁物业的；</p>
+<p class="p38">（7）乙方违反本合同约定，未按期交纳或未按期补足履约保证金，且经丙方书面催告，在5日内未予纠正的。</p>
+<p class="p38">（8）乙方违反甲方或丙方相关管理制度或有其他违反本合同约定的行为且在丙方书面通知后5日内未予纠正的；</p>
+<p class="p38">（9）乙方被强迫或自愿进入清算程序（以重组或合并为目的者除外），或乙方营业执照被吊销或注销，或乙方破产或因破产被管理人接管，或乙方死亡或丧失民事行为能力的；</p>
+<p class="p38">（10）因乙方原因导致重大负面舆情（出现两个或以上的省级以上（含省级）媒体对负面事件进行报道）；</p>
+<p class="p38">（11）因乙方发生安全事件，导致甲方或丙方为此受到行政主管部门处罚、问责，或导致甲方或丙方承担的损失超过10万元的。</p>
+<p class="p38">3、如果乙方违反本合同约定，在未能与甲方及丙方协商一致或未按照本合同第十六条第二款约定提前提出解约申请的情况下提前退租，则乙方缴纳的履约保证金及已付但未使用的租金（如有）、运营管理费（如有）转为违约金不予退还；如前述违约金不能弥补甲方及丙方实际损失的，甲方及丙方还可要求乙方补足或向乙方追偿。</p>
+<p class="p39">4、如乙方未履行本合同约定的租赁物业修复义务、或未履行本合同约定的对设备设施的维护／保养/运作/年检/安检义务、或未履行本合同约定的对第三方的赔偿义务，则视为乙方构成违约。丙方可书面催告乙方履行，如经丙方书面催告，乙方在三天内未予履行或履行不完全的，则自第三天届满后，甲方有权选择继续要求乙方履行或由甲方代为履行，如甲方选择代为履行，则甲方有权从履约保证金中扣除由此产生的费用，乙方应按本合同的要求及时将履约保证金补足，并赔偿甲方由此遭受的一切实际损失。</p>
+<p class="p14">5、如乙方违反第八条第8款的约定，经丙方书面催告，在【5】日内未予纠正的，则自第【5】天届满后，甲方有权选择继续要求乙方自行拆除或由甲方代为（自行或委托第三方）拆除招牌、广告。如甲方选择代为拆除，则甲方有权从履约保证金中扣除由此产生的费用，乙方应按本合同的要求及时将履约保证金补足，并赔偿甲方由此遭受的一切实际损失。</p>
+<p class="p14">6、乙方应于本合同终止或解除日前结清租赁费用水电费等各种费用，乙方搬离前有拖欠租赁费用、水电费、物业管理费或有未尽其他义务的，甲方有权扣留全部或部分履约保证金，履约保证金不足的，还有权留置乙方位于该商业门店内的任何物品。<span class="Apple-converted-space"> </span></p>
+<p class="p35">7、本合同终止或解除后【5】日内，乙方未办理完营业执照变更或者注销登记手续的，甲方不予退还履约保证金，给甲方造成损失（包括但不限于第三方对甲方的索赔）的，还应赔偿甲方的全部损失。</p>
+<p class="p35">8、甲乙丙三方方同意，甲方或丙方为追偿乙方欠付的费用（包括但不限于租金、运营管理费、履约保证金等）或实现对乙方的权利主张而产生的费用（包括但不限于诉讼费、律师费、保全费、保全保险费、执行费、评估费、公证费、鉴定费等一切合理费用）全部由败诉方承担。</p>
+<p class="p35"><b>第十八条<span class="Apple-converted-space">  </span>不可抗力</b></p>
+<p class="p35">1、本合同所称“不可抗力”是指受影响一方不能合理控制的，无法预料或即使可预料到也不可避免且无法克服，并于本合同签订日之后出现的，使该方对本合同全部或部分的履行在客观上成为不可能或不实际的事件。甲乙丙三方共同确认，本条所指不可抗力包括自然灾害如水灾、火灾、旱灾、台风、地震，以及社会事件如战争（不论是否宣战）、动乱、罢工，政府行为（包括但不限于征收、拆迁、规划调整等）或法律规定等。</p>
+<p class="p35">2、任何一方如因不可抗力而不能履行其在本合同项下的义务，该方应在不可抗力发生后三日内书面通知另一方，并应尽可能采取合理措施避免对方损失的扩大。</p>
+<p class="p13"><b>第十九条<span class="Apple-converted-space">  </span>免责条款</b></p>
+<p class="p14">1、因政府政策原因（包括但不限于政策的调整、新法令或禁令的颁布、政府为了公共利益或社会管理的需要而采取的行为、征用或拆迁等），需提前终止合同的，在甲方向乙方发出通知后，本合同自通知载明的日期解除。</p>
+<p class="p14">2、因乙方原因，导致乙方经营不善或与第三方纠纷的，由乙方自行解决，与甲方及丙方无关，甲方及丙方对此不承担任何责任。</p>
+<p class="p14"><span class="Apple-converted-space"> </span><b>第二十条<span class="Apple-converted-space">  </span>法律适用及争议解决</b></p>
+<p class="p14">1、本合同的订立、效力、解释、履行和争议的解决等均适用中华人民共和国（不含港、澳、台地区）法律。</p>
+<p class="p14">2、因本合同引起或与本合同有关的任何争议应由甲乙丙三方通过友好协商解决，协商不成，任何一方均可提起诉讼。与此同时，甲乙丙三方同意，因本合同引起或与本合同有关的任何争议均可向租赁物业所在地有管辖权的人民法院提起诉讼。</p>
+<p class="p14">3、在按照争议解决办法处理期间，乙方仍应当继续履行包含向甲方缴纳租赁费用在内的本合同项下各项义务。</p>
+<p class="p13"><b>第二十一条 <span class="Apple-converted-space"> </span></b><span class="s5"><b> 特别约定</b></span></p>
+<p class="p13"><b>本合同中有关租赁物业租赁商务条件系甲、乙双方自行协商确定；丙方仅提供运营管理服务不对甲、乙双方之间就本合同项下的债权债务或其他纠纷承担任何责任。</b></p>
+<p class="p13"><b>如乙方欠付甲方租金、运营管理费或其他应付款，乙方同意放弃其在租赁物业区域内投入的装饰装修设施设备、附属物、添附物及办公家具用品所有权，甲方或丙方有权扣押留置前述装饰装修设施设备、附属物、添附物及办公家具用品，甲方及丙方可选择自行进行处置(包括但不限于：搬动、迁移、拆除、丢弃或拍卖变卖)，处置所得在扣除处置费用后的余额（如有）可等额冲抵乙方欠付甲方租金、运营管理费或其他应付款。</b></p>
+<p class="p13"><b>第二十二条<span class="Apple-converted-space">  </span>通知及送达</b></p>
+<p class="p14">1、本合同首页所注明的地址和联系方式为三方履行本合同通知义务的约定通讯地址和联系方式，该地址适用于三方通知、协议、函件以及司法文书的送达。若通讯地址和联系方式变更，应及时通知其余各方，因一方提供或确认的通讯地址不准确或地址变更后未及时依程序告知的，以及拒绝签收等原因，导致文书文件未能被实际接收的，以邮寄方式送达的，以邮寄后第三天视为送达之日。</p>
+<p class="p14">2、乙方确认，租赁期限内，租赁物业也是乙方的有效通知地址。甲方或丙方或物业管理服务公司有权选择将本合同项下的通知张贴于租赁物业的门窗或墙面上，该等通知一经张贴即视为已经向乙方送达通知，乙方于通知张贴当日知悉通知内容。</p>
+<p class="p13"><b>第二十三条<span class="Apple-converted-space">  </span>附件</b></p>
+<p class="p40">本合同任何附件为本合同不可分割的组成部分，与本合同具有相同效力。除非本合同另有约定，否则，如本合同条款的规定与任何附件的规定有不一致之处，应以本合同条款规定为准。本合同附件如下：</p>
+<p class="p39">附件一：乙方身份证复印件</p>
+<p class="p39">附件二：安全责任书</p>
+<p class="p13"><b>第二十四条<span class="Apple-converted-space">  </span>生效及其他</b><b></b></p>
+<p class="p14">1、本合同如有未尽事宜，甲乙丙三方可以另行签订补充协议，补充协议与本合同规定有抵触的，以补充协议为准，补充协议与本合同具有同样的法律效力。</p>
+<p class="p35">2、甲方或丙方任何业务人员及工作人员的口头邀约行为和任意言论均不作为订立合同及合同相关权利义务的依据。乙方承租的该商业门店所能享受的优惠政策或者其他条件或者其他约定及承诺，均以本合同为准。</p>
+<p class="p35">3、甲乙双方基于本合同形成租赁合同关系，不产生任何代理、联营或合伙等其他合作关系，乙方不得以引人误解的方式或名义进行虚假经营宣传，甲方及丙方对乙方实际经营状况不承担任何责任。</p>
+<p class="p35">5、本合同一经生效，即取代三方以前与本合同事项有关的全部口头和书面协议、合同、谅解和通信；本合同某一条款或部分条款无效不影响其他条款的效力。</p>
+<p class="p16">6、本合同壹式【<span class="s1"> 伍 </span>】份，甲方执【<span class="s1"> 壹 </span>】份，乙方执【<span class="s1"> 壹 </span>】份，丙方执【<span class="s1"> 叁 </span>】份；自三方签署后即行生效。</p>
+<p class="p37"><b>甲方已经向乙方提示了本合同项下各方的所有权利与义务，并按乙方要求对相应条款作出了充分的解释和说明；乙方确认已经仔细阅读了本合同所有条款，并完全理解合同各条款及相关附件的法律含义，愿意接受本合同的约束。</b></p>
+<p class="p37"><b>以下无正文，为《</b><span class="s1"><b>老鸦冲项目</b></span><b>商铺租赁合同》签章项</b></p>
+<p class="p41"><span class="Apple-converted-space"> </span></p>
+<p class="p41"><span class="Apple-converted-space">    </span></p>
+<p class="p41"><br></p>
+<p class="p41"><br></p>
+<p class="p41"><br></p>
+<p class="p41"><br></p>
+<p class="p41"><span class="Apple-converted-space"> </span></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p42"><b></b><br></p>
+<p class="p43"><b>本页无正文，为《</b><span class="s1"><b>老鸦冲</b></span><b>商铺租赁合同》签章项</b></p>
+<p class="p44"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p46">甲方（盖章）： <span class="Apple-converted-space">                                   </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p46">法定代表人或授权代表（签字）：<span class="Apple-converted-space">                             </span></p>
+<p class="p45"><span class="Apple-converted-space">                                        </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p47"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p47"><b><span class="Apple-converted-space">   </span></b><span class="s5"><span class="Apple-converted-space"> </span></span></p>
+<p class="p46">乙方（盖章）：</p>
+<p class="p47"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p46">法定代表人或授权代表（签字）：<span class="Apple-converted-space"> </span></p>
+<p class="p47"><b><span class="Apple-converted-space">    </span></b></p>
+<p class="p48"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p46">丙方（盖章）：</p>
+<p class="p47"><b></b><br></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p46">法定代表人或授权代表（签字）：<span class="Apple-converted-space"> </span></p>
+<p class="p47"><b><span class="Apple-converted-space">    </span></b></p>
+<p class="p49"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p49"><b></b><br></p>
+<p class="p50"><span class="s7"><b><span class="Apple-converted-space">  </span></b></span>签署日期：【2025】年【 】月【 】日</p>
+<p class="p49"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p51"><span class="Apple-converted-space"> </span></p>
+<p class="p51"><br></p>
+<p class="p51"><br></p>
+<p class="p52"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p45"><span class="Apple-converted-space"> </span></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p53"><b></b><br></p>
+<p class="p54"><span class="s5"><b>附件一：</b></span><b>乙方身份证复印件</b><b></b></p>
+<p class="p49"><b><span class="Apple-converted-space">  </span></b></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b><span class="Apple-converted-space"> </span></b></p>
+<p class="p47"><b></b><br></p>
+<p class="p47"><b></b><br></p>
+<p class="p54"><b>附件二</b></p>
+<p class="p55">安全管理协议<span class="Apple-converted-space"> </span></p>
+<p class="p19">丙方（运营管理方）：<span class="s1">长沙城发商业管理有限公司</span><span class="Apple-converted-space">                   </span></p>
+<p class="p19">乙方（承租方）：苏德<span class="Apple-converted-space">                                     </span></p>
+<p class="p19">出租房屋（场地）位置：<span class="s1">老鸦冲商业网点105号门面（内部编号105号）</span></p>
+<p class="p19">出租房屋（场地）用途：<span class="s1">快剪</span> <span class="Apple-converted-space"> </span></p>
+<p class="p56">为认真贯彻落实《中华人民共和国建筑法》《中华人民共和国安全生产法》《中华人民共和国消防法》《中华人民共和国环境保护法》等法律法规，坚持“安全第一、预防为主、综合治理”的方针，依照“谁管理、谁负责，谁使用、谁负责”的管理原则，明确丙方、乙方双方的安全责任，切实做好安全工作，杜绝安全事故的发生，经丙方、乙方双方共同协商，就安全生产、环境保护、治安消防等方面的问题，达成如下安全管理协议(包括安全生产、环境保护、治安消防等，统称安全管理)，以资双方共同遵守。</p>
+<p class="p57">丙方安全责任</p>
+<p class="p56">丙方应认真履行《中华人民共和国安全生产法》规定的统一协调、管理职责，具体做好以下职责:</p>
+<p class="p56">1.有权对乙方所提供租赁期间证明资料进行真实、合法、有效性核查，对不具备安全生产条件或相应资质的单位和个人有权拒绝出租。</p>
+<p class="p56">2.在乙方进场前，负责将出租区域内的场所环境、重点部位（水电）、设施设备等安全注意事项告知乙方。</p>
+<p class="p56">3.采取多种形式的安全生产、治安消防宣传教育或培训演练活动，普及和推广安全管理知识，提高应急处置能力。</p>
+<p class="p56">4.积极协助承租户协调解决涉及安全生产、治安消防等相关问题。</p>
+<p class="p56">5.对公共区域或权属范围内的各种安全设施设备和消防器材负有装备、检查、保护责任，妥善管理、定期进行检查、维护保养，对损坏、过期、失效的相关设施设备、防护器材要及时更换。</p>
+<p class="p56">6.有权对乙方的安全管理工作进行监督、检查，并要求乙方及时整改隐患问题；督促乙方执行国家有关安全管理方面的法律法规以及上级部门或单位发布的文件要求；有权制止乙方违反安全规章的生产经营活动，发现乙方存在重大安全隐患或违法生产经营的有权责令其停产停业立即整改。</p>
+<p class="p58">二、乙方安全责任</p>
+<p class="p59">乙方作为承租方，是承租房屋范围内的安全管理责任单位，承担安全主体责任，对承租房屋范围内的安全管理工作全面负责。在租赁期内履行以下安全责任：<span class="s2"><br>
+<span class="Apple-converted-space"> </span></span><span class="Apple-converted-space">  </span>1.乙方应严格遵守国家法律法规、地方规章条例、行业规范标准和政府主管部门关于安全方面的工作要求及丙方根据有关法律法规的规定要求制定的安全管理制度，并服从丙方在安全管理工作中的统一协调、管理。<br>
+  <span class="Apple-converted-space">  </span>2.乙方应根据相关法律法规的规定，办理完毕各类资质许可和证照方可营业，建立健全本商铺安全责任制，指定1名安全员并报丙方备案，负责安全工作，如有人员变动(含乙方安全责任人发生变更)，乙方应第一时间以书面形式通知丙方，重新备案。</p>
+<p class="p59">3.根据相关法律法规要求，制定和落实各项安全管理规章制度（含相关设备和设施的安全管理制度、岗位操作规程、设备机房值班管理制度等<span class="s5">）</span>、安全防范措施和应急处置方案；必须对所有员工在上岗前做好安全知识的教育和培训，务必使其在思想上对安全生产工作引起高度重视，并能掌握安全器材的使用方法和逃生技能；积极参加丙方组织的各项安全管理活动，提高安全素养、管控安全风险、消除事故隐患。</p>
+<p class="p59">4.对租赁范围内的各种安全设施和器材负有装备、检查、保护责任，如出现过期失效或非正常原因的损坏和遗失现象，必须及时更换、补充；对公共位置设置的各种消防设施和器材，应予以保护，不能用任何方式遮掩、涂改、弃置或挪动、损毁、破坏。</p>
+<p class="p59">5.未经丙方同意，乙方禁止在商铺内拆墙、打洞，堆放超过房屋负荷的重物，损坏附属设施，搭建阁楼等影响房屋建筑结构和消防安全的行为。</p>
+<p class="p59">6.不得在承租区域内存放易燃、易爆、有毒、放射性等危险品，不得利用租赁房屋从事非法生产、加工、储存等违法犯罪活动。<span class="s2"><br>
+</span><span class="Apple-converted-space">    </span>7.乙方用电必须符合安全规定，不准私接乱搭电线，不准超负荷用电，不准使用违禁电器、“三无产品”和不符合标准的保险装置。</p>
+<p class="p59">8.乙方因经营需要配备的各类作业人员必须具有相应的安全技能，特种作业、特种设备作业人员必须具备国家、行业规定有效的资质证书，方可上岗作业，上岗证复印件加盖乙方公章报丙方及相关部门备案；如涉及电梯、锅炉、瓶装液化气等特种设备的使用管理，应按照国务院《特种设备安全监察条例》及地方相关特种设备规定，制定相关管理制度，定期对瓶装液化气、锅炉、电梯等特种设备进行检测检修，保证安全使用。<span class="s2"><br>
+<span class="Apple-converted-space">   </span></span> 9.乙方如需进行装修，必须提交装饰装修方案等资料文件向丙方该处资产的项目管理中心审批，并按相关规定向消防、住建等政府职能部门申报，待批准后方可施工，乙方要严格执行有关部门批准后的施工方案，不得擅自更改，装修完成后，经职能部门验收合格，方可营业；承租范围内需要使用明火或涉及危险作业的，必须报丙方项目管理中心审核或备案（统一管理的商场需审核，临街门面需备案），经批准后方可实施，须专人负责管理，防止发生火灾及其他意外。<span class="s2"><br>
+    </span>  10.乙方在使用租赁的房屋期间全权负责承租的房屋建筑物空间范围内的人、财、物的安全管理责任，乙方接收租赁标的及租赁期间，租赁标的及设施的所有使用、保管、安全等责任和义务，包括但不限于安全、人员、电、水、暖气、燃气、消防、防火、通行、环境、卫生、设施设备等，均由乙方负责。租赁期间如发生生产安全事故、治安消防等事件必须及时、如实报告，因乙方采取的安全措施不当、违反有关安全规程、使用不当或未尽安全职责及本协议所列安全事项未落实而造成的一切事故或对第三方造成损失或丙方受到损失的，由乙方承担赔偿责任并追究其他法律责任。</p>
+<p class="p58">三、违约责任</p>
+<p class="p59">乙方未履行安全生产、环境保护、治安消防等相关主体责任或不配合丙方管理，丙方连续两次下发书面整改函件后仍未按要求整改的，丙方有权按次向乙方收取违约金人民币200元或保证金的20%，并从履约保证金中直接扣除，扣除后，乙方应在收到丙方书面通知后15日内将履约保证金补足；如罚款后乙方仍拒不整改的，丙方有权单方解除本合同，乙方缴纳的履约保证金不予退还，且无需向乙方支付任何形式的赔偿或补偿，一切损失和责任由乙方自行承担。<br>
+        租赁期内，因乙方违反安全生产法、消防法和有关法律法规规定，发生生产安全、火灾和其它人身伤害事故及财产损失，乙方应负完全经济赔偿责任、民事、刑事责任。<span class="s2"><br>
+</span><span class="s8">      四、附则</span></p>
+<p class="p59">1.此安全管理协议未尽事宜，参照相关安全生产、消防安全管理法律法规执行。</p>
+<p class="p60">2.此安全管理协议一式两份，丙方、乙方双方各执一份，具有相同的法律效力，经双方签字或盖章后生效。<br>
+</p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p61"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p62"><span class="s9">丙方（盖章）： </span><span class="Apple-converted-space">                                   </span></p>
+<p class="p63"><br></p>
+<p class="p62"><span class="s9">法定代表人或授权代表（签字）：</span><span class="Apple-converted-space">                             </span></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p64"><br></p>
+<p class="p65"><br></p>
+<p class="p64"><br></p>
+<p class="p66">乙方（盖章）：</p>
+<p class="p63"><br></p>
+<p class="p66">法定代表人或授权代表（签字）：<span class="s8"><span class="Apple-converted-space"> </span></span></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p63"><br></p>
+<p class="p64"><br></p>
+<p class="p64"><br></p>
+<p class="p64"><br></p>
+<p class="p64"><br></p>
+<p class="p66">签署日期：【2025】年【 】月【 】日</p>
+<p class="p47"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p49"><b></b><br></p>
+<p class="p47"><b></b><br></p>
+<p class="p67"><br></p>
+<p class="p68">使用时，“其他费用”的具体名目及缴纳方式请经办部门按照实际情况进行填写。</p>
+<p class="p67"><br></p>
+<p class="p67"><br></p>
 </body>
 </html>
