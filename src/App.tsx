@@ -101,7 +101,7 @@ const categories: Category[] = [
         demoPrompt: '查看当前流程运行异常，并给出处理建议',
         demoOutput: ['汇总异常流程实例', '定位高频卡点节点', '生成流程治理建议'],
         icon: Workflow,
-        embedUrl: '/embedded/process-manager/index.html?shell=sidebar&v=20260603-flow-manager-ai-label',
+        embedUrl: '/embedded/process-manager/index.html?shell=sidebar&v=20260603-flow-manager-ai-maintenance',
       },
     ],
   },
