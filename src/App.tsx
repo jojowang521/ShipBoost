@@ -150,7 +150,7 @@ const categories: Category[] = [
         demoPrompt: '根据这份合同样张生成套打模板',
         demoOutput: ['识别 23 个占位字段', '生成模板结构和字段映射', '提示 2 个需人工确认字段'],
         icon: FileCheck2,
-        embedUrl: '/embedded/print-template/index.html',
+        embedUrl: '/embedded/print-template/index.html?v=20260603-print-avatar-fix',
       },
     ],
   },
