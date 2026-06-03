@@ -22,15 +22,18 @@
     }
 
     body {
-      width: 1354px;
+      width: 100%;
+      max-width: 1354px;
       min-height: 1510px;
       margin: 0 auto;
-      padding: 86px 150px 96px 154px;
+      padding: 86px clamp(28px, 10vw, 150px) 96px clamp(28px, 10vw, 154px);
       background: #fff;
+      box-sizing: border-box;
     }
 
     table {
       max-width: 100%;
+      box-sizing: border-box;
     }
 
     p.p1 {margin: 0.0px auto 0.0px auto; width: 100%; text-align: center; font: 16.0px 'Times New Roman'; color: #000000}
