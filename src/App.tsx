@@ -90,7 +90,7 @@ const categories: Category[] = [
         demoPrompt: '为合同审批流程生成覆盖所有分支的调试用例',
         demoOutput: ['解析 6 个流程节点', '生成 12 条分支路径', '输出用例表、触发条件和预期结果'],
         icon: GitBranch,
-        embedUrl: '/embedded/process-debug/index.html?shell=sidebar',
+        embedUrl: '/embedded/process-debug/index.html?shell=sidebar&v=20260603-flow-assistant-title',
       },
       {
         name: '流程助手（流程维护）',
