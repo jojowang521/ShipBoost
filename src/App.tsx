@@ -82,7 +82,7 @@ const categories: Category[] = [
         embedUrl: '/embedded/approval/index.html',
       },
       {
-        name: '流程调试助手',
+        name: '流程助手（流程调试）',
         category: '公共助手',
         helper: '自动梳理流程路径并生成全分支调试用例。',
         problem: '复杂流程调试路径长，人工整理用例工作量大，遗漏场景概率高。',
@@ -93,7 +93,7 @@ const categories: Category[] = [
         embedUrl: '/embedded/process-debug/index.html?shell=sidebar',
       },
       {
-        name: '流程维护助手',
+        name: '流程助手（流程维护）',
         category: '公共助手',
         helper: '聚合流程监控、变更分析和运行治理能力，辅助管理员处理流程维护问题。',
         problem: '流程配置和运行数据分散，管理员需要跨页面排查流程状态、异常和变更影响。',
@@ -142,7 +142,7 @@ const categories: Category[] = [
         embedUrl: '/embedded/document-reader/index.html',
       },
       {
-        name: '套打模板制作助手',
+        name: '套打助手',
         category: '公共助手',
         helper: '上传标准样板后识别字段并生成套打模板配置。',
         problem: '套打模板配置复杂，制作和反馈周期长。',
@@ -208,9 +208,9 @@ const assistantDirectory = [
   '消息待办助手',
   '文档问答助手',
   '权限检查助手',
-  '套打模板制作助手',
-  '流程调试助手',
-  '流程维护助手',
+  '套打助手',
+  '流程助手（流程调试）',
+  '流程助手（流程维护）',
 ]
 
 const allAssistants = categories.flatMap(category =>
