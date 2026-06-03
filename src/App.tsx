@@ -213,10 +213,6 @@ const assistantDirectory = [
   '流程维护助手',
 ]
 
-const assistantNavLabels: Record<string, string> = {
-  文档问答助手: '问AI',
-}
-
 const allAssistants = categories.flatMap(category =>
   category.assistants.map(assistant => ({
     ...assistant,
@@ -299,18 +295,17 @@ function App() {
           {directoryAssistants.map((assistant) => {
             const Icon = assistant.icon
             const isActive = assistant.name === activeAssistant.name
-            const navLabel = assistantNavLabels[assistant.name] || assistant.name
             return (
               <button
                 className={`category-nav__item${isActive ? ' category-nav__item--active' : ''}`}
                 key={assistant.name}
                 onClick={() => handleAssistantChange(assistant.name)}
-                title={navLabel}
+                title={assistant.name}
                 type="button"
               >
                 <Icon size={19} strokeWidth={1.8} />
-                <span>{navLabel}</span>
-                <span className="nav-tip">{navLabel}</span>
+                <span>{assistant.name}</span>
+                <span className="nav-tip">{assistant.name}</span>
               </button>
             )
           })}
