@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>审批表单</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #f1f1f1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .approval-preview {
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        overflow: auto;
+      }
+
+      .approval-preview img {
+        display: block;
+        width: min(100vw, 1511px);
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="approval-preview" aria-label="审批表单预览">
+      <img src="./approval-form.png" alt="审批表单" />
+    </main>
+  </body>
+</html>
