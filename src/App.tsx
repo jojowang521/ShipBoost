@@ -112,7 +112,7 @@ const categories: Category[] = [
     icon: MessageSquareText,
     assistants: [
       {
-        name: '消息待办助手',
+        name: '消息待办技能',
         category: '平台技能',
         helper: '聚合待办和消息提醒，按优先级给出今日处理建议。',
         problem: '待办分散在多个入口，用户查找当前任务耗时。',
@@ -139,7 +139,7 @@ const categories: Category[] = [
         demoPrompt: '总结这份招采管理制度里和审批权限有关的内容',
         demoOutput: ['提取 5 条审批权限规则', '标注原文出处', '生成适用场景和注意事项'],
         icon: FileSearch,
-        embedUrl: '/embedded/document-reader/index.html?v=20260609-doc-reader-latest',
+        embedUrl: '/embedded/document-reader/index.html?v=20260609-doc-reader-b6ms',
       },
       {
         name: '套打助手',
@@ -205,7 +205,7 @@ const categories: Category[] = [
 ]
 
 const assistantDirectory = [
-  '消息待办助手',
+  '消息待办技能',
   '文档问答助手',
   '权限检查助手',
   '套打助手',
