@@ -120,7 +120,7 @@ const categories: Category[] = [
         demoPrompt: '今天有哪些必须处理的审批和待办？',
         demoOutput: ['汇总 8 条待办', '标记 3 条高优先级任务', '生成今日处理顺序建议'],
         icon: ListChecks,
-        embedUrl: '/embedded/message-todo/todo-clean.html?shell=sidebar&v=20260609-push-sidebar',
+        embedUrl: '/embedded/message-todo/todo-clean.html?shell=sidebar&v=20260609-todo-no-head',
       },
     ],
   },
@@ -274,7 +274,6 @@ function App() {
             <Bot size={22} strokeWidth={1.8} />
           </div>
           <div className="brand-copy">
-            <p className="brand-kicker">AI Assistant Hub</p>
             <h1>交付提效助手</h1>
           </div>
           <button

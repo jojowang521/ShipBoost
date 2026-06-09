@@ -5,10 +5,28 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ai-demo-shell</title>
-    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260604-todo-cards-clean"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260604-todo-cards-clean">
+    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260609-todo-no-head"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260609-todo-no-head">
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        function decorateApprovalLinks() {
+          document.querySelectorAll('a[href*="approval-form.html"]').forEach(function (link) {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+          });
+        }
+        document.addEventListener('DOMContentLoaded', decorateApprovalLinks);
+        document.addEventListener('click', function (event) {
+          const link = event.target && event.target.closest ? event.target.closest('a[href*="approval-form.html"]') : null;
+          if (!link) return;
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }, true);
+        new MutationObserver(decorateApprovalLinks).observe(document.documentElement, { childList: true, subtree: true });
+      })();
+    </script>
   </body>
 </html>

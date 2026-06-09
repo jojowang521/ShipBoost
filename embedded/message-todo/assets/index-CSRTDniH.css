@@ -10,3 +10,5 @@
 .sidebar-shell--open:not(.sidebar-shell--maximized) .sidebar-shell__panel-group{transform:translateX(0)}
 .sidebar-shell:not(.sidebar-shell--maximized) .sidebar-shell__drawer{width:100%;max-width:100vw;border-radius:0;box-shadow:-8px 0 20px #0f172a14}
 @media (max-width: 900px){.sidebar-shell--open:not(.sidebar-shell--maximized) .host-page-frame-shell{right:0}.sidebar-shell:not(.sidebar-shell--maximized) .sidebar-shell__overlay{width:100vw}.sidebar-shell:not(.sidebar-shell--maximized) .sidebar-shell__panel-group{width:100vw}.sidebar-shell:not(.sidebar-shell--maximized) .sidebar-shell__drawer{width:100vw}}
+
+.chat-agent-content table:first-of-type thead{display:none}
