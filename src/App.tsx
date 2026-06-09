@@ -208,9 +208,6 @@ const assistantDirectory = [
   '消息待办技能',
   '文档问答助手',
   '权限检查助手',
-  '套打助手',
-  '流程助手（流程调试）',
-  '流程助手（流程维护）',
 ]
 
 const allAssistants = categories.flatMap(category =>
