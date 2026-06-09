@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ai-demo-shell</title>
-    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260609-todo-stream-clean"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260609-todo-stream-clean">
+    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260609-todo-table-stable"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260609-todo-table-stable">
   </head>
   <body>
     <div id="root"></div>
@@ -18,25 +18,19 @@
             link.setAttribute('rel', 'noopener noreferrer');
           });
         }
-        function cleanStreamingTodoRows() {
-          document.querySelectorAll('.chat-agent-content table tr').forEach(function (row) {
-            const text = row.textContent || '';
+        function stabilizeTodoTables() {
+          document.querySelectorAll('.chat-agent-content table').forEach(function (table) {
+            const text = table.textContent || '';
+            const linkCount = table.querySelectorAll('a[href*="approval-form.html"]').length;
             const hasRawMarkdown = /\[[^\]]*(?:\]\([^)]*)?$|\]\([^)]*$|^\s*\|/.test(text);
-            const hasSeparator = /^\s*:?-{2,}:?\s*$/.test(text.replace(/\s+/g, ''));
-            if (hasRawMarkdown || hasSeparator) {
-              row.style.visibility = 'hidden';
-              row.setAttribute('data-streaming-row', 'pending');
-              return;
-            }
-            if (row.getAttribute('data-streaming-row') === 'pending') {
-              row.style.visibility = '';
-              row.removeAttribute('data-streaming-row');
-            }
+            const isTodoTable = /保利花园三期|中粮祥云国际|万科翡翠公园|今日待办/.test(text);
+            const isReady = !isTodoTable || (linkCount >= 8 && !hasRawMarkdown);
+            table.style.display = isReady ? '' : 'none';
           });
         }
         function refreshTodoView() {
           decorateApprovalLinks();
-          cleanStreamingTodoRows();
+          stabilizeTodoTables();
         }
         document.addEventListener('DOMContentLoaded', refreshTodoView);
         document.addEventListener('click', function (event) {
