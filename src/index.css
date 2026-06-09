@@ -15,10 +15,12 @@ textarea {
 .assistant-hub {
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr);
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   color: #172033;
   background: #f4f6f8;
   transition: grid-template-columns 0.2s ease;
+  overflow: hidden;
 }
 
 .assistant-hub--collapsed {
@@ -29,7 +31,8 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   padding: 20px 10px;
   background: #edf0f3;
   border-right: 1px solid #dce1e7;
@@ -252,7 +255,7 @@ textarea {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 100vh;
+  min-height: 0;
 }
 
 .assistant-topbar {
@@ -358,9 +361,11 @@ textarea {
 
 .content-layout {
   display: block;
+  flex: 1;
   min-height: 0;
   padding: 22px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .content-layout--embedded {
@@ -438,6 +443,8 @@ textarea {
 }
 
 .demo-panel--embedded {
+  height: 100%;
+  min-height: 0;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -452,7 +459,7 @@ textarea {
 
 .embedded-demo {
   overflow: hidden;
-  height: calc(100vh - 98px);
+  height: 100%;
   min-height: 0;
   background: #fff;
   border: 0;
