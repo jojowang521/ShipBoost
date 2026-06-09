@@ -7,7 +7,7 @@ const sourceIndex = `<!doctype html>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ai-demo-shell</title>
+    <title>交付提效助手</title>
   </head>
   <body>
     <div id="root"></div>
