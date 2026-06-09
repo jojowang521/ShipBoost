@@ -169,7 +169,7 @@ const categories: Category[] = [
         demoPrompt: '帮我检查并调整武汉项目合同台账权限',
         demoOutput: ['定位用户与角色关系', '识别权限缺口和冲突项', '生成授权调整建议'],
         icon: ShieldCheck,
-        embedUrl: '/embedded/permission-check/index.html?shell=sidebar',
+        embedUrl: '/embedded/permission-check/index.html?shell=sidebar&v=permission-modify-plan',
       },
       {
         name: '组织架构调整助手',
