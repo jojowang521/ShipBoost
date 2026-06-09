@@ -5,8 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ai-demo-shell</title>
-    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260609-todo-table-stable"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260609-todo-table-stable">
+    <script type="module" crossorigin src="./assets/index-CEoZRuVF.js?v=20260609-todo-final-table"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CSRTDniH.css?v=20260609-todo-final-table">
+    <style>
+      .chat-agent-content table:not([data-todo-final-ready="true"]) {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -18,19 +23,53 @@
             link.setAttribute('rel', 'noopener noreferrer');
           });
         }
-        function stabilizeTodoTables() {
+        function hideTodoLoading() {
+          document.querySelectorAll('div, span, p').forEach(function (node) {
+            const text = (node.textContent || '').trim();
+            if (text === 'AI 正在分析...' || text === 'AI 正在分析…') {
+              node.style.display = 'none';
+            }
+          });
+        }
+        function hideRawTodoMarkdown() {
           document.querySelectorAll('.chat-agent-content table').forEach(function (table) {
             const text = table.textContent || '';
+            const hasRawLink = text.includes('approval-form.html') || text.includes('](./') || text.includes('](/');
+            const looksLikeTodo = /保利花园三期|中粮祥云国际|万科翡翠公园|今日待办/.test(text);
+            const rowCount = table.querySelectorAll('tbody tr').length;
             const linkCount = table.querySelectorAll('a[href*="approval-form.html"]').length;
-            const hasRawMarkdown = /\[[^\]]*(?:\]\([^)]*)?$|\]\([^)]*$|^\s*\|/.test(text);
-            const isTodoTable = /保利花园三期|中粮祥云国际|万科翡翠公园|今日待办/.test(text);
-            const isReady = !isTodoTable || (linkCount >= 8 && !hasRawMarkdown);
-            table.style.display = isReady ? '' : 'none';
+            const isReady = !looksLikeTodo || (!hasRawLink && rowCount >= 8 && linkCount >= 8);
+            if (isReady) {
+              table.dataset.todoFinalReady = 'true';
+            }
+          });
+          document.querySelectorAll('.chat-agent-content p, .chat-agent-content pre, .chat-agent-content code').forEach(function (node) {
+            const text = (node.textContent || '').trim();
+            const looksLikeTodo = /保利花园三期|中粮祥云国际|万科翡翠公园|今日待办/.test(text);
+            const hasRawMarkdown = /^\|/.test(text)
+              || /\[[^\]]*(?:\]\([^)]*)?$/.test(text)
+              || /\]\([^)]*$/.test(text);
+            if (looksLikeTodo && hasRawMarkdown) {
+              node.style.display = 'none';
+            }
+          });
+        }
+        function hidePermissionActions() {
+          document.querySelectorAll('.confirm-action').forEach(function (actionGroup) {
+            const text = actionGroup.textContent || '';
+            const isPermissionActions = text.includes('诊断功能权限')
+              && text.includes('诊断公司与项目权限')
+              && text.includes('修改用户权限');
+            if (isPermissionActions) {
+              actionGroup.style.display = 'none';
+            }
           });
         }
         function refreshTodoView() {
           decorateApprovalLinks();
-          stabilizeTodoTables();
+          hideTodoLoading();
+          hideRawTodoMarkdown();
+          hidePermissionActions();
         }
         document.addEventListener('DOMContentLoaded', refreshTodoView);
         document.addEventListener('click', function (event) {

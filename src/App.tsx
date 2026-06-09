@@ -121,7 +121,7 @@ const categories: Category[] = [
         demoPrompt: '今天有哪些必须处理的审批和待办？',
         demoOutput: ['汇总 8 条待办', '标记 3 条高优先级任务', '生成今日处理顺序建议'],
         icon: ListChecks,
-        embedUrl: '/embedded/message-todo/todo-clean.html?shell=sidebar&v=20260609-todo-table-stable',
+        embedUrl: '/embedded/message-todo/todo-clean.html?shell=sidebar&v=20260609-todo-final-table',
       },
     ],
   },
@@ -171,7 +171,7 @@ const categories: Category[] = [
         demoPrompt: '帮我检查并调整武汉项目合同台账权限',
         demoOutput: ['定位用户与角色关系', '识别权限缺口和冲突项', '生成授权调整建议'],
         icon: ShieldCheck,
-        embedUrl: '/embedded/permission-check/index.html?shell=sidebar&v=20260609-combo-link-fix',
+        embedUrl: '/embedded/permission-check/index.html?shell=sidebar&v=20260609-combo-latest-5179',
       },
       {
         name: '组织架构调整助手',
