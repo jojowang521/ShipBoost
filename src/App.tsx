@@ -25,6 +25,7 @@ import {
 
 type Assistant = {
   name: string
+  navLabel?: string
   category: string
   helper: string
   problem: string
@@ -162,6 +163,7 @@ const categories: Category[] = [
     assistants: [
       {
         name: '权限检查助手',
+        navLabel: '权限&套打&流程助手',
         category: '公共助手',
         helper: '面向权限配置、授权调整和异常排查，辅助管理员完成权限检查。',
         problem: '权限配置项多、角色关系复杂，管理员调整权限时容易遗漏影响范围。',
@@ -244,6 +246,7 @@ function App() {
     () => allAssistants.find(item => item.name === activeAssistantName) || directoryAssistants[0],
     [activeAssistantName]
   )
+  const activeAssistantLabel = activeAssistant.navLabel || activeAssistant.name
 
   const handleAssistantChange = (assistantName: string) => {
     setActiveAssistantName(assistantName)
@@ -290,18 +293,19 @@ function App() {
         <nav className="category-nav" aria-label="助手目录">
           {directoryAssistants.map((assistant) => {
             const Icon = assistant.icon
+            const label = assistant.navLabel || assistant.name
             const isActive = assistant.name === activeAssistant.name
             return (
               <button
                 className={`category-nav__item${isActive ? ' category-nav__item--active' : ''}`}
                 key={assistant.name}
                 onClick={() => handleAssistantChange(assistant.name)}
-                title={assistant.name}
+                title={label}
                 type="button"
               >
                 <Icon size={19} strokeWidth={1.8} />
-                <span>{assistant.name}</span>
-                <span className="nav-tip">{assistant.name}</span>
+                <span>{label}</span>
+                <span className="nav-tip">{label}</span>
               </button>
             )
           })}
@@ -317,7 +321,7 @@ function App() {
         <header className="assistant-topbar">
           <div className="topbar-copy">
             <div className="topbar-title-line">
-              <h2>{activeAssistant.name}</h2>
+              <h2>{activeAssistantLabel}</h2>
               <span className="service-tag">{activeAssistant.serviceName}</span>
               <p>{activeAssistant.helper}</p>
             </div>
@@ -338,7 +342,7 @@ function App() {
               <div className="embedded-demo">
                 <iframe
                   src={withFreshParam(activeAssistant.embedUrl)}
-                  title={`${activeAssistant.name}嵌入演示`}
+                  title={`${activeAssistantLabel}嵌入演示`}
                 />
               </div>
             ) : (
