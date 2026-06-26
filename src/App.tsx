@@ -83,6 +83,17 @@ const categories: Category[] = [
         embedUrl: '/embedded/approval/index.html',
       },
       {
+        name: '执行AI预审',
+        category: '平台页面',
+        helper: '展示合同审批表单与 AI 预审结果，便于查看完整审批单据。',
+        problem: '审批表单字段和 AI 预审信息分散，演示时需要单独打开本地文件。',
+        value: '将审批表单 demo 归档到合集内，支持在右侧预览区直接查看。',
+        demoPrompt: '查看合同审批表单及 AI 预审结果',
+        demoOutput: ['展示合同审批基础信息', '展示 AI 预审风险提示', '支持全屏打开表单 demo'],
+        icon: FileCheck2,
+        embedUrl: '/embedded/approval-form/index.html',
+      },
+      {
         name: '流程助手（流程调试）',
         category: '公共助手',
         helper: '自动梳理流程路径并生成全分支调试用例。',
@@ -210,6 +221,7 @@ const assistantDirectory = [
   '消息待办技能',
   '文档问答助手',
   '权限检查助手',
+  '执行AI预审',
 ]
 
 const allAssistants = categories.flatMap(category =>

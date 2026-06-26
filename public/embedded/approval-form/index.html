@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>合同审批表</title>
+  <style>
+    :root {
+      --primary: #266eff;
+      --top-blue: #2389f3;
+      --top-blue-2: #36aeea;
+      --bg: #f0f0f0;
+      --white: #fff;
+      --section: #f1f1f1;
+      --line: #e8e8e8;
+      --soft-line: #efefef;
+      --text-0: #2f343d;
+      --text-1: #5e6673;
+      --text-2: #9ca3af;
+      --success: #2ed39a;
+      --warning: #ff9f26;
+      --blue: #2c8bff;
+      --danger: #ff5b55;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 1260px;
+      background: var(--bg);
+      color: var(--text-0);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .page {
+      position: relative;
+      width: 100%;
+      min-width: 940px;
+      min-height: 1260px;
+      margin: 0 auto;
+      background: var(--bg);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      height: 50px;
+      background: linear-gradient(90deg, #2474e8 0%, var(--top-blue) 54%, var(--top-blue-2) 100%);
+      color: #fff;
+      box-shadow: 0 1px 5px rgba(0,0,0,.15);
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: 1170px;
+      padding: 0 24px;
+      height: 50px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .top-title {
+      flex: 1;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toolbar {
+      width: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      color: rgba(255,255,255,.95);
+      white-space: nowrap;
+    }
+
+    .tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 20px;
+    }
+
+    .tool-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .tool-sep {
+      width: 1px;
+      height: 14px;
+      background: rgba(255,255,255,.45);
+    }
+
+    .main {
+      position: relative;
+      width: 940px;
+      min-height: 1224px;
+      margin: 62px auto 0;
+      padding: 14px 10px 54px;
+      background: var(--white);
+    }
+
+    .form-title {
+      margin: 0 0 10px;
+      text-align: center;
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .section {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .section-head {
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      background: var(--section);
+      color: var(--text-0);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .section-head .fold {
+      color: #a5aab2;
+      font-size: 16px;
+    }
+
+    .fields {
+      padding: 14px 6px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 74px;
+      row-gap: 10px;
+    }
+
+    .field {
+      min-height: 24px;
+      display: grid;
+      grid-template-columns: 94px minmax(0, 1fr);
+      align-items: start;
+      color: var(--text-1);
+      font-size: 14px;
+    }
+
+    .field.wide {
+      grid-column: 1 / 3;
+    }
+
+    .label {
+      color: #6f7680;
+    }
+
+    .value {
+      color: var(--text-0);
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .paragraph-field {
+      grid-column: 1 / 3;
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      align-items: start;
+    }
+
+    .ai-box {
+      margin-top: -4px;
+      padding: 0;
+      border: 1px solid #d9d0ff;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, .07);
+      overflow: hidden;
+    }
+
+    .ai-box .section-head {
+      min-height: 40px;
+      padding: 0 12px 0 14px;
+      background: linear-gradient(90deg, #f1edff 0%, #f7f4ff 54%, #f9fbff 100%);
+      border-bottom: 1px solid #e7ddff;
+    }
+
+    .ai-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-spark {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      background: transparent;
+    }
+
+    .ai-spark img {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .ai-note {
+      font-weight: 400;
+      color: #697386;
+      margin-left: 8px;
+      font-size: 13px;
+    }
+
+    .ai-empty {
+      min-height: 44px;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 24px auto;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      border: 0;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text-1);
+      font-size: 13px;
+    }
+
+    .ai-empty-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    .ai-empty-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      border-radius: 0;
+      display: block;
+    }
+
+    .ai-empty-main {
+      display: grid;
+      gap: 2px;
+    }
+
+    .ai-empty-title {
+      color: var(--text-1);
+      font-weight: 400;
+    }
+
+    .ai-empty-desc {
+      color: #7c8491;
+    }
+
+    .ai-action-btn {
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #5c8aff 0%, #786cff 100%);
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 400;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(92, 138, 255, .24);
+    }
+
+    .section-head .ai-action-btn {
+      margin: 6px 0;
+    }
+
+    .ai-action-btn img {
+      width: 16px;
+      height: 16px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .ai-box.is-running .ai-action-btn {
+      pointer-events: none;
+      cursor: default;
+      background: linear-gradient(90deg, #aec4ff 0%, #bcb6ff 100%);
+      box-shadow: none;
+    }
+
+    .ai-box.is-running .ai-action-btn img {
+      display: none;
+    }
+
+    .ai-box.is-running .ai-action-btn::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .5);
+      border-top-color: #fff;
+      animation: aiButtonSpin .8s linear infinite;
+    }
+
+    .ai-empty.is-loading {
+      min-height: 92px;
+      grid-template-columns: 44px minmax(220px, 1fr) 360px;
+      column-gap: 16px;
+      row-gap: 6px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .ai-box.is-running .ai-empty {
+      display: grid;
+    }
+
+    .ai-empty.is-loading .ai-action-btn {
+      display: none;
+    }
+
+    .ai-empty.is-loading .ai-empty-icon {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #f3f1ff 0%, #f8f7ff 100%);
+      overflow: hidden;
+    }
+
+    .ai-loading-status {
+      display: none;
+      color: #111;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ai-loading-copy {
+      display: none;
+      color: var(--text-0);
+      position: relative;
+      width: fit-content;
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .ai-loading-copy::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -36%;
+      width: 34%;
+      height: 100%;
+      background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.18) 24%, rgba(255,255,255,.95) 50%, rgba(255,255,255,.18) 76%, transparent 100%);
+      filter: blur(.2px);
+      animation: aiTextShine 1.8s ease-in-out infinite;
+    }
+
+    .ai-progress {
+      display: none;
+      height: 8px;
+      border-radius: 999px;
+      background: transparent;
+      overflow: hidden;
+      position: relative;
+      box-shadow: none;
+    }
+
+    .ai-progress-bar {
+      width: 60%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2f70ff 0%, #5c6cff 46%, #8a39ff 100%);
+      box-shadow: 0 0 10px rgba(92, 106, 255, .26);
+      position: relative;
+      overflow: hidden;
+      animation: aiProgressBreath 2.2s ease-in-out infinite;
+    }
+
+    .ai-progress-bar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -42%;
+      width: 42%;
+      height: 100%;
+      background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.18) 20%, rgba(255,255,255,.75) 50%, rgba(255,255,255,.18) 80%, transparent 100%);
+      animation: aiProgressShine 1.35s ease-in-out infinite;
+    }
+
+    .ai-spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #cfd5df;
+      border-top-color: #5c8aff;
+      border-radius: 50%;
+      animation: aiSpin .8s linear infinite;
+    }
+
+    .ai-empty.is-loading .ai-empty-main {
+      display: contents;
+    }
+
+    .ai-empty.is-loading .ai-empty-title,
+    .ai-empty.is-loading .ai-empty-desc {
+      display: none;
+    }
+
+    .ai-empty.is-loading .ai-loading-status,
+    .ai-empty.is-loading .ai-loading-copy,
+    .ai-empty.is-loading .ai-progress {
+      display: block;
+    }
+
+    .ai-empty.is-loading .ai-empty-icon {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      align-self: center;
+    }
+
+    .ai-empty.is-loading .ai-loading-status {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      min-width: 0;
+    }
+
+    .ai-empty.is-loading .ai-loading-copy {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      min-width: 0;
+    }
+
+    .ai-empty.is-loading .ai-progress {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      align-self: center;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .ai-empty.is-loading .ai-empty-icon img {
+      display: none;
+    }
+
+    .ai-empty.is-loading .ai-empty-icon::before {
+      content: "✦";
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      color: #8b5cf6;
+      font-size: 30px;
+      line-height: 1;
+      text-shadow: 0 4px 14px rgba(139, 92, 246, .25);
+      animation: aiStarPulse 1.8s ease-in-out infinite;
+    }
+
+    .ai-result {
+      display: none;
+      margin: 0;
+      padding: 20px;
+      background: #fff;
+      color: var(--text-0);
+      font-size: 13px;
+      line-height: 22px;
+    }
+
+    .ai-result-title {
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .ai-result a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .ai-box.is-complete .ai-empty {
+      display: none;
+    }
+
+    .ai-box.is-complete .ai-result {
+      display: block;
+    }
+
+    @keyframes aiSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes aiButtonSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes aiProgressBreath {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.12); }
+    }
+
+    @keyframes aiProgressShine {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(340%); }
+    }
+
+    @keyframes aiStarPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.08); filter: brightness(1.08); }
+    }
+
+    @keyframes aiTextShine {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(420%); }
+    }
+
+    .flow-head {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .flow-tabs {
+      display: flex;
+      gap: 16px;
+      color: var(--primary);
+      font-weight: 400;
+    }
+
+    .timeline {
+      position: relative;
+      margin: 4px 0 0;
+      padding-left: 50px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 22px;
+      bottom: 28px;
+      width: 1px;
+      background: #dfe4ea;
+    }
+
+    .node {
+      position: relative;
+      width: 870px;
+      min-height: 106px;
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .node::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 18px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      transform: rotate(45deg);
+    }
+
+    .node-dot {
+      position: absolute;
+      left: -50px;
+      top: 16px;
+      width: 18px;
+      height: 18px;
+      display: block;
+      background: center / contain no-repeat url("assets/status-gray.svg");
+      font-size: 0;
+      line-height: 0;
+      z-index: 1;
+    }
+
+    .node-dot.done { background-image: url("assets/status-green.svg"); }
+    .node-dot.wait {
+      background-image: url("assets/status-orange.svg");
+    }
+
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--line);
+      color: var(--text-1);
+      font-size: 14px;
+    }
+
+    .node-status {
+      color: var(--success);
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .node-status.pending { color: var(--warning); }
+    .node-status.todo { color: #b7bdc4; }
+
+    .node-meta {
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .actor {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      column-gap: 12px;
+      padding-top: 12px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 40px;
+      height: 40px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: #fff;
+      font-size: 13px;
+      line-height: 16px;
+    }
+
+    .mini {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 13px;
+      height: 13px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      background: var(--success);
+      color: #fff;
+      font-size: 8px;
+    }
+
+    .mini.wait { background: var(--warning); }
+
+    .actor-text {
+      min-width: 0;
+      color: var(--text-0);
+      font-size: 14px;
+    }
+
+    .actor-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .actor-desc {
+      color: var(--text-1);
+    }
+
+    .right-actions {
+      position: fixed;
+      left: calc(50% + 490px);
+      top: 62px;
+      width: 54px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      overflow: hidden;
+      z-index: 4;
+    }
+
+    .right-action {
+      height: 64px;
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      align-content: center;
+      border-bottom: 1px solid var(--line);
+      color: #666;
+      font-size: 15px;
+      line-height: 20px;
+      background: #fff;
+    }
+
+    .right-action:last-child { border-bottom: 0; }
+
+    .action-icon {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+    }
+
+    .action-icon img {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .watermark {
+      position: absolute;
+      inset: 72px 0 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: .32;
+      color: #d7dce4;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 0;
+    }
+
+    .wm-row {
+      height: 94px;
+      white-space: nowrap;
+      transform: rotate(-12deg);
+      transform-origin: left top;
+    }
+
+    .wm-row span {
+      display: inline-block;
+      margin-right: 148px;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      position: absolute;
+      right: 22px;
+      bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1b55e7;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 22px;
+      background: linear-gradient(135deg, #1a55ef 0%, #36a6ff 100%);
+      clip-path: polygon(0 72%, 16% 72%, 44% 20%, 72% 72%, 100% 72%, 60% 0, 40% 0);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div style="width:380px"></div>
+        <div class="top-title">合同审批表-集团/工程预算中心/华中区域/建设公司</div>
+        <div class="toolbar">
+          <span class="tool"><img class="tool-icon" src="assets/top-print.svg" alt="" />打印</span>
+          <span class="tool"><img class="tool-icon" src="assets/top-save.svg" alt="" />暂存</span>
+          <span class="tool">更多...</span>
+          <span class="tool-sep"></span>
+          <span class="tool"><img class="tool-icon" src="assets/top-back.svg" alt="" />返回</span>
+        </div>
+      </div>
+    </header>
+
+    <aside class="right-actions" aria-label="审批操作">
+      <div class="right-action"><span class="action-icon"><img src="assets/action-agree.svg" alt="" /></span><span>同意</span></div>
+      <div class="right-action"><span class="action-icon"><img src="assets/action-reject.svg" alt="" /></span><span>驳回</span></div>
+      <div class="right-action"><span class="action-icon"><img src="assets/action-negotiate.svg" alt="" /></span><span>协商</span></div>
+      <div class="right-action"><span class="action-icon"><img src="assets/action-transfer.svg" alt="" /></span><span>交办</span></div>
+      <div class="right-action"><span class="action-icon"><img src="assets/action-invalid.svg" alt="" /></span><span>作废</span></div>
+    </aside>
+
+    <main class="main">
+      <div class="watermark" aria-hidden="true">
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+        <div class="wm-row"><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span><span>系统管理员 2026-05-24</span></div>
+      </div>
+
+      <div class="main-content">
+        <h1 class="form-title">合同审批表</h1>
+
+        <section class="section">
+          <div class="section-head"><span>基本信息</span><span class="fold">⌃</span></div>
+          <div class="fields">
+            <div class="field"><span class="label">合同名称</span><span class="value">福建中电（A栋项目部）工程总承包合同</span></div>
+            <div class="field"><span class="label">合同编号</span><span class="value">HS001-2026-05-0001-202605</span></div>
+            <div class="field"><span class="label">合同类别</span><span class="value">工程类</span></div>
+            <div class="field"><span class="label">签约日期</span><span class="value">2026-05-12</span></div>
+            <div class="field"><span class="label">经办人</span><span class="value">系统管理员</span></div>
+            <div class="field"><span class="label">经办部门</span><span class="value">工程管理部</span></div>
+            <div class="field"><span class="label">经办日期</span><span class="value">2026-05-14</span></div>
+            <div class="field"><span class="label">缴纳印花税方式</span><span class="value">无</span></div>
+            <div class="field"><span class="label">计价方式</span><span class="value">总价包干</span></div>
+            <div class="field"><span class="label">是否EPC合同</span><span class="value">否</span></div>
+            <div class="field"><span class="label">是否关联主合同</span><span class="value">否</span></div>
+            <div class="field"><span class="label"></span><span class="value"></span></div>
+            <div class="field wide"><span class="label">所属项目</span><span class="value">福建中电产业园建设项目-A栋</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><span>合同主体信息</span><span class="fold">⌃</span></div>
+          <div class="fields">
+            <div class="field"><span class="label">甲方单位</span><span class="value">福建鸿森建设集团有限公司</span></div>
+            <div class="field"><span class="label">乙方单位</span><span class="value">中建八局第三建设有限公司</span></div>
+            <div class="field"><span class="label">收款单位</span><span class="value">中建八局第三建设有限公司</span></div>
+            <div class="field"><span class="label">丙方单位</span><span class="value"></span></div>
+            <div class="field"><span class="label">乙方供应商类别</span><span class="value">施工总承包企业</span></div>
+            <div class="field"><span class="label">采购方式</span><span class="value">公开招标</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><span>价格信息</span><span class="fold">⌃</span></div>
+          <div class="fields">
+            <div class="field"><span class="label">合同金额</span><span class="value">199,800,000.00</span></div>
+            <div class="field"><span class="label">不计成本金额</span><span class="value">0.00</span></div>
+            <div class="field"><span class="label">合同净值</span><span class="value">199,800,000.00</span></div>
+            <div class="field"><span class="label"></span><span class="value"></span></div>
+            <div class="paragraph-field">
+              <span class="label">合同要点及经办部门意见</span>
+              <span class="value">按照中标通知书及招标文件约定执行；履约保证金10%（人民币壹仟玖佰捌拾万元），见招标文件第6.2条；质量违约金按违约项金额的5%/项计算，单次上限不超过合同价的5%；预付款比例30%，开工前7日内支付。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section ai-box">
+          <div class="section-head">
+            <span class="ai-title"><span class="ai-spark"><img src="assets/summary-icon.svg" alt="" /></span>AI审中执行摘要</span>
+            <a class="ai-action-btn" href="#"><img src="assets/omni-magic-fill-white.svg" alt="" /><span class="ai-action-text">执行AI预审</span></a>
+          </div>
+          <div class="ai-empty">
+            <span class="ai-empty-icon"><img src="assets/empty-attachment.png" alt="" /></span>
+            <span class="ai-empty-main">
+              <span class="ai-empty-title">暂无AI预审摘要</span>
+              <span class="ai-loading-status">AI预审执行中...</span>
+              <span class="ai-loading-copy">正在调用xx助手的xxx技能</span>
+              <span class="ai-progress"><span class="ai-progress-bar"></span></span>
+            </span>
+          </div>
+          <div class="ai-result">
+            <div class="ai-result-title">本期结算核对完成，发现 3 项偏差</div>
+            <div>本期 2#楼吊 QTZ80 申报租赁费 ¥20,000，AI 已比对 中标合同价、管理考勤、设备进退场记录与竣工日志，识别出月租单价高于合同价 9.1%、维保费疑似与月租重复计算、5月12-14日停滞期未作扣减。三项偏差合计可核减 ¥5,242，建议核减后应付 ¥14,758 并推请与租赁方书面确认。 <a href="#">点击查看详情</a></div>
+          </div>
+        </section>
+
+        <section class="section" style="margin-bottom:0">
+          <div class="flow-head">
+            <span>流程意见</span>
+            <span class="flow-tabs"><span>附件记录</span><span>传阅记录</span><span>流程图</span></span>
+          </div>
+
+          <div class="timeline">
+            <article class="node">
+              <span class="node-dot done">✓</span>
+              <div class="node-header">
+                <span><span class="node-status">发起</span>林嘉诚（合同经办）</span>
+                <span class="node-meta">【来自PC端】　2026-05-14 09:18</span>
+              </div>
+              <div class="actor">
+                <div class="avatar-wrap"><div class="avatar">林嘉</div><span class="mini">✓</span></div>
+                <div class="actor-text">
+                  <div class="actor-title">林嘉诚</div>
+                  <div class="actor-desc">提交福建中电 A 栋工程总承包合同审批，请各节点审核合同金额、履约保证金及付款条款。</div>
+                </div>
+              </div>
+              <div class="brand"><span class="brand-mark"></span><span>MytePro</span></div>
+            </article>
+
+            <article class="node">
+              <span class="node-dot done">✓</span>
+              <div class="node-header">
+                <span><span class="node-status">已审批</span>工程管理部负责人审批</span>
+                <span class="node-meta">【来自移动端】　2026-05-14 10:26　历时 1小时08分</span>
+              </div>
+              <div class="actor">
+                <div class="avatar-wrap"><div class="avatar">周明</div><span class="mini">✓</span></div>
+                <div class="actor-text">
+                  <div class="actor-title">周明轩</div>
+                  <div class="actor-desc">同意。合同范围、工期节点与招标结果一致，请成本合约部重点复核总价包干条款和保证金比例。</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="node">
+              <span class="node-dot wait">⌛</span>
+              <div class="node-header">
+                <span><span class="node-status pending">审批中</span>成本合约部复核</span>
+                <span class="node-meta">【2026-05-14 10:32 已读】　当前停留 42分钟</span>
+              </div>
+              <div class="actor">
+                <div class="avatar-wrap"><div class="avatar">陈昊</div><span class="mini wait">!</span></div>
+                <div class="actor-text">
+                  <div class="actor-title">陈昊</div>
+                  <div class="actor-desc">待复核合同金额、付款比例、履约保证金及不计成本金额。</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="node">
+              <span class="node-dot">•</span>
+              <div class="node-header">
+                <span><span class="node-status todo">未开始</span>合同归档</span>
+                <span class="node-meta"></span>
+              </div>
+              <div class="actor">
+                <div class="avatar-wrap"><div class="avatar">档案</div></div>
+                <div class="actor-text">
+                  <div class="actor-title">合同档案管理员</div>
+                  <div class="actor-desc">审批完成后自动生成归档任务，同步合同台账与电子签章文件。</div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const aiBox = document.querySelector(".ai-box");
+    const aiActionButton = document.querySelector(".ai-action-btn");
+    const aiActionText = document.querySelector(".ai-action-text");
+    const aiEmpty = document.querySelector(".ai-empty");
+    let aiTimer;
+
+    aiActionButton?.addEventListener("click", (event) => {
+      event.preventDefault();
+      window.clearTimeout(aiTimer);
+      const isRerun = aiBox?.classList.contains("is-complete");
+      if (aiActionText) aiActionText.textContent = isRerun ? "重新执行AI预审" : "执行AI预审";
+      aiBox?.classList.remove("is-complete");
+      aiBox?.classList.add("is-running");
+      aiEmpty?.classList.add("is-loading");
+      aiTimer = window.setTimeout(() => {
+        aiBox?.classList.remove("is-running");
+        aiEmpty?.classList.remove("is-loading");
+        aiBox?.classList.add("is-complete");
+        if (aiActionText) aiActionText.textContent = "重新执行AI预审";
+      }, 2800);
+    });
+  </script>
+</body>
+</html>
