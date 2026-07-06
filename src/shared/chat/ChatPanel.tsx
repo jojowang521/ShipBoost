@@ -14,13 +14,15 @@ interface Props {
   previewOpen?: boolean
   hasPreviewContent?: boolean
   onTogglePreview?: () => void
+  inputReplacement?: React.ReactNode
 }
 
-export default function ChatPanel({ mode = 'sidebar' }: Props) {
+export default function ChatPanel({ mode = 'sidebar', previewOpen = false, inputReplacement }: Props) {
   const { state, dispatch } = useApp()
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const isNearBottomRef = useRef(true)
+  const previewScrollLockRef = useRef(false)
   const stateRef = useRef(state)
   stateRef.current = state
   const lastPhaseEnterKey = useRef('')
@@ -30,6 +32,14 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
   const scenario = getScenario(state.currentScenario)
+
+  const scrollToConversationEnd = useCallback((behavior: ScrollBehavior = 'auto') => {
+    const container = messagesContainerRef.current
+    if (!container) return
+    messagesEndRef.current?.scrollIntoView({ behavior, block: 'end' })
+    container.scrollTop = container.scrollHeight
+    isNearBottomRef.current = true
+  }, [])
 
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current
@@ -70,6 +80,28 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
   }, [state.messages])
 
   useEffect(() => {
+    if (!state.openPreview || !state.openPreviewScrollBeforeOpen) return
+    previewScrollLockRef.current = true
+    window.requestAnimationFrame(() => {
+      scrollToConversationEnd('auto')
+    })
+  }, [scrollToConversationEnd, state.openPreview, state.openPreviewScrollBeforeOpen])
+
+  useEffect(() => {
+    if (!previewOpen || !previewScrollLockRef.current) return
+
+    const delays = [0, 80, 160, 260]
+    const timers = delays.map(delay => window.setTimeout(() => {
+      scrollToConversationEnd('auto')
+    }, delay))
+
+    return () => {
+      timers.forEach(timer => window.clearTimeout(timer))
+      previewScrollLockRef.current = false
+    }
+  }, [previewOpen, scrollToConversationEnd])
+
+  useEffect(() => {
     if (state.pendingQuestion) {
       const q = state.pendingQuestion
       trackEvent('question_sent', {
@@ -108,7 +140,39 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
     }
   }, [scenario, dispatch])
 
+  const handleAttachment = useCallback((file: { name: string; size?: string; type?: 'pdf' | 'word' | 'excel' | 'xml' | 'file' }) => {
+    const prompt = file.type === 'word'
+      ? `上传《${file.name}》，并根据这份标准租赁合同样张生成套打模板`
+      : `上传《${file.name}》`
+    dispatch({
+      type: 'ADD_MESSAGE',
+      message: {
+        id: `${Date.now()}-attachment-user`,
+        role: 'user',
+        content: prompt,
+        timestamp: Date.now(),
+        attachment: file,
+      },
+    })
+    if (scenario) {
+      scenario.handleSend(prompt, { state: stateRef.current, dispatch, stateRef })
+    }
+  }, [dispatch, scenario])
+
   const handleComponentAction = useCallback((action: string, payload: Record<string, unknown>) => {
+    if (action === 'sendSuggestionQuestion') {
+      const text = typeof payload.text === 'string' ? payload.text.trim() : ''
+      if (!text) return
+      trackEvent('question_sent', {
+        scenarioId: stateRef.current.currentScenario,
+        phase: stateRef.current.phase,
+        source: 'suggestion_card',
+        value: text,
+      })
+      handleSend(text, 'suggestion_card')
+      return
+    }
+
     trackEvent(action === 'openPreview' ? 'preview_opened' : 'component_action_clicked', {
       scenarioId: stateRef.current.currentScenario,
       phase: stateRef.current.phase,
@@ -118,7 +182,18 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
     })
     // PreviewTriggerCard 的点击：直接 dispatch 到 store，不经过 scenario
     if (action === 'openPreview') {
-      dispatch({ type: 'OPEN_PREVIEW', readonly: !!(payload.readonly), targetPhase: payload.targetPhase as string | undefined })
+      if (payload.scrollBeforeOpen !== false) {
+        previewScrollLockRef.current = true
+        scrollToConversationEnd('auto')
+      }
+      dispatch({
+        type: 'OPEN_PREVIEW',
+        readonly: !!(payload.readonly),
+        targetPhase: payload.targetPhase as string | undefined,
+        targetArtifactTitle: payload.targetArtifactTitle as string | undefined,
+        delayMs: payload.delayMs as number | undefined,
+        scrollBeforeOpen: payload.scrollBeforeOpen !== false,
+      })
       if (payload.messageId) {
         dispatch({ type: 'UPDATE_MESSAGE', id: payload.messageId as string, updates: { componentHandled: true } })
       }
@@ -136,7 +211,7 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
     if (scenario) {
       scenario.handleComponentAction(action, payload, { state: stateRef.current, dispatch, stateRef })
     }
-  }, [scenario, dispatch])
+  }, [scenario, dispatch, handleSend, scrollToConversationEnd])
 
   const actionButtons: ActionButtonDef[] | null = React.useMemo(() => {
     if (!scenario) return null
@@ -156,6 +231,9 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
   }, [actionButtons, handleSend])
 
   const visibleComponents = scenario?.chatVisibleComponents || []
+  const taskReplayVisibleComponents = state.phase === 'task-replay'
+    ? ['PreviewTriggerCard', 'TaskReplayDivider', 'ConfirmAction', 'ArtifactStackCard']
+    : []
   // 全局注册表 + 场景专属组件合并，供 MessageBubble 渲染任意已注册组件
   const extraComponentMap = {
     ...demoComponentRegistry,
@@ -168,6 +246,7 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
     if (msg.role === 'assistant') {
       if (!msg.component) return true
       if (visibleComponents.includes(msg.component as string)) return true
+      if (taskReplayVisibleComponents.includes(msg.component as string)) return true
       return false
     }
     return false
@@ -218,7 +297,7 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
               </div>
             ))}
 
-            {state.isStreaming && (
+            {state.isStreaming && state.phase !== 'task-replay' && (
               <div className="chat-typing-indicator">
                 <span className="spinner" /> AI 正在分析...
               </div>
@@ -243,11 +322,14 @@ export default function ChatPanel({ mode = 'sidebar' }: Props) {
             <ChevronDown size={14} />
           </button>
         )}
-        <ChatInput
-          onSend={handleSend}
-          disabled={state.isStreaming}
-          showQuickPrompts={false}
-        />
+        {inputReplacement ?? (
+          <ChatInput
+            onSend={handleSend}
+            onAttachment={handleAttachment}
+            disabled={state.isStreaming}
+            showQuickPrompts={false}
+          />
+        )}
       </div>
     </div>
   )

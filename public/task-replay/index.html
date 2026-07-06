@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>任务回放</title>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const scene = params.get('scene') || 'control-price';
+      window.location.replace(`/?shell=hidden&taskReplay=${encodeURIComponent(scene)}`);
+    </script>
+  </head>
+  <body></body>
+</html>

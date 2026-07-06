@@ -1,0 +1,11 @@
+{
+  "agentId": "permission-assistant",
+  "agentName": "权限助手",
+  "agentDescription": "专注功能权限、公司数据权限、项目数据权限和用户授权调整方案生成。",
+  "avatarKey": "avatar-ai-3",
+  "scenarioName": "用户权限配置检查",
+  "shortcutLabel": "查用户权限",
+  "shortcutPrompt": "查询李四现在有哪些权限，说明角色、公司和项目数据权限",
+  "shortcutOrder": 1,
+  "dataScope": "scenario-only"
+}

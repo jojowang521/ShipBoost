@@ -1,0 +1,11 @@
+{
+  "agentId": "process-assistant",
+  "agentName": "流程助手",
+  "agentDescription": "面向流程配置、流程调试和流程维护，自动识别路径、节点、责任人和规则影响。",
+  "avatarKey": "avatar-ai-2",
+  "scenarioName": "流程责任人批量转交",
+  "shortcutLabel": "流程转交",
+  "shortcutPrompt": "将张三的所有流程转交给李四",
+  "shortcutOrder": 2,
+  "dataScope": "scenario-only"
+}

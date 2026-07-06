@@ -93,14 +93,15 @@ input[type="checkbox"]:disabled {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  height: 56px;
+  padding: 6px 12px;
   background: #fff;
-  border: 1px solid var(--border, #e2e8f0);
-  border-radius: var(--radius);
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
   cursor: pointer;
   transition: box-shadow 0.15s, border-color 0.15s;
   user-select: none;
-  width: 280px;
+  width: 320px;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -110,7 +111,74 @@ input[type="checkbox"]:disabled {
 }
 .preview-trigger-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-color: var(--accent, #5147FF);
+  border-color: var(--accent, #4668FF);
+}
+
+.preview-trigger-card__link-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-trigger-card__link-icon img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.preview-trigger-card__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.preview-trigger-card__title {
+  overflow: hidden;
+  color: #222;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 22px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-trigger-card__title[data-handled="true"] {
+  color: var(--text-secondary, #6b7280);
+}
+
+.preview-trigger-card__meta {
+  overflow: hidden;
+  color: #999;
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-trigger-card__action {
+  display: inline-flex;
+  height: 24px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+  border: 1px solid #f2f4f6;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  white-space: nowrap;
 }
 
 /* ─── 卡片设计系统布局原语 ────────────────────────────────────── */

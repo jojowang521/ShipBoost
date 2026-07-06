@@ -20,6 +20,7 @@ export interface PanelFooterProps {
 export interface HomeChip {
   label: string
   scenarioId: string
+  prompt?: string
 }
 
 export interface AgentProfile {
@@ -42,6 +43,7 @@ export interface ScenarioModule {
   agentDescription?: string
   /** 首页快捷入口文案，要求 8 个字以内 */
   shortcutLabel?: string
+  shortcutPrompt?: string
   /** 同一专员下快捷入口排序 */
   shortcutOrder?: number
   phases: string[]

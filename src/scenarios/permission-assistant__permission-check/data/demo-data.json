@@ -1,0 +1,19 @@
+{
+  "queryUser": "李四",
+  "diagnosisUser": "张三",
+  "roles": [
+    "销售经理",
+    "财务只读"
+  ],
+  "companies": [
+    "华东分公司",
+    "华南分公司"
+  ],
+  "projects": [
+    "P-1001 华东直营项目",
+    "P-2008 华南渠道项目",
+    "P-3016 集团大客户项目"
+  ],
+  "missingPermission": "inventory.report.export",
+  "recommendedRole": "库存报表员"
+}

@@ -131,8 +131,8 @@ export function ScenarioSwitcher() {
           height: SIZE,
           borderRadius: '50%',
           background: open
-            ? 'rgba(109, 40, 217, 0.85)'
-            : 'rgba(109, 40, 217, 0.60)',
+            ? 'rgba(70, 104, 255, 0.85)'
+            : 'rgba(70, 104, 255, 0.60)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           border: '1.5px solid rgba(255,255,255,0.28)',
@@ -141,8 +141,8 @@ export function ScenarioSwitcher() {
           alignItems: 'center',
           justifyContent: 'center',
           boxShadow: open
-            ? '0 4px 16px rgba(109,40,217,0.45)'
-            : '0 2px 10px rgba(109,40,217,0.30)',
+            ? '0 4px 16px rgba(70,104,255,0.38)'
+            : '0 2px 10px rgba(70,104,255,0.26)',
           touchAction: 'none',
           transition: 'background 0.15s, box-shadow 0.15s',
           padding: 0,
@@ -212,14 +212,14 @@ export function ScenarioSwitcher() {
                 transition: 'background 0.1s',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(109,40,217,0.07)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(70,104,255,0.08)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
             >
               <span style={{
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: 'rgba(109,40,217,0.45)',
+                background: 'rgba(70,104,255,0.45)',
                 flexShrink: 0,
               }} />
               <span style={{ lineHeight: 1.4 }}>{agent.agentName}</span>

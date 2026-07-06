@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { Expand, FileText, Minimize2, Paperclip, X } from 'lucide-react'
 import { useApp, useAppDispatch } from '../../shared/store/AppContext'
 import { getAgent, getAllAgents, getAllScenarios, getScenario } from '../../scenarios/registry'
-import { generateTaskTitle, genMessageId } from '../../shared/utils'
+import { genMessageId, summarizeTaskTitle } from '../../shared/utils'
 import ChatPanel from '../../shared/chat/ChatPanel'
 import AgentAvatar from '../../shared/chat/components/AgentAvatar'
 import { AuditHistoryRail } from '../AuditHistoryRail'
@@ -14,11 +14,24 @@ import { HostPagePreset } from './HostPagePreset'
 import type { HostPresetType } from './HostPagePreset'
 import type { AgentProfile, HomeChip, ScenarioModule } from '../../scenarios/types'
 
-interface Props {
-  onNewChat?: () => void
+const FINANCE_SCENARIO_ID = 'payment-audit__simple-payment-review'
+const FINANCE_HOME_AGENT_ID = 'finance-management'
+const FINANCE_HOME_AGENT_NAME = '智能财务助手'
+const FINANCE_HOME_AVATAR_KEY = 'finance_assistant'
+const FINANCE_HOME_DESCRIPTION = '我可以帮您处理付款审核、账款核对、票据对账和财务流程风险识别。'
+
+interface SidebarShellProps {
+  embedMode?: 'top-nav' | 'side-nav'
+  aiEntryVisibility?: {
+    toolbarButton: boolean
+    floatingButton: boolean
+  }
 }
 
-export function SidebarShell({ onNewChat }: Props) {
+export function SidebarShell({
+  embedMode = 'top-nav',
+  aiEntryVisibility = { toolbarButton: false, floatingButton: true },
+}: SidebarShellProps) {
   const { state, dispatch } = useApp()
   const appDispatch = useAppDispatch()
   const [isOpen, setIsOpen] = useState(false)
@@ -26,15 +39,22 @@ export function SidebarShell({ onNewChat }: Props) {
   const [railCollapsed, setRailCollapsed] = useState(true)
   const [previewMounted, setPreviewMounted] = useState(false)
   const [previewVisible, setPreviewVisible] = useState(false)
-  const [previewClosing, setPreviewClosing] = useState(false)
   const [railMounted, setRailMounted] = useState(false)
   const [railVisible, setRailVisible] = useState(false)
   const [selectedArtifactPhase, setSelectedArtifactPhase] = useState<string | undefined>(undefined)
   const [previewReadonly, setPreviewReadonly] = useState(false)
+  const [drawerCollapsed, setDrawerCollapsed] = useState(false)
+  const [containerWidth, setContainerWidth] = useState(() => window.innerWidth)
+  const shellRef = useRef<HTMLDivElement | null>(null)
   const previewCloseTimerRef = useRef<number | null>(null)
   const railCloseTimerRef = useRef<number | null>(null)
+  const closePreviewRequestRef = useRef(state.closePreviewRequestId)
   const hostPreset = (new URLSearchParams(window.location.search).get('host') || 'list') as HostPresetType
   const scenario = getScenario(state.currentScenario)
+  const visibleScenarios = getAllScenarios().filter(item => !item.hidden)
+  const defaultFinanceScenario = getScenario(FINANCE_SCENARIO_ID)
+    ?? visibleScenarios.find(item => item.agentId === 'payment-audit')
+    ?? visibleScenarios[0]
 
   const clearPreviewCloseTimer = useCallback(() => {
     if (previewCloseTimerRef.current !== null) {
@@ -85,18 +105,19 @@ export function SidebarShell({ onNewChat }: Props) {
     const target = getScenario(scenarioId)
     if (!target) return
     clearPreviewCloseTimer()
-    setPreviewClosing(false)
     setPreviewMounted(false)
     setPreviewVisible(false)
     setSelectedArtifactPhase(undefined)
     setPreviewReadonly(false)
-    generateTaskTitle(target.label, dispatch)
+    setDrawerCollapsed(false)
+    const taskTitle = summarizeTaskTitle(userText || target.shortcutLabel || target.label)
     dispatch({
       type: 'SWITCH_SCENARIO',
       scenarioId: target.id,
       agentName: target.agentName || target.label,
       avatarKey: target.avatarKey || 'avatar-ai-1',
       initialPhase: target.phases[0] || 'step_1',
+      taskTitle,
       message: {
         id: genMessageId(),
         role: 'user',
@@ -106,14 +127,19 @@ export function SidebarShell({ onNewChat }: Props) {
     })
   }, [clearPreviewCloseTimer, dispatch])
 
-  const handleOpen = () => {
+  const handleStartDemoFromHost = () => {
     setIsOpen(true)
+    if (!defaultFinanceScenario) return
+    enterScenario(
+      defaultFinanceScenario.id,
+      defaultFinanceScenario.shortcutPrompt || defaultFinanceScenario.shortcutLabel || defaultFinanceScenario.label,
+    )
   }
 
-  const resetTransientShellState = useCallback(() => {
+  const handleOpenFinanceAssistant = () => {
     clearPreviewCloseTimer()
     clearRailCloseTimer()
-    setPreviewClosing(false)
+    setIsOpen(true)
     setIsMaximized(false)
     setRailCollapsed(true)
     setRailMounted(false)
@@ -122,30 +148,51 @@ export function SidebarShell({ onNewChat }: Props) {
     setPreviewVisible(false)
     setSelectedArtifactPhase(undefined)
     setPreviewReadonly(false)
+    setDrawerCollapsed(false)
+    dispatch({ type: 'RESET', homeAgentId: FINANCE_HOME_AGENT_ID })
+  }
+
+  const resetTransientShellState = useCallback(() => {
+    clearPreviewCloseTimer()
+    clearRailCloseTimer()
+    setIsMaximized(false)
+    setRailCollapsed(true)
+    setRailMounted(false)
+    setRailVisible(false)
+    setPreviewMounted(false)
+    setPreviewVisible(false)
+    setSelectedArtifactPhase(undefined)
+    setPreviewReadonly(false)
+    setDrawerCollapsed(false)
   }, [clearPreviewCloseTimer, clearRailCloseTimer])
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
     resetTransientShellState()
-  }, [resetTransientShellState])
+    dispatch({ type: 'RESET' })
+  }, [dispatch, resetTransientShellState])
 
   const closePreview = useCallback(() => {
     clearPreviewCloseTimer()
-    setPreviewClosing(true)
     setPreviewVisible(false)
     setPreviewReadonly(false)
+    setDrawerCollapsed(false)
     previewCloseTimerRef.current = window.setTimeout(() => {
       setPreviewMounted(false)
-      setPreviewClosing(false)
       previewCloseTimerRef.current = null
-    }, 250)
+    }, 200)
   }, [clearPreviewCloseTimer])
 
   const handleNewChat = () => {
     closePreview()
     closeFloatingRail()
+    clearPreviewCloseTimer()
     setSelectedArtifactPhase(undefined)
-    onNewChat?.()
+    setPreviewMounted(false)
+    setPreviewVisible(false)
+    setPreviewReadonly(false)
+    setDrawerCollapsed(false)
+    dispatch({ type: 'RESET', homeAgentId: defaultFinanceScenario?.agentId ?? null })
   }
 
   const handleSelectHistory = (scenarioId: string) => {
@@ -157,11 +204,11 @@ export function SidebarShell({ onNewChat }: Props) {
   useEffect(() => {
     if (!state.openPreview) return
     clearPreviewCloseTimer()
-    setPreviewClosing(false)
     if (state.openPreviewTargetPhase) {
       setSelectedArtifactPhase(state.openPreviewTargetPhase)
     }
     setPreviewMounted(true)
+    setDrawerCollapsed(true)
     window.requestAnimationFrame(() => {
       setPreviewVisible(true)
     })
@@ -170,11 +217,32 @@ export function SidebarShell({ onNewChat }: Props) {
   }, [appDispatch, clearPreviewCloseTimer, state.openPreview, state.openPreviewReadonly, state.openPreviewTargetPhase])
 
   useEffect(() => {
+    if (closePreviewRequestRef.current === state.closePreviewRequestId) return
+    closePreviewRequestRef.current = state.closePreviewRequestId
+    closePreview()
+    setSelectedArtifactPhase(undefined)
+  }, [closePreview, state.closePreviewRequestId])
+
+  useEffect(() => {
     return () => {
       clearPreviewCloseTimer()
       clearRailCloseTimer()
     }
   }, [clearPreviewCloseTimer, clearRailCloseTimer])
+
+  useEffect(() => {
+    const measure = () => {
+      setContainerWidth(shellRef.current?.clientWidth || window.innerWidth)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    if (shellRef.current) observer.observe(shellRef.current)
+    window.addEventListener('resize', measure)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [])
 
   const panelPhase = selectedArtifactPhase ?? state.phase
   const PanelComponent = scenario?.panelMap?.[panelPhase]
@@ -185,28 +253,108 @@ export function SidebarShell({ onNewChat }: Props) {
   const hasVisiblePreview = previewMounted && previewVisible && hasPanelContent
   const useInlineHistoryRail = isMaximized && !hasVisiblePreview
   const useFloatingHistoryRail = railMounted && (!isMaximized || hasVisiblePreview)
+  const isNarrowViewport = containerWidth < 960
 
   const sidebarClassName = [
     'sidebar-shell',
+    embedMode === 'side-nav' ? 'sidebar-shell--side-nav-embed' : 'sidebar-shell--top-nav-embed',
     isOpen ? 'sidebar-shell--open' : '',
     isHome ? 'sidebar-shell--home' : '',
     isMaximized ? 'sidebar-shell--maximized' : '',
     useInlineHistoryRail && !railCollapsed ? 'sidebar-shell--history-open' : '',
     hasVisiblePreview ? 'sidebar-shell--with-preview' : '',
+    drawerCollapsed && hasVisiblePreview ? 'sidebar-shell--drawer-collapsed' : '',
   ].filter(Boolean).join(' ')
+  const drawerWidth = Math.min(Math.max(Math.round(containerWidth * 0.31), 420), 540)
+  const numericAiPaneWidth = isOpen ? (isNarrowViewport ? containerWidth : drawerWidth) : 0
+  const numericHostPaneWidth = Math.max(containerWidth - numericAiPaneWidth, 0)
+  const numericPreviewLayerWidth = hasPanelContent
+    ? (isNarrowViewport ? containerWidth : Math.min(680, numericHostPaneWidth))
+    : 0
+  const aiPaneWidth = `${numericAiPaneWidth}px`
+  const hostPaneWidth = `${numericHostPaneWidth}px`
+  const previewLayerWidth = `${numericPreviewLayerWidth}px`
+  const hostPaneStyle = {
+    left: 0,
+    right: 'auto',
+    width: hostPaneWidth,
+  } as CSSProperties
+  const aiPaneStyle = {
+    left: hostPaneWidth,
+    right: 'auto',
+    width: aiPaneWidth,
+    minWidth: aiPaneWidth,
+    maxWidth: aiPaneWidth,
+    opacity: isOpen ? 1 : 0,
+    pointerEvents: isOpen ? 'auto' : 'none',
+  } as CSSProperties
+  const previewLayerStyle = {
+    left: isNarrowViewport ? 0 : numericHostPaneWidth - numericPreviewLayerWidth,
+    right: isNarrowViewport ? 0 : aiPaneWidth,
+    width: previewLayerWidth,
+    top: 0,
+    bottom: 0,
+  } as CSSProperties
+  const shellStyle = {
+    '--aui-host-width': hostPaneWidth,
+    '--aui-ai-left': hostPaneWidth,
+    '--aui-ai-width': aiPaneWidth,
+    '--aui-preview-width': previewLayerWidth,
+  } as CSSProperties
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--aui-finance-ai-width', aiPaneWidth)
+    root.classList.toggle('aui-finance-ai-open', isOpen)
+    return () => {
+      root.classList.remove('aui-finance-ai-open')
+      root.style.removeProperty('--aui-finance-ai-width')
+    }
+  }, [aiPaneWidth, isOpen])
 
   return (
-    <div className={sidebarClassName}>
-      <HostPagePreset type={hostPreset} />
-
-      {!isOpen && (
-        <AiEntryButton
-          onOpen={handleOpen}
-          hasActivity={state.messages.length > 0}
+    <div className={sidebarClassName} style={shellStyle} ref={shellRef}>
+      <div className="sidebar-shell__host-pane aui-split-host" style={hostPaneStyle}>
+        <HostPagePreset
+          type={hostPreset}
+          onOpenAi={handleStartDemoFromHost}
+          showHeaderAiButton={aiEntryVisibility.toolbarButton}
+          aiDocked={isOpen}
         />
+        {aiEntryVisibility.floatingButton ? (
+          <AiEntryButton onOpen={isOpen ? () => undefined : handleOpenFinanceAssistant} />
+        ) : null}
+      </div>
+
+      {previewMounted && hasPanelContent && (
+        <div
+          className={`sidebar-shell__preview-layer${previewVisible ? ' sidebar-shell__preview-layer--visible' : ''}`}
+          style={previewLayerStyle}
+          aria-hidden={!previewVisible}
+        >
+          <PreviewDock
+            isVisible
+            onClose={closePreview}
+            title={panelTitle}
+            footerReadonly={previewReadonly}
+            flex="1 1 auto"
+            closingFlex="1 1 auto"
+            keepFlexOnExit
+            motion="none"
+            motionMs={200}
+          >
+            {PanelComponent ? (
+              <PanelComponent
+                readonly={previewReadonly}
+                onClosePreview={closePreview}
+                targetArtifactTitle={state.openPreviewTargetArtifactTitle}
+              />
+            ) : null}
+          </PreviewDock>
+        </div>
       )}
 
-      <div className="sidebar-shell__overlay" aria-hidden={!isOpen}>
+      <div className="aui-split-ai" style={aiPaneStyle} aria-hidden={!isOpen}>
         <div className="sidebar-shell__panel-group">
           {useInlineHistoryRail && (
             <AuditHistoryRail
@@ -216,22 +364,7 @@ export function SidebarShell({ onNewChat }: Props) {
               onSelectScenario={handleSelectHistory}
               nativeMode
               hideDigitalEmployees
-            />
-          )}
-
-          {previewMounted && hasPanelContent && (
-            <PreviewDock
-              isVisible={previewVisible}
-              onClose={closePreview}
-              title={panelTitle}
-              footerReadonly={previewReadonly}
-              flex="1 1 auto"
-              closingFlex="0 1 auto"
-              hiddenTransform={isMaximized && previewClosing ? 'translateX(-28px)' : undefined}
-              motion="slide-left"
-            >
-              {PanelComponent ? <PanelComponent readonly={previewReadonly} /> : null}
-            </PreviewDock>
+              />
           )}
 
           <aside className="sidebar-shell__drawer">
@@ -309,7 +442,6 @@ export function SidebarShell({ onNewChat }: Props) {
             </div>
           </aside>
         </div>
-
       </div>
     </div>
   )
@@ -324,12 +456,16 @@ function SidebarHome({ onStartScenario }: SidebarHomeProps) {
   const [text, setText] = useState('')
   const agents = getAllAgents()
   const scenarios = getAllScenarios().filter(item => !item.hidden)
-  const homeAgent = (state.homeAgentId ? getAgent(state.homeAgentId) : undefined) ?? agents[0]
-  const fallbackScenario = homeAgent?.scenarios.find(item => !item.hidden) ?? scenarios[0]
-  const agentName = homeAgent?.agentName || fallbackScenario?.agentName || '智能助手'
-  const avatarKey = homeAgent?.avatarKey || fallbackScenario?.avatarKey || 'avatar-ai-1'
-  const description = getSidebarHomeDescription(homeAgent, fallbackScenario)
-  const chips = getSidebarHomeChips(homeAgent, fallbackScenario)
+  const isFinanceHome = state.homeAgentId === FINANCE_HOME_AGENT_ID
+  const financeScenario = getScenario(FINANCE_SCENARIO_ID)
+  const homeAgent = isFinanceHome ? undefined : (state.homeAgentId ? getAgent(state.homeAgentId) : undefined) ?? agents[0]
+  const fallbackScenario = isFinanceHome
+    ? financeScenario ?? scenarios[0]
+    : homeAgent?.scenarios.find(item => !item.hidden) ?? scenarios[0]
+  const agentName = isFinanceHome ? FINANCE_HOME_AGENT_NAME : homeAgent?.agentName || fallbackScenario?.agentName || '智能助手'
+  const avatarKey = isFinanceHome ? FINANCE_HOME_AVATAR_KEY : homeAgent?.avatarKey || fallbackScenario?.avatarKey || 'avatar-ai-1'
+  const description = isFinanceHome ? FINANCE_HOME_DESCRIPTION : getSidebarHomeDescription(homeAgent, fallbackScenario)
+  const chips = isFinanceHome ? getFinanceHomeChips(fallbackScenario) : getSidebarHomeChips(homeAgent, fallbackScenario)
 
   const start = (prompt?: string) => {
     const trimmed = prompt?.trim() || text.trim()
@@ -356,7 +492,7 @@ function SidebarHome({ onStartScenario }: SidebarHomeProps) {
           <div className="sidebar-home__opening-card">
             <div className="sidebar-home__opening-head">
               <div className="sidebar-home__identity">
-                <AgentAvatar avatarKey={avatarKey} size={40} style={{ borderRadius: 10 }} />
+                <AgentAvatar avatarKey={avatarKey} size={40} />
                 <span className="sidebar-home__agent-name">{agentName}</span>
               </div>
               <button type="button" className="sidebar-home__shuffle">
@@ -378,7 +514,7 @@ function SidebarHome({ onStartScenario }: SidebarHomeProps) {
                       key={`${chip.scenarioId}-${chip.label}`}
                       type="button"
                       className="sidebar-home__chip"
-                      onClick={() => onStartScenario(chip.scenarioId, chip.label)}
+                      onClick={() => onStartScenario(chip.scenarioId, chip.prompt || chip.label)}
                     >
                       {getSidebarChipIcon(chip.label, index)}
                       <span>{chip.label}</span>
@@ -437,12 +573,21 @@ function getSidebarHomeDescription(agent?: AgentProfile, scenario?: ScenarioModu
   return agent?.agentDescription || scenario?.agentDescription || '我可以帮您理解当前页面、整理业务信息并生成分析结果'
 }
 
+function getFinanceHomeChips(scenario?: ScenarioModule): HomeChip[] {
+  const scenarioId = scenario?.id || FINANCE_SCENARIO_ID
+  return [
+    { label: '核对当前申请', scenarioId, prompt: scenario?.shortcutPrompt || '核对当前付款申请' },
+    { label: '分析付款风险点', scenarioId, prompt: '分析当前付款申请的风险点' },
+    { label: '整理处理建议', scenarioId, prompt: '整理当前付款申请的处理建议' },
+  ]
+}
+
 function getSidebarHomeChips(agent?: AgentProfile, scenario?: ScenarioModule): HomeChip[] {
   if (!scenario) return (agent?.homeChips || []).slice(0, 3)
   const isDailyReport = `${agent?.agentName || ''}${scenario.label}`.includes('日报')
   if (isDailyReport) {
     return [
-      { label: scenario.shortcutLabel || '日报校验', scenarioId: scenario.id },
+      { label: scenario.shortcutLabel || '日报校验', scenarioId: scenario.id, prompt: scenario.shortcutPrompt },
       { label: '生成日报摘要', scenarioId: scenario.id },
       { label: '查看异常项目', scenarioId: scenario.id },
     ]
@@ -452,7 +597,7 @@ function getSidebarHomeChips(agent?: AgentProfile, scenario?: ScenarioModule): H
     return getSidebarDemoQuestionChips(scenario.id)
   }
   const baseChips = agent?.homeChips?.length ? agent.homeChips : [
-    { label: scenario.shortcutLabel || scenario.label, scenarioId: scenario.id },
+    { label: scenario.shortcutLabel || scenario.label, scenarioId: scenario.id, prompt: scenario.shortcutPrompt },
     { label: `分析${scenario.label}的风险点`, scenarioId: scenario.id },
     { label: `整理${scenario.label}的处理建议`, scenarioId: scenario.id },
   ]
@@ -464,7 +609,7 @@ function ensureThreeSidebarQuestions(chips: HomeChip[], scenario: ScenarioModule
     .filter(chip => chip.label.trim())
     .map(chip => ({ ...chip, scenarioId: chip.scenarioId || scenario.id }))
   const fallback = [
-    { label: scenario.shortcutLabel || scenario.label, scenarioId: scenario.id },
+    { label: scenario.shortcutLabel || scenario.label, scenarioId: scenario.id, prompt: scenario.shortcutPrompt },
     { label: `分析${scenario.label}的风险点`, scenarioId: scenario.id },
     { label: `整理${scenario.label}的处理建议`, scenarioId: scenario.id },
   ]

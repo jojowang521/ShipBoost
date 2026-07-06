@@ -1,244 +1,233 @@
-import { Search, Filter, MoreHorizontal, CalendarDays, FileText, Building2, AlertTriangle, CheckCircle2 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { ChevronDown, ClipboardCheck, FileText, Menu, Settings, WalletCards } from 'lucide-react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
-export type HostPresetType = 'list' | 'workbench' | 'detail' | 'split'
+export type HostPresetType = 'list' | 'workbench' | 'detail' | 'split' | 'honeycomb-control-price'
 
-interface HostRecord {
+interface PaymentRecord {
   id: string
   project: string
-  document: string
+  contract: string
+  supplier: string
   amount: string
-  status: string
+  status: '未审核' | '审核中' | '已审核'
   owner: string
   updatedAt: string
   risk: '高' | '中' | '低'
 }
 
-const records: HostRecord[] = [
+const paymentRecords: PaymentRecord[] = [
   {
-    id: 'ZB-2026-0412',
-    project: '问数验证项目一期',
-    document: '招标控制价文件',
-    amount: '551,867,033.03',
-    status: '待 AI 复核',
-    owner: '成本管理部',
-    updatedAt: '2026-04-24',
-    risk: '高',
-  },
-  {
-    id: 'ZB-2026-0408',
-    project: '深圳湾东区展示中心',
-    document: '安装工程清单',
-    amount: '80,829,880.17',
-    status: '待补充依据',
-    owner: '招采合约部',
-    updatedAt: '2026-04-22',
+    id: 'FK-20260609-001',
+    project: '深圳湾一号城市更新项目',
+    contract: '一期施工总承包合同',
+    supplier: '深圳市华筑建设工程有限公司',
+    amount: '1,860,000 元',
+    status: '未审核',
+    owner: '项目财务',
+    updatedAt: '2026-06-09',
     risk: '中',
   },
   {
-    id: 'ZB-2026-0396',
-    project: '观澜云庭二期',
-    document: '精装修工程标底',
-    amount: '50,168,546.23',
-    status: '已通过',
-    owner: '成本管理部',
-    updatedAt: '2026-04-18',
+    id: 'FK-20260608-017',
+    project: '龙华云璟花园二期',
+    contract: '机电安装专业分包合同',
+    supplier: '广东启安机电工程有限公司',
+    amount: '920,000 元',
+    status: '审核中',
+    owner: '区域财务',
+    updatedAt: '2026-06-08',
     risk: '低',
   },
   {
-    id: 'ZB-2026-0389',
-    project: '南山科创园配套',
-    document: '门窗栏杆工程',
-    amount: '27,538,440.35',
-    status: '待复核',
-    owner: '项目成本组',
-    updatedAt: '2026-04-15',
-    risk: '中',
+    id: 'FK-20260607-011',
+    project: '前海展示中心改造工程',
+    contract: '精装修工程合同',
+    supplier: '深圳市深装建设集团有限公司',
+    amount: '2,480,000 元',
+    status: '未审核',
+    owner: '项目财务',
+    updatedAt: '2026-06-07',
+    risk: '高',
+  },
+  {
+    id: 'FK-20260605-006',
+    project: '广州金融城综合体',
+    contract: '幕墙工程合同',
+    supplier: '广州立诚幕墙工程有限公司',
+    amount: '1,320,000 元',
+    status: '已审核',
+    owner: '财务经理',
+    updatedAt: '2026-06-05',
+    risk: '低',
   },
 ]
 
-export function HostPagePreset({ type = 'list' }: { type?: HostPresetType }) {
-  const page = (() => {
-    if (type === 'workbench') return <WorkbenchPreset />
-    if (type === 'detail') return <DetailPreset />
-    if (type === 'split') return <SplitPreset />
-    return <ListPreset />
-  })()
+interface HostPagePresetProps {
+  type?: HostPresetType
+  onOpenAi?: () => void
+  showHeaderAiButton?: boolean
+  aiDocked?: boolean
+}
+
+function HostAiButtonIcon() {
+  return (
+    <svg className="host-ai-button__icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M14.4752 13.266L7.40819 7.0057C7.05034 7.04002 6.71171 7.18299 6.43813 7.41527C6.16455 7.64754 5.96921 7.9579 5.87856 8.30436L12.2485 15.4724L12.3798 15.6031C12.573 15.7744 12.8055 15.8956 13.0569 15.9561C13.3082 16.0166 13.5707 16.0145 13.821 15.95C14.0714 15.8855 14.3019 15.7606 14.4923 15.5863C14.6826 15.412 14.827 15.1937 14.9125 14.9507C15.0147 14.6582 15.0277 14.3421 14.9498 14.0423C14.8718 13.7424 14.7065 13.4723 14.4745 13.266H14.4752ZM3.85162 7.70963C4.29654 8.424 4.71562 8.30436 4.77359 7.48565C4.81543 7.07234 5.00416 6.68751 5.30575 6.40055C5.60735 6.11358 6.00197 5.94337 6.41847 5.92059C7.26151 5.89416 7.38235 5.48237 6.68528 5.01215C6.34799 4.76711 6.10981 4.41003 6.01374 4.00541C5.91767 3.60078 5.97006 3.17528 6.16144 2.80576C6.55956 2.06496 6.26621 1.76238 5.50139 2.122C5.11673 2.29905 4.68062 2.33107 4.27405 2.21209C3.86749 2.09312 3.51809 1.83124 3.29076 1.4751C2.84584 0.760736 2.43165 0.865073 2.36879 1.69978C2.32695 2.11309 2.13822 2.49792 1.83662 2.78488C1.53502 3.07185 1.1404 3.24206 0.723907 3.26484C-0.124725 3.30101 -0.244861 3.7135 0.457094 4.18302C0.794384 4.42806 1.03257 4.78513 1.12864 5.18976C1.22471 5.59439 1.17232 6.01988 0.980941 6.38941C0.582817 7.13091 0.876171 7.43279 1.64099 7.07317C2.02446 6.89515 2.45971 6.86154 2.86615 6.97856C3.27259 7.09557 3.62269 7.3553 3.85162 7.70963ZM8.51875 4.05781L9.2207 4.30266C9.43929 4.37895 9.63698 4.50502 9.79801 4.67082C9.95904 4.83662 10.079 5.03758 10.1483 5.25769L10.3732 5.96719C10.3944 6.01902 10.4306 6.06338 10.4773 6.0946C10.5239 6.12582 10.5789 6.1425 10.6351 6.1425C10.6913 6.1425 10.7462 6.12582 10.7929 6.0946C10.8395 6.06338 10.8758 6.01902 10.897 5.96719L11.1429 5.26813C11.2195 5.05044 11.3461 4.85357 11.5126 4.6932C11.679 4.53283 11.8808 4.41339 12.1019 4.34439L12.8248 4.13085C12.8768 4.1097 12.9214 4.0736 12.9527 4.02714C12.9841 3.98068 13.0008 3.92598 13.0008 3.87C13.0008 3.81403 12.9841 3.75932 12.9527 3.71286C12.9214 3.6664 12.8768 3.6303 12.8248 3.60916L12.1228 3.36362C11.9043 3.28739 11.7067 3.16143 11.5456 2.99575C11.3846 2.83007 11.2646 2.62925 11.1953 2.40927L11.0018 1.70464C10.9806 1.65282 10.9443 1.60846 10.8976 1.57724C10.851 1.54601 10.7961 1.52934 10.7399 1.52934C10.6837 1.52934 10.6287 1.54601 10.5821 1.57724C10.5354 1.60846 10.4992 1.65282 10.4779 1.70464L10.2321 2.40371C10.1555 2.6214 10.0289 2.81827 9.86239 2.97864C9.6959 3.13901 9.49411 3.25845 9.27309 3.32745L8.56065 3.55142C8.50861 3.57257 8.46407 3.60867 8.43272 3.65513C8.40137 3.70159 8.38462 3.75629 8.38462 3.81227C8.38462 3.86824 8.40137 3.92295 8.43272 3.96941C8.46407 4.01587 8.50861 4.05197 8.56065 4.07311L8.51875 4.05781ZM5.5433 11.2314L4.92027 11.0123C4.72653 10.9447 4.55128 10.8331 4.40845 10.6862C4.26562 10.5394 4.15915 10.3614 4.09748 10.1664L3.89842 9.54041C3.88156 9.49082 3.84952 9.44773 3.8068 9.41721C3.76407 9.38669 3.71282 9.37028 3.66024 9.37028C3.60767 9.37028 3.55641 9.38669 3.51369 9.41721C3.47096 9.44773 3.43892 9.49082 3.42207 9.54041L3.20205 10.1616C3.13268 10.3509 3.0205 10.5219 2.8742 10.6612C2.72789 10.8005 2.55138 10.9044 2.35831 10.965L1.72969 11.1632C1.67964 11.1798 1.63611 11.2117 1.60526 11.2544C1.57441 11.297 1.55781 11.3482 1.55781 11.4008C1.55781 11.4533 1.57441 11.5045 1.60526 11.5471C1.63611 11.5898 1.67964 11.6217 1.72969 11.6383L2.35342 11.8574C2.54112 11.929 2.70992 12.0424 2.84695 12.1889C2.98397 12.3353 3.0856 12.511 3.14408 12.7025L3.34314 13.3286C3.35984 13.3784 3.39186 13.4218 3.43467 13.4525C3.47747 13.4832 3.5289 13.4997 3.58167 13.4997C3.63443 13.4997 3.68586 13.4832 3.72867 13.4525C3.77147 13.4218 3.80349 13.3784 3.82019 13.3286L4.04021 12.7074C4.10808 12.5147 4.22011 12.3403 4.36741 12.1982C4.51472 12.0561 4.69325 11.9501 4.88884 11.8887L5.51745 11.6905C5.56751 11.6738 5.61104 11.642 5.64189 11.5993C5.67273 11.5567 5.68933 11.5055 5.68933 11.4529C5.68933 11.4004 5.67273 11.3492 5.64189 11.3065C5.61104 11.2639 5.56751 11.232 5.51745 11.2154L5.5433 11.2314Z" fill="url(#host-ai-button-icon-gradient)" />
+      <defs>
+        <linearGradient id="host-ai-button-icon-gradient" x1="0" y1="8.5" x2="15" y2="8.5" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#5C8AFF" />
+          <stop offset="1" stopColor="#786CFF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function HostAiButton({ label = 'AI 助手', onOpenAi }: { label?: string; onOpenAi?: () => void }) {
+  return (
+    <button
+      className="host-ai-button"
+      type="button"
+      onClick={onOpenAi}
+      aria-label={label}
+      title={label}
+    >
+      <span className="host-ai-button__icon-wrapper">
+        <HostAiButtonIcon />
+      </span>
+      <span className="host-ai-button__label">{label}</span>
+    </button>
+  )
+}
+
+export function HostPagePreset({ onOpenAi, showHeaderAiButton = true, aiDocked = false }: HostPagePresetProps) {
+  const previousAiDockedRef = useRef(aiDocked)
+  const [navCollapsed, setNavCollapsed] = useState(false)
+  const hostNavWidth = navCollapsed ? '64px' : '208px'
+  const hostStyle = {
+    gridTemplateColumns: `${hostNavWidth} minmax(0, 1fr)`,
+    '--host-nav-width': hostNavWidth,
+  } as CSSProperties
+  const sidebarStyle = {
+    width: hostNavWidth,
+    minWidth: hostNavWidth,
+    maxWidth: hostNavWidth,
+  } as CSSProperties
+  const mainStyle = {
+    left: hostNavWidth,
+    right: 0,
+    width: 'auto',
+  } as CSSProperties
+  const className = [
+    'host-app-shell',
+    aiDocked ? 'host-app-shell--ai-docked' : '',
+    navCollapsed ? 'host-app-shell--nav-collapsed' : '',
+  ].filter(Boolean).join(' ')
+
+  useEffect(() => {
+    if (aiDocked && !previousAiDockedRef.current) {
+      setNavCollapsed(true)
+    }
+    if (!aiDocked && previousAiDockedRef.current) {
+      setNavCollapsed(false)
+    }
+    previousAiDockedRef.current = aiDocked
+  }, [aiDocked])
 
   return (
-    <div className="host-app-shell">
-      <HostSidebar />
-      <div className="host-app-main">
-        {page}
+    <div className={className} style={hostStyle}>
+      <HostSidebar
+        collapsed={navCollapsed}
+        onToggleNav={() => setNavCollapsed(value => !value)}
+        style={sidebarStyle}
+      />
+      <div className="host-app-main" style={mainStyle}>
+        <PaymentListPage onOpenAi={onOpenAi} showHeaderAiButton={showHeaderAiButton} />
       </div>
     </div>
   )
 }
 
-function HostSidebar() {
+function PaymentListPage({ onOpenAi, showHeaderAiButton = true }: { onOpenAi?: () => void; showHeaderAiButton?: boolean }) {
   return (
-    <aside className="host-sidebar" aria-label="产品导航">
-      <div className="host-sidebar__brand">
-        <div className="host-sidebar__brand-mark">明</div>
-        <div>
-          <strong>成本云</strong>
-          <span>企业成本管理</span>
-        </div>
-      </div>
-
-      <nav className="host-sidebar__nav">
-        <div className="host-sidebar__section">常用工作</div>
-        <button className="host-sidebar__item">
-          <Building2 size={16} />
-          <span>经营驾驶舱</span>
-        </button>
-        <button className="host-sidebar__item">
-          <FileText size={16} />
-          <span>项目台账</span>
-        </button>
-
-        <div className="host-sidebar__section">成本业务</div>
-        <button className="host-sidebar__item host-sidebar__item--parent">
-          <FileText size={16} />
-          <span>成本管理</span>
-        </button>
-        <div className="host-sidebar__subnav">
-          <button className="host-sidebar__subitem host-sidebar__subitem--active">招标控制价</button>
-          <button className="host-sidebar__subitem">动态成本</button>
-          <button className="host-sidebar__subitem">合同台账</button>
-          <button className="host-sidebar__subitem">付款申请</button>
-        </div>
-
-        <div className="host-sidebar__section">协同与分析</div>
-        <button className="host-sidebar__item">
-          <CheckCircle2 size={16} />
-          <span>审批中心</span>
-        </button>
-        <button className="host-sidebar__item">
-          <AlertTriangle size={16} />
-          <span>风险指标</span>
-        </button>
-        <button className="host-sidebar__item">
-          <MoreHorizontal size={16} />
-          <span>系统设置</span>
-        </button>
-      </nav>
-
-      <div className="host-sidebar__footer">
-        <div className="host-sidebar__avatar">成</div>
-        <div>
-          <strong>成本管理部</strong>
-          <span>招标复核组</span>
-        </div>
-      </div>
-    </aside>
-  )
-}
-
-function HostHeader() {
-  return (
-    <header className="host-page__header">
-      <div>
-        <h1>招标控制价审核工作台</h1>
-      </div>
-    </header>
-  )
-}
-
-function HostActionButtons() {
-  return (
-    <div className="host-page__header-actions">
-      <button>导入清单</button>
-      <button className="is-primary">提交复核</button>
-    </div>
-  )
-}
-
-function ListPreset() {
-  return (
-    <main className="host-page host-page--list">
-      <section className="host-card host-top-card">
-        <HostHeader />
-        <div className="host-toolbar">
-          <div className="host-search">
-            <Search size={16} />
-            <span>搜索项目、文件编号、工程类别</span>
-          </div>
-          <button className="host-filter"><Filter size={16} />筛选</button>
-          <button className="host-filter"><CalendarDays size={16} />近 30 天</button>
+    <main className="host-page host-page--list host-page--honeycomb">
+      <section className="host-card host-filter-card">
+        <div className="host-toolbar host-toolbar--honeycomb">
+          <label className="host-field">
+            <span>项目范围</span>
+            <div className="host-field__control">全部项目</div>
+          </label>
+          <label className="host-field">
+            <span>付款类型</span>
+            <div className="host-field__control">工程进度款</div>
+          </label>
+          <label className="host-field">
+            <span>供应商</span>
+            <div className="host-field__control">全部供应商</div>
+          </label>
+          <label className="host-field">
+            <span>申请日期</span>
+            <div className="host-field__control">近 30 天</div>
+          </label>
         </div>
       </section>
 
       <section className="host-card host-card--fill">
-        <div className="host-card__title-row host-card__title-row--inline">
-          <div className="host-card__title-inline">
-            <h2>待审核清单</h2>
-            <p>基于招标控制价文件、清单金额和异常指标生成待处理任务。</p>
+        <div className="host-list-toolbar">
+          <div className="tt-l">
+            <div className="view-tabs" aria-label="状态筛选">
+              <button className="view-tab on" type="button">全部<span>·28</span></button>
+              <button className="view-tab" type="button"><span className="vt-div" />未审核<span>·9</span></button>
+              <button className="view-tab" type="button"><span className="vt-div" />审核中<span>·11</span></button>
+              <button className="view-tab" type="button"><span className="vt-div" />已审核<span>·8</span></button>
+            </div>
           </div>
           <div className="host-card__title-actions">
-            <span className="host-badge host-badge--danger">35 个异常</span>
-            <HostActionButtons />
+            <HostActionButtons onOpenAi={onOpenAi} showAiButton={showHeaderAiButton} />
           </div>
         </div>
+
         <div className="host-table">
           <div className="host-table__row host-table__row--head">
-            <span>文件编号</span>
-            <span>项目 / 文件</span>
-            <span>金额（元）</span>
+            <span>申请单号</span>
+            <span>项目 / 合同</span>
+            <span>申请金额</span>
             <span>风险</span>
             <span>状态</span>
             <span>操作</span>
           </div>
-          {records.map(record => (
+          {paymentRecords.map(record => (
             <div className="host-table__row" key={record.id}>
               <span className="host-code">{record.id}</span>
               <span>
                 <strong>{record.project}</strong>
-                <small>{record.document} · {record.owner}</small>
+                <small>{record.contract} · {record.supplier}</small>
               </span>
               <span>{record.amount}</span>
               <span><RiskBadge risk={record.risk} /></span>
               <span>{record.status}</span>
-              <span><button className="host-row-action">查看</button></span>
+              <span><button className="host-row-action" type="button">查看</button></span>
             </div>
           ))}
         </div>
-      </section>
-    </main>
-  )
-}
 
-function WorkbenchPreset() {
-  return (
-    <main className="host-page host-page--workbench">
-      <HostHeader />
-      <section className="host-metrics">
-        <Metric title="本月待审金额" value="7.28 亿" trend="较上月 +12.4%" />
-        <Metric title="异常指标" value="59 项" trend="高风险 35 项" tone="danger" />
-        <Metric title="平均复核时长" value="6min30s" trend="AI 已处理 18 单" />
-        <Metric title="待人工确认" value="12 单" trend="集中在钢结构与门窗工程" tone="warn" />
-      </section>
-      <section className="host-grid">
-        <div className="host-card">
-          <h2>重点待办</h2>
-          {records.slice(0, 3).map(record => (
-            <div className="host-task" key={record.id}>
-              <FileText size={18} />
-              <div>
-                <strong>{record.project}</strong>
-                <span>{record.document} · {record.status}</span>
-              </div>
-              <RiskBadge risk={record.risk} />
+        <div className="pgn">
+          <div className="pgn-info">共 <b>28</b> 条</div>
+          <div className="pgn-size">
+            <div className="pgn-pages">
+              <button className="pgn-btn" type="button">‹</button>
+              <button className="pgn-btn on" type="button">1</button>
+              <button className="pgn-btn" type="button">2</button>
+              <button className="pgn-btn" type="button">3</button>
+              <button className="pgn-btn" type="button">...</button>
+              <button className="pgn-btn" type="button">9</button>
+              <button className="pgn-btn" type="button">›</button>
             </div>
-          ))}
-        </div>
-        <div className="host-card">
-          <h2>异常分布</h2>
-          <div className="host-bars">
-            <Bar label="住宅钢结构" value={82} />
-            <Bar label="普通砌体" value={56} />
-            <Bar label="门窗栏杆" value={42} />
-            <Bar label="精装修" value={36} />
+            <select className="sel" defaultValue="20 条/页" aria-label="每页条数">
+              <option>20 条/页</option>
+              <option>50 条/页</option>
+              <option>100 条/页</option>
+            </select>
           </div>
         </div>
       </section>
@@ -246,111 +235,118 @@ function WorkbenchPreset() {
   )
 }
 
-function DetailPreset() {
-  const record = records[0]
+function HostSidebar({
+  collapsed,
+  onToggleNav,
+  style,
+}: {
+  collapsed: boolean
+  onToggleNav: () => void
+  style?: CSSProperties
+}) {
   return (
-    <main className="host-page host-page--detail">
-      <HostHeader />
-      <section className="host-card">
-        <div className="host-card__title-row">
-          <div>
-            <h2>{record.project}控制价文件</h2>
-            <p>文件编号 {record.id} · 出具日期 {record.updatedAt}</p>
-          </div>
-          <RiskBadge risk={record.risk} />
-        </div>
-        <div className="host-detail-grid">
-          <Info label="项目位置" value="广东省深圳市" />
-          <Info label="建筑面积" value="192,909.28 ㎡" />
-          <Info label="送审金额" value="551,867,033.03 元" />
-          <Info label="折合单方" value="2,860.76 元/㎡" />
-        </div>
-      </section>
-      <section className="host-card">
-        <h2>审核轨迹</h2>
-        <div className="host-timeline">
-          <Timeline icon={<CheckCircle2 size={16} />} title="文件上传完成" desc="招标控制价文件、清单明细和指标表已归集。" />
-          <Timeline icon={<AlertTriangle size={16} />} title="发现异常指标" desc="钢结构工程单价偏离明显，建议优先复核。" />
-          <Timeline icon={<FileText size={16} />} title="等待 AI 报告" desc="点击右下角 AI 入口生成控制价审核报告。" />
-        </div>
-      </section>
-    </main>
+    <aside className="host-sidebar" style={style} aria-label="产品导航" aria-expanded={!collapsed}>
+      <div className="host-sidebar__module">
+        <strong>财务管理</strong>
+        <button
+          className="host-sidebar__collapse-btn"
+          type="button"
+          aria-label={collapsed ? '展开导航' : '收起导航'}
+          aria-pressed={collapsed}
+          onClick={onToggleNav}
+        >
+          <Menu size={18} />
+        </button>
+      </div>
+
+      <nav className="host-sidebar__nav">
+        <HostNavGroup
+          defaultOpen
+          icon={<WalletCards size={16} />}
+          label="付款管理"
+          activeItem="付款申请审核"
+          items={['付款申请审核', '付款计划', '供应商付款台账']}
+        />
+
+        <HostNavGroup
+          icon={<ClipboardCheck size={16} />}
+          label="审批中心"
+          items={['待我审批', '审批记录', '退回单据']}
+        />
+
+        <HostNavGroup
+          icon={<FileText size={16} />}
+          label="票据与对账"
+          items={['发票登记', '往来对账', '付款回单']}
+        />
+
+        <button className="host-sidebar__item host-sidebar__item--single" type="button">
+          <span className="host-sidebar__item-main">
+            <Settings size={16} />
+            <span>系统设置</span>
+          </span>
+        </button>
+      </nav>
+    </aside>
   )
 }
 
-function SplitPreset() {
+function HostNavGroup({
+  icon,
+  label,
+  items,
+  activeItem,
+  defaultOpen = false,
+}: {
+  icon: ReactNode
+  label: string
+  items: string[]
+  activeItem?: string
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+
   return (
-    <main className="host-page host-page--split">
-      <HostHeader />
-      <section className="host-split">
-        <aside className="host-card host-tree">
-          <h2>项目分类</h2>
-          {['问数验证项目一期', '深圳湾东区展示中心', '观澜云庭二期', '南山科创园配套'].map((name, index) => (
-            <button className={index === 0 ? 'is-active' : ''} key={name}>
-              <Building2 size={16} />{name}
+    <div className="host-sidebar__group">
+      <button
+        className="host-sidebar__item host-sidebar__item--parent"
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen(value => !value)}
+      >
+        <span className="host-sidebar__item-main">
+          {icon}
+          <span>{label}</span>
+        </span>
+        <ChevronDown className="host-sidebar__chevron" size={14} aria-hidden="true" />
+      </button>
+      {open ? (
+        <div className="host-sidebar__subnav">
+          {items.map(item => (
+            <button
+              className={`host-sidebar__subitem${item === activeItem ? ' host-sidebar__subitem--active' : ''}`}
+              type="button"
+              key={item}
+            >
+              {item}
             </button>
           ))}
-        </aside>
-        <div className="host-card">
-          <div className="host-card__title-row">
-            <div>
-              <h2>专业工程费用</h2>
-              <p>当前项目共 8112 条清单项，建筑工程占比最高。</p>
-            </div>
-            <button className="host-filter"><MoreHorizontal size={16} /></button>
-          </div>
-          <div className="host-table host-table--compact">
-            {records.map(record => (
-              <div className="host-table__row" key={record.id}>
-                <span>{record.document}</span>
-                <span>{record.amount}</span>
-                <span><RiskBadge risk={record.risk} /></span>
-              </div>
-            ))}
-          </div>
         </div>
-      </section>
-    </main>
-  )
-}
-
-function Metric({ title, value, trend, tone }: { title: string; value: string; trend: string; tone?: 'danger' | 'warn' }) {
-  return (
-    <div className={`host-card host-metric${tone ? ` host-metric--${tone}` : ''}`}>
-      <span>{title}</span>
-      <strong>{value}</strong>
-      <small>{trend}</small>
+      ) : null}
     </div>
   )
 }
 
-function RiskBadge({ risk }: { risk: HostRecord['risk'] }) {
+function HostActionButtons({ onOpenAi, showAiButton = true }: { onOpenAi?: () => void; showAiButton?: boolean }) {
+  return (
+    <div className="host-page__header-actions">
+      <button type="button">导出</button>
+      {showAiButton ? <HostAiButton label="AI智能审核" onOpenAi={onOpenAi} /> : null}
+      <button className="is-primary" type="button">批量审核</button>
+    </div>
+  )
+}
+
+function RiskBadge({ risk }: { risk: PaymentRecord['risk'] }) {
   return <span className={`host-badge host-badge--${risk === '高' ? 'danger' : risk === '中' ? 'warn' : 'ok'}`}>{risk}风险</span>
-}
-
-function Bar({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="host-bar">
-      <div><span>{label}</span><strong>{value}%</strong></div>
-      <i style={{ width: `${value}%` }} />
-    </div>
-  )
-}
-
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="host-info">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  )
-}
-
-function Timeline({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
-  return (
-    <div className="host-timeline__item">
-      <span>{icon}</span>
-      <div><strong>{title}</strong><p>{desc}</p></div>
-    </div>
-  )
 }

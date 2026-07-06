@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { useRef } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { FloatingScrollbar } from '../../shared/components/FloatingScrollbar'
 
 interface Props {
@@ -68,11 +68,26 @@ function extractPanelContext(markdown: string, title: string) {
   return { project, contract, amount }
 }
 
+function getMarkdownCellText(children: ReactNode): string {
+  if (typeof children === 'string' || typeof children === 'number') return String(children)
+  if (Array.isArray(children)) return children.map(getMarkdownCellText).join('')
+  return ''
+}
+
+function isMarkdownBarCell(children: ReactNode) {
+  return /^█+$/.test(getMarkdownCellText(children).trim())
+}
+
 const markdownComponents = {
   table: ({ children, ...props }: any) => (
     <div className="v4-workbench-table-scroll">
       <table {...props}>{children}</table>
     </div>
+  ),
+  td: ({ children, ...props }: any) => (
+    <td {...props} className={isMarkdownBarCell(children) ? 'v4-workbench-table__cell--bar' : undefined}>
+      {isMarkdownBarCell(children) ? <span className="v4-workbench-table__bar">{children}</span> : children}
+    </td>
   ),
 }
 
@@ -106,26 +121,24 @@ export default function GenericPanel({ description, title = '内容预览' }: Pr
   return (
     <div className="v4-workbench-shell">
       <div className="v4-workbench-page" ref={workbenchPageRef}>
-        <header className="v4-workbench-report-header">
-          <h1>{title}</h1>
-          <div className="v4-workbench-ai-attr">
-            <span className="v4-workbench-ai-name">AI 专员</span>
-            <span className="v4-workbench-ai-sub">已按业务规则生成当前工作台内容</span>
-          </div>
-        </header>
+        <div className="v4-workbench-summary-card" aria-label="工作台摘要">
+          <header className="v4-workbench-report-header">
+            <h1>{title}</h1>
+          </header>
 
-        <div className="v4-workbench-kpi-strip" aria-label="工作台上下文">
-          <div className="v4-workbench-vc">
-            <div className="v4-workbench-vc-label">项目</div>
-            <div className="v4-workbench-vc-value">{context.project}</div>
-          </div>
-          <div className="v4-workbench-vc">
-            <div className="v4-workbench-vc-label">合同/对象</div>
-            <div className="v4-workbench-vc-value">{context.contract}</div>
-          </div>
-          <div className="v4-workbench-vc">
-            <div className="v4-workbench-vc-label">关键金额</div>
-            <div className="v4-workbench-vc-value">{context.amount}</div>
+          <div className="v4-workbench-kpi-strip" aria-label="工作台上下文">
+            <div className="v4-workbench-vc">
+              <div className="v4-workbench-vc-label">项目</div>
+              <div className="v4-workbench-vc-value">{context.project}</div>
+            </div>
+            <div className="v4-workbench-vc">
+              <div className="v4-workbench-vc-label">合同/对象</div>
+              <div className="v4-workbench-vc-value">{context.contract}</div>
+            </div>
+            <div className="v4-workbench-vc">
+              <div className="v4-workbench-vc-label">关键金额</div>
+              <div className="v4-workbench-vc-value">{context.amount}</div>
+            </div>
           </div>
         </div>
 

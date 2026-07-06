@@ -1,0 +1,1483 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智能体</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --card: #fff;
+      --text: #1f2329;
+      --muted: #646a73;
+      --line: #e9edf2;
+      --active: #3478f6;
+      --detail-hover-bg: #f2f4f6;
+      --detail-hover-border: #eef1f5;
+      --shadow: 0 1px 2px rgba(15, 23, 42, .04);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body { overflow: hidden; background: var(--bg); color: var(--text); }
+
+    .market-page {
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 1438px);
+      height: 100%;
+      padding: 12px 100px 8px;
+      margin: 0 auto;
+      overflow: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      background: #f7f8fa;
+    }
+
+    .market-page::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    .market-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+      min-height: 36px;
+      margin: 0 0 16px;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      color: #25272c;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: 0;
+    }
+
+    .market-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      width: 100%;
+      margin: 0 0 16px;
+      flex: 0 0 auto;
+    }
+
+    .market-search {
+      display: flex;
+      align-items: center;
+      width: 240px;
+      min-width: 240px;
+      max-width: 240px;
+      height: 32px;
+      min-height: 32px;
+      max-height: 32px;
+      flex: 0 0 240px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: #999;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .market-search:focus-within {
+      border-color: #ddd;
+      box-shadow: var(--shadow);
+    }
+
+    .market-search input {
+      min-width: 0;
+      flex: 1 1 auto;
+      height: 100%;
+      padding: 0 8px 0 12px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #333;
+      font: inherit;
+      line-height: 22px;
+    }
+
+    .market-search input::placeholder {
+      color: #999;
+    }
+
+    .market-search input::-webkit-search-decoration,
+    .market-search input::-webkit-search-cancel-button {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .market-search__addon {
+      display: inline-flex;
+      width: 32px;
+      height: 100%;
+      flex: 0 0 32px;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid #ddd;
+      background: #fff;
+    }
+
+    .market-search__addon img {
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+
+    .market-tabs {
+      display: flex;
+      gap: 12px;
+      min-width: 0;
+      flex: 1 1 auto;
+      margin: 0;
+      padding: 0;
+      overflow-x: auto;
+      height: 32px;
+      align-items: flex-start;
+    }
+
+    .market-tab {
+      flex: 0 0 auto;
+      height: 32px;
+      padding: 3px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #555d6b;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 22px;
+      cursor: pointer;
+    }
+
+    .market-tab:hover {
+      background: #f2f4f6;
+    }
+
+    .market-tab.active {
+      background: #e9ecff;
+      color: #222;
+    }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(230px, 1fr));
+      gap: 16px;
+      width: 100%;
+      margin: 0;
+    }
+
+    .market-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding: 0 0 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .market-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    .agent-card {
+      min-height: 150px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .agent-card:hover,
+    .agent-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: #cfe0ff;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    }
+
+    .agent-card:focus-visible {
+      outline: 2px solid rgba(81, 71, 255, .24);
+      outline-offset: 2px;
+    }
+
+    .agent-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .agent-id {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 10px;
+    }
+
+    .agent-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #eef5ff;
+      flex: 0 0 auto;
+    }
+
+    .agent-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .agent-card h2 {
+      margin: 0;
+      overflow: hidden;
+      color: #22252b;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 52px;
+      padding: 0 12px;
+      border: 1px solid #d8dde6;
+      border-radius: 8px;
+      background: #fff;
+      color: #4e5969;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 26px;
+      white-space: nowrap;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease, border-color .16s ease, color .16s ease, background .16s ease;
+    }
+
+    .agent-card:hover .agent-action,
+    .agent-card:focus-within .agent-action {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .agent-action:hover {
+      border-color: #C7D1FF;
+      color: #3456F0;
+      background: #fff;
+    }
+
+    .agent-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .agent-detail-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 42px 70px;
+      background: rgba(0, 0, 0, .34);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+
+    .agent-detail-backdrop.opening,
+    .agent-detail-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .agent-detail-backdrop.closing {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .agent-detail-dialog {
+      display: flex;
+      width: min(1242px, calc(100vw - 140px));
+      height: min(700px, calc(100vh - 84px));
+      min-height: 540px;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 16px 38px rgba(15, 23, 42, .18);
+      color: #333;
+      opacity: 0;
+      transform: translateY(8px) scale(.992);
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .agent-detail-backdrop.opening .agent-detail-dialog,
+    .agent-detail-backdrop.open .agent-detail-dialog {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .agent-detail-backdrop.closing .agent-detail-dialog {
+      opacity: 0;
+      transform: translateY(8px) scale(.992);
+    }
+
+    .agent-detail-header {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px 8px;
+    }
+
+    .agent-detail-fixed {
+      flex: 0 0 auto;
+      padding: 12px 18px 0;
+      background: #fff;
+    }
+
+    .agent-detail-title {
+      margin: 0;
+      color: #222;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+    }
+
+    .agent-detail-close {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #999;
+      cursor: pointer;
+      transition: background-color .16s ease;
+    }
+
+    .agent-detail-close img {
+      display: block;
+      width: 28px;
+      height: 28px;
+      pointer-events: none;
+    }
+
+    .agent-detail-close:hover {
+      background: #f7f8fa;
+    }
+
+    .agent-detail-close:focus {
+      outline: none;
+    }
+
+    .agent-detail-close:focus-visible {
+      box-shadow: 0 0 0 2px rgba(81, 71, 255, .18);
+    }
+
+    .agent-detail-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding: 0 18px 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .agent-detail-body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    .agent-detail-profile {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f2f4f6;
+    }
+
+    .agent-detail-avatar {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      overflow: hidden;
+      border: 1.4px solid #fff;
+      border-radius: 50%;
+      background: #cdf;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    }
+
+    .agent-detail-avatar img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .agent-detail-summary {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agent-detail-heading {
+      display: flex;
+      min-width: 0;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .agent-detail-identity {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .agent-detail-tags {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .agent-detail-name {
+      color: #333;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 22px;
+      white-space: nowrap;
+    }
+
+    .agent-detail-tag {
+      display: inline-flex;
+      height: 20px;
+      min-width: 20px;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      padding: 0 6px;
+      border-radius: 4px;
+      background: #f2f4f6;
+      color: #576275;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .agent-detail-tag.online {
+      background: #d7f5e5;
+      color: #13a374;
+    }
+
+    .agent-detail-desc {
+      margin: 0;
+      color: #4e5969;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 22px;
+    }
+
+    .agent-detail-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      margin-bottom: 14px;
+    }
+
+    .agent-detail-tab {
+      height: 32px;
+      padding: 3px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #666;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 22px;
+      cursor: pointer;
+      transition: background-color .16s ease, color .16s ease;
+    }
+
+    .agent-detail-tab:hover:not(.active) {
+      background: var(--detail-hover-bg);
+      color: #333;
+    }
+
+    .agent-detail-tab.active {
+      background: #e9ecff;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .agent-detail-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .agent-detail-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 22px;
+    }
+
+    .agent-detail-section-title img {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+    }
+
+    .agent-detail-instructions {
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: rgba(247, 248, 250, .75);
+      color: #333;
+      font-size: 13px;
+      line-height: 22px;
+    }
+
+    .agent-detail-instructions ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .agent-detail-questions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .agent-detail-question {
+      display: flex;
+      min-height: 40px;
+      width: 100%;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid #f2f4f6;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      font-size: 13px;
+      line-height: 22px;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease;
+    }
+
+    .agent-detail-question:hover {
+      border-color: var(--detail-hover-border);
+      background: var(--detail-hover-bg);
+    }
+
+    .agent-detail-question span {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-detail-question svg {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      color: #999;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+
+    .agent-detail-question:hover svg,
+    .agent-detail-question:focus-visible svg {
+      opacity: 1;
+    }
+
+    .agent-detail-content {
+      display: none;
+    }
+
+    .agent-detail-panel[data-panel="basic"] .agent-detail-content[data-content="basic"],
+    .agent-detail-panel[data-panel="skills"] .agent-detail-content[data-content="skills"],
+    .agent-detail-panel[data-panel="records"] .agent-detail-content[data-content="records"],
+    .agent-detail-panel[data-panel="artifacts"] .agent-detail-content[data-content="artifacts"] {
+      display: block;
+    }
+
+    .agent-detail-skill-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .agent-skill-card {
+      display: flex;
+      min-height: 108px;
+      flex-direction: column;
+      gap: 12px;
+      padding: 13px 17px;
+      border: 1px solid #f2f4f6;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+      cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease;
+    }
+
+    .agent-skill-card:hover {
+      border-color: var(--detail-hover-border);
+      background: var(--detail-hover-bg);
+    }
+
+    .agent-skill-card__top {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-skill-card__icon {
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+    }
+
+    .agent-skill-card__icon.tone-blue {
+      background: #eef4ff;
+      color: #2f6fff;
+    }
+
+    .agent-skill-card__icon.tone-green {
+      background: #e9fbf4;
+      color: #13a374;
+    }
+
+    .agent-skill-card__icon.tone-orange {
+      background: #fff2dc;
+      color: #f59a23;
+    }
+
+    .agent-skill-card__title {
+      min-width: 0;
+      overflow: hidden;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 22px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-skill-card__desc {
+      margin: 0;
+      color: #999;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    .agent-detail-record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .agent-record-card {
+      display: flex;
+      min-height: 70px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid #f2f4f6;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease;
+    }
+
+    .agent-record-card:hover {
+      border-color: var(--detail-hover-border);
+      background: var(--detail-hover-bg);
+    }
+
+    .agent-record-card__top {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .agent-record-card__title-wrap {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-record-card__icon {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      display: block;
+    }
+
+    .agent-record-card__title {
+      min-width: 0;
+      overflow: hidden;
+      color: #333;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 22px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-record-card__meta {
+      flex: 0 0 auto;
+      color: #999;
+      font-size: 12px;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .agent-record-card__desc {
+      margin: 0;
+      overflow: hidden;
+      color: #999;
+      font-size: 12px;
+      line-height: 20px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-detail-artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .agent-artifact-card {
+      display: flex;
+      height: 56px;
+      min-width: 0;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid #f2f4f6;
+      border-radius: 12px;
+      background: #fff;
+      cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease;
+    }
+
+    .agent-artifact-card:hover {
+      border-color: var(--detail-hover-border);
+      background: var(--detail-hover-bg);
+    }
+
+    .agent-file-icon {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      display: block;
+    }
+
+    .agent-artifact-card__main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .agent-artifact-card__title {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      color: #333;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-artifact-card__meta {
+      display: block;
+      color: #999;
+      font-size: 12px;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .agent-detail-footer {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 18px 16px;
+    }
+
+    .agent-detail-btn {
+      display: inline-flex;
+      min-width: 80px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      font-size: 13px;
+      line-height: 22px;
+      cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease, color .16s ease;
+    }
+
+    .agent-detail-btn:hover {
+      border-color: var(--detail-hover-border);
+      background: var(--detail-hover-bg);
+      color: #333;
+    }
+
+    .agent-detail-btn.primary {
+      width: 80px;
+      border-color: #5147ff;
+      background: #5147ff;
+      color: #fff;
+    }
+
+    .agent-detail-btn.primary:hover {
+      border-color: #5147ff;
+      background: #5147ff;
+      color: #fff;
+    }
+
+    .agent-detail-btn img,
+    .agent-detail-btn svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 1180px) {
+      .market-page {
+        width: 100%;
+        padding: 12px 32px 8px;
+      }
+      .agent-grid { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+      .agent-detail-backdrop { padding: 32px; }
+      .agent-detail-dialog {
+        width: calc(100vw - 64px);
+      }
+    }
+    @media (max-width: 820px) {
+      .market-head {
+        align-items: stretch;
+        flex-direction: column;
+        height: auto;
+        gap: 12px;
+      }
+      .market-page { width: 100%; }
+      .market-controls { align-items: stretch; flex-direction: column; gap: 12px; }
+      .market-search {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        flex: 0 0 32px;
+      }
+      .agent-grid { grid-template-columns: 1fr; }
+      .agent-detail-backdrop { padding: 16px; }
+      .agent-detail-dialog {
+        width: calc(100vw - 32px);
+        height: calc(100vh - 32px);
+        min-height: 0;
+      }
+      .agent-detail-heading {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .agent-detail-fixed {
+        padding: 12px 18px 0;
+      }
+      .agent-detail-desc,
+      .agent-detail-question span {
+        white-space: normal;
+      }
+      .agent-detail-tabs {
+        overflow-x: auto;
+      }
+      .agent-detail-skill-grid,
+      .agent-detail-artifact-grid {
+        grid-template-columns: 1fr;
+      }
+      .agent-record-card__top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .agent-record-card__title,
+      .agent-record-card__desc,
+      .agent-artifact-card__title {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="market-page">
+    <header class="market-head">
+      <h1>智能体</h1>
+      <label class="market-search" aria-label="搜索智能体">
+        <input id="marketSearch" type="search" placeholder="输入智能体名称搜索" autocomplete="off">
+        <span class="market-search__addon" aria-hidden="true">
+          <img src="/agent-skill-market/icons/search.svg" alt="">
+        </span>
+      </label>
+    </header>
+    <div class="market-controls">
+      <nav class="market-tabs" aria-label="智能体分类">
+        <button class="market-tab active">全部</button>
+        <button class="market-tab">销售域</button>
+        <button class="market-tab">成本域</button>
+        <button class="market-tab">资管域</button>
+        <button class="market-tab">租赁域</button>
+        <button class="market-tab">公共域</button>
+      </nav>
+    </div>
+    <div class="market-scroll">
+      <section class="agent-grid" id="agentGrid" aria-label="智能体列表"></section>
+    </div>
+  </main>
+  <div class="agent-detail-backdrop" id="agentDetailBackdrop" aria-hidden="true">
+    <section class="agent-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="agentDetailTitle">
+      <header class="agent-detail-header">
+        <h2 class="agent-detail-title" id="agentDetailTitle">智能体详情</h2>
+        <button class="agent-detail-close" type="button" id="agentDetailClose" aria-label="关闭">
+          <img src="/agent-skill-market/icons/close.svg" alt="">
+        </button>
+      </header>
+      <div class="agent-detail-fixed">
+        <div class="agent-detail-profile">
+          <span class="agent-detail-avatar">
+            <img id="agentDetailAvatar" src="/aui-native/avatars/custom/1.png" alt="">
+          </span>
+          <div class="agent-detail-summary">
+            <div class="agent-detail-heading">
+              <div class="agent-detail-identity">
+                <strong class="agent-detail-name" id="agentDetailName">调价助手</strong>
+                <div class="agent-detail-tags" aria-label="智能体标签">
+                  <span class="agent-detail-tag online">在线</span>
+                  <span class="agent-detail-tag" id="agentDetailDomain">销售域</span>
+                  <span class="agent-detail-tag" id="agentDetailSkillCount">技能·0</span>
+                  <span class="agent-detail-tag" id="agentDetailRecordCount">对话记录·0</span>
+                  <span class="agent-detail-tag" id="agentDetailArtifactCount">输出产物·0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="agent-detail-tabs" aria-label="智能体详情分类">
+          <button class="agent-detail-tab active" type="button" data-panel="basic">基本信息</button>
+          <button class="agent-detail-tab" type="button" data-panel="skills">可用技能</button>
+          <button class="agent-detail-tab" type="button" data-panel="records">对话记录</button>
+          <button class="agent-detail-tab" type="button" data-panel="artifacts">输出产物</button>
+        </nav>
+      </div>
+
+      <div class="agent-detail-body">
+        <div class="agent-detail-panel" id="agentDetailPanel" data-panel="basic">
+          <div class="agent-detail-content" data-content="basic">
+            <section class="agent-detail-section">
+              <div class="agent-detail-section-title">
+                <img src="/agent-skill-market/icons/instruction.svg" alt="">
+                <span>说明</span>
+              </div>
+              <div class="agent-detail-instructions">
+                <p class="agent-detail-desc" id="agentDetailDesc"></p>
+              </div>
+            </section>
+
+            <section class="agent-detail-section">
+              <div class="agent-detail-section-title">
+                <img src="/agent-skill-market/icons/instruction.svg" alt="">
+                <span>使用方式</span>
+              </div>
+              <div class="agent-detail-instructions">
+                <ul id="agentDetailInstructions"></ul>
+              </div>
+            </section>
+
+            <section class="agent-detail-section">
+              <div class="agent-detail-section-title">
+                <img src="/agent-skill-market/icons/message-record.svg" alt="">
+                <span>推荐问题</span>
+              </div>
+              <div class="agent-detail-questions" id="agentDetailQuestions"></div>
+            </section>
+          </div>
+          <div class="agent-detail-content" data-content="skills">
+            <div class="agent-detail-skill-grid" id="agentDetailSkills"></div>
+          </div>
+          <div class="agent-detail-content" data-content="records">
+            <div class="agent-detail-record-list" id="agentDetailRecords"></div>
+          </div>
+          <div class="agent-detail-content" data-content="artifacts">
+            <div class="agent-detail-artifact-grid" id="agentDetailArtifacts"></div>
+          </div>
+        </div>
+      </div>
+      <footer class="agent-detail-footer">
+        <button class="agent-detail-btn" type="button" id="agentDetailCancel">取消</button>
+        <button class="agent-detail-btn primary" type="button">
+          <img src="/agent-skill-market/icons/chat.svg" alt="">
+          <span>对话</span>
+        </button>
+      </footer>
+    </section>
+  </div>
+  <script>
+    const agents = [
+      ['调价助手', '销售域', '通过对话式交互自动筛选房源、计算价格，生成一房一价的调价方案与合理性评估结果。'],
+      ['库存分析助手', '销售域', '快速统计库存的产品结构、户型结构与库龄分布，辅助识别高压库存，支撑营销策略制定。'],
+      ['销售日报助手', '销售域', '自动按模版汇总销售数据并完成简单特征分析，形成销售日报，减少人工统计与编写成本。'],
+      ['回款分析助手', '销售域', '统计应收账龄、按揭银行、回款节点及实收情况，辅助识别回款风险与资金压力。'],
+      ['项目成本分析助手', '成本域', '基于自然语言理解，覆盖项目、科目、业态、趋势 4 大分析视角与 30+ 标准指标。'],
+      ['合同录入助手', '成本域', '上传合同附件与合同草拟件，智能审查准确性，无误后提取文本内容自动填充合同表单。'],
+      ['合同审核助手', '成本域', '在流程审批过程中，结合业务资料、系统数据与内置规则检查点，辅助审批人进行业务审核。'],
+      ['付款预审助手', '成本域', '对付款申请的概算、合同、账户、发票、工程量、现场进度等维度进行穿透式核验。'],
+      ['资管查询助手', '资管域', '通过自然语言智能识别用户意图，提供多条件、跨业务查询数据服务与业务穿透。'],
+      ['资产经营监管助手', '资管域', '将人工写材料升级为自动经营复盘，系统每天主动给出经营结论，内含业务 knowhow。'],
+      ['合同录入助手（租赁）', '租赁域', '将人工填单升级为资料自动结构化，大幅提升租赁合同的录入吞吐量与准确率。'],
+      ['租赁合同预审助手', '租赁域', '依据租赁商务政策与合同商务条款进行预审，提升商务审核效率，保障租赁合同收益。'],
+      ['数据主题分析助手', '公共域', '针对成本、销售、资管租赁等主题宽表进行分析与洞察，支持自然语言自由问数。'],
+      ['审批助手', '公共域', '作为流程审批人的副驾，基于审批规则对业务资料与系统数据进行检查对比。'],
+      ['消息待办助手', '公共域', 'ERP 用户可随时通过对话查询自身待办与待阅任务，节省查找待办时间。'],
+      ['文档辅助阅读助手', '公共域', '用户直接提问即可快速获取文档内容总结，无需逐页翻找关键信息，节省理解时间。']
+    ];
+
+    const grid = document.getElementById('agentGrid');
+    const marketSearch = document.getElementById('marketSearch');
+    const detailBackdrop = document.getElementById('agentDetailBackdrop');
+    const detailAvatar = document.getElementById('agentDetailAvatar');
+    const detailName = document.getElementById('agentDetailName');
+    const detailDomain = document.getElementById('agentDetailDomain');
+    const detailSkillCount = document.getElementById('agentDetailSkillCount');
+    const detailRecordCount = document.getElementById('agentDetailRecordCount');
+    const detailArtifactCount = document.getElementById('agentDetailArtifactCount');
+    const detailDesc = document.getElementById('agentDetailDesc');
+    const detailInstructions = document.getElementById('agentDetailInstructions');
+    const detailQuestions = document.getElementById('agentDetailQuestions');
+    const detailSkills = document.getElementById('agentDetailSkills');
+    const detailRecords = document.getElementById('agentDetailRecords');
+    const detailArtifacts = document.getElementById('agentDetailArtifacts');
+    const detailPanel = document.getElementById('agentDetailPanel');
+    const detailTabs = Array.from(document.querySelectorAll('.agent-detail-tab'));
+    const detailClose = document.getElementById('agentDetailClose');
+    const detailCancel = document.getElementById('agentDetailCancel');
+    let lastFocusedElement = null;
+    let detailCloseTimer = null;
+    let activeCategory = '全部';
+
+    function assetPath(index) {
+      return `/aui-native/avatars/custom/${(index % 12) + 1}.png`;
+    }
+
+    function renderAgentCards(list) {
+      grid.innerHTML = list.map((item) => {
+        const sourceIndex = agents.findIndex(source => source[0] === item[0]);
+        return `
+      <article class="agent-card" tabindex="0" role="button" data-agent-index="${sourceIndex}" aria-label="查看${item[0]}详情">
+        <div class="agent-top">
+          <div class="agent-id">
+            <span class="agent-avatar"><img src="${assetPath(sourceIndex)}" alt=""></span>
+            <h2>${item[0]}</h2>
+          </div>
+          <span class="agent-action" aria-hidden="true">对话</span>
+        </div>
+        <p>${item[2]}</p>
+      </article>
+    `;
+      }).join('');
+    }
+
+    function getAgentInstructions(agent) {
+      if (agent[0] === '调价助手') {
+        return [
+          '你可以在对话框中直接描述调价需求，比如说“帮我筛选深圳湾一期未售出的 3 房房源，对比上月均价生成调价方案”。',
+          '调价助手将逐步引导确认筛选条件、调价幅度、合规校验，最终输出可导出的 Excel 调价清单。'
+        ];
+      }
+      return [
+        `你可以在对话框中直接描述${agent[1]}相关任务，${agent[0]}会按业务目标识别条件并拆解执行步骤。`,
+        `${agent[0]}将结合历史记录、业务规则和当前资料输出结果，并在需要时继续引导你补充信息。`
+      ];
+    }
+
+    function getAgentSkills(agent) {
+      const preset = {
+        '调价助手': [
+          ['一', 'tone-blue', '一房一价测算', '自动筛选房源、计算调价方案并评估货值影响。支持批量处理，输出标准化调价清单。'],
+          ['成', 'tone-green', '成交结构分析', '产品与户型成交结构、环比、换退房异常识别。为调价策略提供数据支撑。'],
+          ['自', 'tone-orange', '自然语言意图识别', '把用户的口语化提问解析为可执行的查询条件、参数、动作。支持多轮对话追问。']
+        ],
+        '项目成本分析助手': [
+          ['科', 'tone-blue', '科目指标分析', '覆盖 30+ 标准指标，按项目、科目、业态、趋势 4 视角问数与分析。'],
+          ['清', 'tone-green', '清单组价', '基于市场价库和历史成本，自动完成工程量清单组价。'],
+          ['报', 'tone-orange', '控制价审核报告生成', '汇总科目对比、清单组价合理性、风险点，输出审核报告。']
+        ],
+        '合同录入助手': [
+          ['识', 'tone-blue', '合同要素识别', '从合同附件和草拟件中提取合同名称、金额、乙方、付款节点等核心字段。'],
+          ['核', 'tone-green', '附件一致性校验', '对比附件、草拟件和系统字段，识别金额、主体、日期不一致。'],
+          ['填', 'tone-orange', '表单自动填充', '将已确认字段映射到合同录入表单，减少人工重复录入。']
+        ],
+        '合同审核助手': [
+          ['审', 'tone-blue', '审批规则校验', '业务资料与系统数据按规则对比，输出风险清单。'],
+          ['条', 'tone-green', '商务条款审核', '对照合同模板和商务政策审核条款合理性，标记异常条款。'],
+          ['摘', 'tone-orange', '风险摘要生成', '按付款、结算、签证、履约等维度生成可复核的审核摘要。']
+        ],
+        '付款预审助手': [
+          ['付', 'tone-blue', '付款规则预审', '从概算、合同、账户、发票、工程量、进度等维度批量校验。'],
+          ['票', 'tone-green', '票据账户核验', '识别发票、收款账户、供应商主体与合同信息是否一致。'],
+          ['进', 'tone-orange', '进度匹配检查', '核验付款金额、工程量和现场进度是否匹配。']
+        ]
+      };
+      return preset[agent[0]] || [
+        ['识', 'tone-blue', '自然语言意图识别', '把用户的口语化提问解析为可执行的查询条件、参数、动作。'],
+        ['编', 'tone-green', '多轮对话编排', '维持上下文，支持追问、改写、纠错，确保任务闭环。'],
+        ['输', 'tone-orange', '结果摘要生成', '把分析结果整理成可复核、可交付的业务结论。']
+      ];
+    }
+
+    function getAgentRecords(agent) {
+      const preset = {
+        '调价助手': [
+          ['深圳湾一号中信宏城片区 — 2025 年 12 月批量调价', '筛选出 32 套未售 3 房房源，按楼层区间生成差异化调价方案，最终调价幅度在 -2% ~ +1.5% 区间。'],
+          ['西安·云璟府滞销房源专项调价分析', '针对去化周期超过 6 个月的 15 套高层房源进行专项分析，结合竞品均价给出阶梯让利方案，预测去化周期可缩短至 2.3 个月。'],
+          ['武汉光谷项目竞品响应调价策略', '筛选出 32 套未售 3 房房源，按楼层区间生成差异化调价方案，最终调价幅度在 -2% ~ +1.5% 区间。']
+        ]
+      };
+      return preset[agent[0]] || [
+        [`${agent[0]}近期任务复盘`, `围绕${agent[1]}任务生成关键结论和后续建议，并保留完整对话上下文。`],
+        [`${agent[0]}专项分析`, `结合业务资料和规则检查点，整理风险、机会和待确认事项。`],
+        [`${agent[0]}结果确认`, `根据用户补充条件更新分析结果，输出可复核摘要。`]
+      ];
+    }
+
+    function getAgentArtifacts(agent) {
+      const preset = {
+        '调价助手': [
+          ['excel', '深圳湾一号_2025年12月批量调价清单.xlsx', '生成于2025/12/03 · 2.4 MB'],
+          ['pdf', '西安云璟府_滞销房源调价分析报告.pdf', '生成于2025/12/03 · 2.4 MB'],
+          ['excel', '华南大区·11月度调价汇总台账.xlsx', '生成于2025/12/03 · 2.4 MB']
+        ]
+      };
+      return preset[agent[0]] || [
+        ['excel', `${agent[0]}_任务处理清单.xlsx`, '生成于2025/12/03 · 2.4 MB'],
+        ['pdf', `${agent[0]}_专项分析报告.pdf`, '生成于2025/12/03 · 2.4 MB'],
+        ['excel', `${agent[1]}月度汇总台账.xlsx`, '生成于2025/12/03 · 2.4 MB']
+      ];
+    }
+
+    function artifactIconSrc(type) {
+      return type === 'pdf' ? '/agent-skill-market/icons/pdf.svg' : '/agent-skill-market/icons/excel.svg';
+    }
+
+    function renderDetailTabData(agent) {
+      const skills = getAgentSkills(agent);
+      const records = getAgentRecords(agent);
+      const artifacts = getAgentArtifacts(agent);
+
+      detailSkillCount.textContent = `技能·${skills.length}`;
+      detailRecordCount.textContent = `对话记录·${records.length}`;
+      detailArtifactCount.textContent = `输出产物·${artifacts.length}`;
+
+      detailSkills.innerHTML = skills.map(item => `
+        <article class="agent-skill-card">
+          <div class="agent-skill-card__top">
+            <span class="agent-skill-card__icon ${item[1]}">${item[0]}</span>
+            <strong class="agent-skill-card__title">${item[2]}</strong>
+          </div>
+          <p class="agent-skill-card__desc">${item[3]}</p>
+        </article>
+      `).join('');
+
+      detailRecords.innerHTML = records.map(item => `
+        <article class="agent-record-card">
+          <div class="agent-record-card__top">
+            <span class="agent-record-card__title-wrap">
+              <img class="agent-record-card__icon" src="/agent-skill-market/icons/message-record.svg" alt="">
+              <strong class="agent-record-card__title">${item[0]}</strong>
+            </span>
+            <span class="agent-record-card__meta">2025-12-03 14:32 · 对话18轮</span>
+          </div>
+          <p class="agent-record-card__desc">${item[1]}</p>
+        </article>
+      `).join('');
+
+      detailArtifacts.innerHTML = artifacts.map(item => `
+        <article class="agent-artifact-card">
+          <img class="agent-file-icon" src="${artifactIconSrc(item[0])}" alt="">
+          <span class="agent-artifact-card__main">
+            <strong class="agent-artifact-card__title">${item[1]}</strong>
+            <span class="agent-artifact-card__meta">${item[2]}</span>
+          </span>
+        </article>
+      `).join('');
+    }
+
+    function getAgentQuestions(agent) {
+      const preset = {
+        '调价助手': [
+          '西安云璟府滞销超 6 个月的高层房源有哪些？给出让利调价建议',
+          '对比上月均价，武汉光谷项目全盘调价货值会变化多少？',
+          '帮我筛选深圳湾一号 2 栋未售的 3 房，楼层 15 层以上，按 +1.2% 生成调价清单',
+          '帮我检查这批调价方案是否有超备案价的房源'
+        ],
+        '项目成本分析助手': [
+          '查看本月动态成本变化，重点说明超目标科目和项目原因',
+          '对比目标成本差异，按项目和成本科目输出偏差说明',
+          '查武汉项目硬景指标，并输出单方造价与含量对标结果',
+          '复盘本月动态成本超目标科目'
+        ],
+        '合同录入助手': [
+          '帮我识别这份合同附件中的核心字段并生成录入摘要',
+          '检查合同草拟件和附件金额是否一致',
+          '提取付款节点、履约保证金和结算方式',
+          '把合同要素整理成可复核的录入清单'
+        ],
+        '合同审核助手': [
+          '审核总包合同条款风险，标记付款、结算和签证相关异常',
+          '帮我检查这份合同是否存在超范围付款约定',
+          '对比审批规则，列出需要重点关注的合同条款',
+          '生成本次合同审核的风险摘要'
+        ],
+        '付款预审助手': [
+          '检查这批付款申请是否存在账户或发票异常',
+          '对比合同付款节点，识别提前付款风险',
+          '核验付款金额、工程量和现场进度是否匹配',
+          '输出付款预审风险清单'
+        ]
+      };
+      return preset[agent[0]] || [
+        `请帮我处理一个${agent[1]}任务，并给出关键结论`,
+        `结合当前业务数据，生成${agent[0]}的处理建议`,
+        `列出这个任务里需要人工确认的风险点`,
+        `把本次分析整理成可复用的结果摘要`
+      ];
+    }
+
+    function setDetailPanel(panelName) {
+      detailPanel.dataset.panel = panelName;
+      detailTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.panel === panelName));
+    }
+
+    function notifyParentDetailState(state) {
+      if (window.parent === window) return;
+      window.parent.postMessage({
+        source: 'agent-skill-market',
+        modal: 'agent-detail',
+        state
+      }, window.location.origin);
+    }
+
+    function openAgentDetail(index) {
+      const agent = agents[index];
+      if (!agent) return;
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          source: 'agent-skill-market',
+          modal: 'agent-detail',
+          state: 'open',
+          agent: {
+            index,
+            name: agent[0],
+            domain: agent[1],
+            description: agent[2],
+            avatarSrc: assetPath(index),
+            instructions: getAgentInstructions(agent),
+            questions: getAgentQuestions(agent),
+            skills: getAgentSkills(agent),
+            records: getAgentRecords(agent),
+            artifacts: getAgentArtifacts(agent)
+          }
+        }, window.location.origin);
+        return;
+      }
+      lastFocusedElement = document.activeElement;
+      detailAvatar.src = assetPath(index);
+      detailName.textContent = agent[0];
+      detailDomain.textContent = agent[1];
+      detailDesc.textContent = agent[2];
+      detailInstructions.innerHTML = getAgentInstructions(agent).map(text => `<li>${text}</li>`).join('');
+      detailQuestions.innerHTML = getAgentQuestions(agent).map(question => `
+        <button class="agent-detail-question" type="button">
+          <span>${question}</span>
+          <svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M5.25 3.5 8.75 7l-3.5 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      `).join('');
+      renderDetailTabData(agent);
+      setDetailPanel('basic');
+      if (detailCloseTimer !== null) {
+        window.clearTimeout(detailCloseTimer);
+        detailCloseTimer = null;
+      }
+      document.body.classList.remove('detail-modal-closing');
+      document.body.classList.add('detail-modal-open');
+      detailBackdrop.classList.remove('closing');
+      detailBackdrop.classList.add('opening');
+      detailBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      notifyParentDetailState('opening');
+      window.setTimeout(() => {
+        detailBackdrop.classList.remove('opening');
+        detailBackdrop.classList.add('open');
+        notifyParentDetailState('open');
+        detailClose.focus();
+      }, 200);
+    }
+
+    function closeAgentDetail() {
+      if (!detailBackdrop.classList.contains('open') && !detailBackdrop.classList.contains('opening')) return;
+      if (detailCloseTimer !== null) window.clearTimeout(detailCloseTimer);
+      document.body.classList.remove('detail-modal-open');
+      document.body.classList.add('detail-modal-closing');
+      detailBackdrop.classList.remove('opening', 'open');
+      detailBackdrop.classList.add('closing');
+      detailBackdrop.setAttribute('aria-hidden', 'true');
+      notifyParentDetailState('closing');
+      detailCloseTimer = window.setTimeout(() => {
+        detailBackdrop.classList.remove('closing');
+        document.body.classList.remove('detail-modal-closing');
+        document.body.style.overflow = '';
+        detailCloseTimer = null;
+        notifyParentDetailState('closed');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+        }
+      }, 200);
+    }
+
+    function filterAgents() {
+      const keyword = marketSearch.value.trim().toLowerCase();
+      const visible = agents.filter(item => {
+        const categoryMatched = activeCategory === '全部' || item[1] === activeCategory;
+        const searchMatched = !keyword || item.join(' ').toLowerCase().includes(keyword);
+        return categoryMatched && searchMatched;
+      });
+      renderAgentCards(visible);
+    }
+
+    filterAgents();
+
+    grid.addEventListener('click', event => {
+      const target = event.target;
+      const card = target.closest('.agent-card');
+      if (!card) return;
+      event.preventDefault();
+      openAgentDetail(Number(card.dataset.agentIndex));
+    });
+
+    grid.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const card = event.target.closest('.agent-card');
+      if (!card) return;
+      event.preventDefault();
+      openAgentDetail(Number(card.dataset.agentIndex));
+    });
+
+    detailTabs.forEach(tab => {
+      tab.addEventListener('click', () => setDetailPanel(tab.dataset.panel));
+    });
+
+    detailClose.addEventListener('click', closeAgentDetail);
+    detailCancel.addEventListener('click', closeAgentDetail);
+    detailBackdrop.addEventListener('click', event => {
+      if (event.target === detailBackdrop) closeAgentDetail();
+    });
+
+    window.addEventListener('message', event => {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data;
+      if (data && data.source === 'native-shell' && data.action === 'close-agent-detail') {
+        closeAgentDetail();
+      }
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && detailBackdrop.classList.contains('open')) {
+        closeAgentDetail();
+      }
+    });
+
+    document.querySelectorAll('.market-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.market-tab').forEach(item => item.classList.remove('active'));
+        tab.classList.add('active');
+        activeCategory = tab.textContent.trim();
+        filterAgents();
+      });
+    });
+
+    marketSearch.addEventListener('input', filterAgents);
+  </script>
+</body>
+</html>

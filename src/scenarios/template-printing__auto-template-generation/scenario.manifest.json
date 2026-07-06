@@ -1,0 +1,11 @@
+{
+  "agentId": "template-printing",
+  "agentName": "套打助手",
+  "agentDescription": "懂合同样张、套打字段和模板发布规则，协助实施顾问完成字段识别、配置生成和发布前复核。",
+  "avatarKey": "avatar-ai-1",
+  "scenarioName": "上传标准合同生成套打模板",
+  "shortcutLabel": "AI新增模板",
+  "shortcutPrompt": "根据标准合同样张生成套打模板",
+  "shortcutOrder": 1,
+  "dataScope": "scenario-only"
+}

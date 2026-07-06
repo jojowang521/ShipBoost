@@ -1,4 +1,4 @@
-import type { ParsedBusinessDesign, BusinessDesignMeta, ParsedStep, GateNode, StepButton, FAQItem } from './types'
+import type { ParsedBusinessDesign, BusinessDesignMeta, ParsedStep, GateNode, StepButton, GeneratedArtifact, SuggestedQuestion, FAQItem } from './types'
 
 // ─── Frontmatter 解析 ─────────────────────────────────────────────────────────
 
@@ -30,21 +30,95 @@ function extractSection(text: string, heading: string): string {
   return match ? match[1].trim() : ''
 }
 
+function extractTrailingSection(text: string, heading: string): string {
+  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const regex = new RegExp(`${escapedHeading}[^\\n]*\\n([\\s\\S]*)$`)
+  const match = text.match(regex)
+  return match ? match[1].trim() : ''
+}
+
 // ─── 操作按钮解析 ─────────────────────────────────────────────────────────────
 
 function parseActionButtons(text: string): StepButton[] {
   const buttons: StepButton[] = []
-  // 匹配格式：「按钮文字」→ 进入步骤 N  或  「按钮文字」→ 重新开始
+  // 匹配格式：
+  // - 「按钮文字」→ 进入步骤 N
+  // - 「按钮文字」→ 发送「用户消息」→ 进入步骤 N
+  // - 「按钮文字」→ 重新开始
   const lines = text.split('\n')
   for (const line of lines) {
+    if (line.trim() === '无') continue
     const match = line.match(/「([^」]+)」/)
     if (!match) continue
     const label = match[1]
+    const sendMatch = line.match(/发送\s*「([^」]+)」/)
+    const sendText = sendMatch?.[1]?.trim() || label
     const targetMatch = line.match(/步骤\s*(\d+)/)
     const targetStep = targetMatch ? parseInt(targetMatch[1], 10) : 0
-    buttons.push({ label, targetStep })
+    buttons.push({ label, sendText, targetStep })
   }
   return buttons
+}
+
+// ─── 生成物卡片解析 ───────────────────────────────────────────────────────────
+
+function parseGeneratedArtifacts(text: string): GeneratedArtifact[] {
+  const artifacts: GeneratedArtifact[] = []
+  const lines = text.split('\n')
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed.startsWith('-')) continue
+    const raw = trimmed.replace(/^-\s*/, '')
+    const parts = raw.split('|').map(part => part.trim()).filter(Boolean)
+    if (!parts[0]) continue
+    artifacts.push({
+      title: parts[0].replace(/^「|」$/g, ''),
+      meta: parts[1],
+      icon: parts[2],
+    })
+  }
+  return artifacts
+}
+
+// ─── 推荐问题 / 下一步建议解析 ───────────────────────────────────────────────
+
+function parseSuggestedQuestions(text: string): SuggestedQuestion[] {
+  if (!text.trim() || text.trim() === '无') return []
+
+  const suggestions: SuggestedQuestion[] = []
+  const lines = text.split('\n')
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed.startsWith('-')) continue
+
+    const raw = trimmed.replace(/^-\s*/, '').trim()
+    if (!raw) continue
+
+    const quotedWithSend = raw.match(/^「([^」]+)」\s*→\s*(?:发送)?「([^」]+)」/)
+    if (quotedWithSend) {
+      suggestions.push({ label: quotedWithSend[1].trim(), sendText: quotedWithSend[2].trim() })
+      continue
+    }
+
+    const quoted = raw.match(/^「([^」]+)」/)
+    if (quoted) {
+      const label = quoted[1].trim()
+      suggestions.push({ label, sendText: label })
+      continue
+    }
+
+    const arrowParts = raw.split(/\s*→\s*/)
+    if (arrowParts.length >= 2) {
+      const label = arrowParts[0].trim()
+      const sendText = arrowParts.slice(1).join('→').replace(/^发送/, '').replace(/^「|」$/g, '').trim()
+      if (label && sendText) suggestions.push({ label, sendText })
+      continue
+    }
+
+    suggestions.push({ label: raw, sendText: raw })
+  }
+
+  return suggestions
 }
 
 // ─── 确认节点解析 ─────────────────────────────────────────────────────────────
@@ -54,8 +128,12 @@ function parseGateNode(text: string): GateNode | undefined {
 
   const typeMatch = text.match(/\*\*类型\*\*[：:]\s*(.+)/)
   const contentMatch = text.match(/\*\*展示内容\*\*[：:]\s*(.+)/)
+  const contentMarkdownMatch = text.match(/\*\*展示内容说明\*\*[：:]\s*([\s\S]*?)(?=\n\*\*[^*]+\*\*[：:]|$)/)
+  const hideTitleMatch = text.match(/\*\*隐藏标题\*\*[：:]\s*(是|否|true|false)/i)
   const primaryMatch = text.match(/\*\*主操作按钮\*\*[：:]\s*「([^」]+)」/)
   const secondaryMatch = text.match(/\*\*次操作按钮\*\*[：:]\s*「([^」]+)」/)
+  const userReplyMatch = text.match(/\*\*用户回显\*\*[：:]\s*([\s\S]*?)(?=\n\*\*[^*]+\*\*[：:]|$)/)
+  const secondaryUserReplyMatch = text.match(/\*\*次操作用户回显\*\*[：:]\s*([\s\S]*?)(?=\n\*\*[^*]+\*\*[：:]|$)/)
 
   if (!primaryMatch) return undefined
 
@@ -66,8 +144,12 @@ function parseGateNode(text: string): GateNode | undefined {
   return {
     type: typeMatch?.[1]?.trim() || '待确认事项',
     displayContent,
+    displayMarkdown: contentMarkdownMatch?.[1]?.trim(),
+    hideTitle: hideTitleMatch ? /^(是|true)$/i.test(hideTitleMatch[1]) : false,
     primaryButton: primaryMatch[1],
     secondaryButton: secondaryMatch?.[1],
+    userReply: userReplyMatch?.[1]?.trim(),
+    secondaryUserReply: secondaryUserReplyMatch?.[1]?.trim(),
   }
 }
 
@@ -97,9 +179,15 @@ function parseSteps(flowSection: string): ParsedStep[] {
     const buttonsRaw = extractSection(part, '### 操作按钮')
     const actionButtons = parseActionButtons(buttonsRaw)
 
-    const panelDescription = extractSection(part, '### 右侧面板')
+    const artifactsRaw = extractSection(part, '### 生成物卡片')
+    const generatedArtifacts = parseGeneratedArtifacts(artifactsRaw)
 
-    return { number, stepId, title, trigger, agentLines, gateNode, actionButtons, panelDescription }
+    const suggestionsRaw = extractSection(part, '### 推荐问题/下一步建议')
+    const suggestedQuestions = parseSuggestedQuestions(suggestionsRaw)
+
+    const panelDescription = extractTrailingSection(part, '### 右侧面板')
+
+    return { number, stepId, title, trigger, agentLines, gateNode, actionButtons, generatedArtifacts, suggestedQuestions, panelDescription }
   }).filter(s => s !== null) as ParsedStep[]
 }
 

@@ -9,12 +9,16 @@ export const initialState: AppState = {
   uploadedFileName: null,
   currentTaskTitle: '新任务',
   currentScenario: null,
-  currentAgentName: 'AI 助手',
-  currentAvatarKey: 'avatar-ai-1',
+  currentAgentName: 'Noma 助手',
+  currentAvatarKey: 'noma_ai',
   homeAgentId: null,
   openPreview: false,
   openPreviewReadonly: false,
   openPreviewTargetPhase: null,
+  openPreviewTargetArtifactTitle: null,
+  openPreviewDelayMs: 0,
+  openPreviewScrollBeforeOpen: false,
+  closePreviewRequestId: 0,
   scenarioStates: {},
 }
 
@@ -26,6 +30,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, phase: action.phase }
     case 'ADD_MESSAGE':
       return { ...state, messages: [...state.messages, action.message] }
+    case 'SET_MESSAGES':
+      return { ...state, messages: action.messages }
+    case 'REPLACE_MESSAGES':
+      return {
+        ...state,
+        messages: action.messages,
+        isStreaming: action.isStreaming ?? state.isStreaming,
+      }
     case 'UPDATE_MESSAGE':
       return {
         ...state,
@@ -57,6 +69,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         currentAgentName: action.agentName ?? state.currentAgentName,
         currentAvatarKey: action.avatarKey ?? state.currentAvatarKey,
       }
+    case 'SET_HOME_AGENT':
+      return { ...state, homeAgentId: action.agentId }
     case 'SWITCH_SCENARIO':
       // 原子切换：一次 dispatch 完成 RESET + 场景初始化，杜绝中间态渲染
       return {
@@ -66,8 +80,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         currentAgentName: action.agentName,
         currentAvatarKey: action.avatarKey,
         phase: action.initialPhase,
-        currentTaskTitle: action.message.content.slice(0, 10) || '新任务',
+        currentTaskTitle: action.taskTitle || action.message.content || '新任务',
         messages: [action.message],
+      }
+    case 'START_TASK_REPLAY':
+      return {
+        ...initialState,
+        shellMode: state.shellMode,
+        phase: 'task-replay',
+        currentScenario: action.scenarioId ?? null,
+        currentAgentName: action.agentName,
+        currentAvatarKey: action.avatarKey,
+        currentTaskTitle: action.title,
+        messages: action.messages,
       }
     case 'UPDATE_MESSAGE_PROGRESS':
       return {
@@ -77,9 +102,36 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ),
       }
     case 'OPEN_PREVIEW':
-      return { ...state, openPreview: true, openPreviewReadonly: action.readonly, openPreviewTargetPhase: action.targetPhase ?? null }
+      return {
+        ...state,
+        openPreview: true,
+        openPreviewReadonly: action.readonly,
+        openPreviewTargetPhase: action.targetPhase ?? null,
+        openPreviewTargetArtifactTitle: action.targetArtifactTitle ?? null,
+        openPreviewDelayMs: action.delayMs ?? 0,
+        openPreviewScrollBeforeOpen: !!action.scrollBeforeOpen,
+      }
     case 'RESET_OPEN_PREVIEW':
-      return { ...state, openPreview: false, openPreviewReadonly: false, openPreviewTargetPhase: null }
+      return {
+        ...state,
+        openPreview: false,
+        openPreviewReadonly: false,
+        openPreviewTargetPhase: null,
+        openPreviewTargetArtifactTitle: null,
+        openPreviewDelayMs: 0,
+        openPreviewScrollBeforeOpen: false,
+      }
+    case 'CLOSE_PREVIEW':
+      return {
+        ...state,
+        openPreview: false,
+        openPreviewReadonly: false,
+        openPreviewTargetPhase: null,
+        openPreviewTargetArtifactTitle: null,
+        openPreviewDelayMs: 0,
+        openPreviewScrollBeforeOpen: false,
+        closePreviewRequestId: state.closePreviewRequestId + 1,
+      }
     case 'SET_SCENARIO_STATE':
       return {
         ...state,

@@ -21,8 +21,11 @@
   --primary-foreground: #ffffff;
 
   /* 强调色 */
-  --accent: #5147FF;
-  --accent-light: #EBEBFF;
+  --accent: #4668FF;
+  --accent-hover: #3456F0;
+  --accent-active: #2447D8;
+  --accent-light: #E6EBFF;
+  --accent-border: #C7D1FF;
   --accent-foreground: #ffffff;
 
   /* 卡片 */
@@ -37,7 +40,7 @@
   --destructive-foreground: #ffffff;
 
   /* 焦点环 */
-  --ring: #5147FF;
+  --ring: #4668FF;
 
   /* ─── 文字颜色（统一规范，以 --text-* 为准）──── */
   --text-primary:   #333333;
@@ -69,6 +72,7 @@
   --line-height-base:  1.5;   /* 段落、正文、AI 回复、表单 */
 
   /* ─── 布局尺寸 ─────────────────────────────────── */
+  --global-topnav-height: 52px;
   --header-height: 56px;
   --sidebar-width: 240px;
   --sidebar-collapsed-width: 64px;
@@ -81,8 +85,9 @@
 
   /* ─── AI 工作台展示层所需额外 tokens ──────────── */
   /* 与 cost-ai-main 保持一致，供迁入组件使用 */
-  --primary-light: #EBF2FF;
-  --primary-hover: #003EB3;
+  --primary-light: #E6EBFF;
+  --primary-hover: #3456F0;
+  --primary-active: #2447D8;
   --success: #00A870;
   --warning: #ED7B2F;
   --danger: #E34D59;
@@ -128,10 +133,10 @@
   --bg-line: var(--border-subtle);
 
   /* 品牌色 */
-  --brand-500: #645BFF;
+  --brand-500: #4668FF;
   --brand-600: var(--accent);
-  --brand-700: #4740E0;
-  --brand-gradient-text: linear-gradient(90deg, #646efc 5.95%, #dd2d85);
+  --brand-700: #2447D8;
+  --brand-gradient-text: linear-gradient(90deg, #4668FF 5.95%, #3456F0);
   --blue-500: #266EFF;
   --blue-600: #1677FF;
 

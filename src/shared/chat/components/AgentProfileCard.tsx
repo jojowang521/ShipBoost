@@ -12,14 +12,19 @@ const AGENT_PROFILES: Record<string, {
   color: string
 }> = {
   default: {
-    name: '成本请款专员', title: '付款申请审核',
-    desc: '负责工程付款申请资料识别、附件完整性检查、金额核对和提交前智能预审。',
-    tags: ['付款申请', '附件检查', '智能预审'], color: '#5147FF',
+    name: 'Noma 助手', title: '默认助手',
+    desc: '负责聚合业务知识、数据查询、流程建议和日常任务协同。',
+    tags: ['业务问答', '任务协同', '助手推荐'], color: '#4668FF',
+  },
+  noma_ai: {
+    name: 'Noma 助手', title: '默认助手',
+    desc: '负责聚合业务知识、数据查询、流程建议和日常任务协同。',
+    tags: ['业务问答', '任务协同', '助手推荐'], color: '#4668FF',
   },
   payment_specialist: {
     name: '成本请款专员', title: '付款申请审核',
     desc: '负责工程付款申请资料识别、附件完整性检查、金额核对和提交前智能预审。',
-    tags: ['付款申请', '金额核对', '审批跟进'], color: '#5147FF',
+    tags: ['付款申请', '附件检查', '智能预审'], color: '#4668FF',
   },
 }
 

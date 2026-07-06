@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自动化任务 - 装修标底合理性审核</title>
+    <link rel="stylesheet" href="./replay.css" />
+  </head>
+  <body>
+    <main class="replay-page replay-page--automation" data-page="automation">
+      <header class="replay-header">
+        <div>
+          <p class="replay-kicker">自动化任务</p>
+          <h1 id="automationTitle">控制价标底智能审核</h1>
+        </div>
+        <button id="closeAutomation" class="replay-close" aria-label="关闭">×</button>
+      </header>
+
+      <section class="replay-content" aria-live="polite">
+        <div id="automationTimeline" class="replay-timeline"></div>
+      </section>
+
+      <footer id="automationControls" class="replay-controls">
+        <div id="automationStatus" class="replay-round-status">正在自动提交任务</div>
+        <button id="restartAutomation" class="replay-action">↺ 重新执行</button>
+      </footer>
+    </main>
+
+    <script type="module" src="./automation.js"></script>
+  </body>
+</html>

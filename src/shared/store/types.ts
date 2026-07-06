@@ -7,6 +7,8 @@ export type RichComponentType =
   | 'GenericPanel'
   | 'ConfirmAction'
   | 'PreviewTriggerCard'
+  | 'ArtifactStackCard'
+  | 'TaskReplayDivider'
   | 'ScenarioSelectCard'
 
 export interface ChatMessage {
@@ -20,7 +22,8 @@ export interface ChatMessage {
   appendedComponent?: RichComponentType
   appendedComponentProps?: Record<string, unknown>
   appendedComponentHandled?: boolean
-  attachment?: { name: string; size?: string }
+  suggestionCards?: Array<{ label: string; sendText: string }>
+  attachment?: { name: string; size?: string; type?: 'pdf' | 'word' | 'excel' | 'xml' | 'file' }
   error?: string
   progress?: number
   hidden?: boolean
@@ -54,6 +57,10 @@ export interface AppState {
   openPreview: boolean
   openPreviewReadonly: boolean
   openPreviewTargetPhase: string | null
+  openPreviewTargetArtifactTitle: string | null
+  openPreviewDelayMs: number
+  openPreviewScrollBeforeOpen: boolean
+  closePreviewRequestId: number
   // 各场景专属状态容器（sub-object pattern）
   scenarioStates: Record<string, unknown>
 }
@@ -64,16 +71,21 @@ export type AppAction =
   | { type: 'SET_SHELL_MODE'; shellMode: 'native' | 'sidebar' }
   | { type: 'SET_PHASE'; phase: string }
   | { type: 'ADD_MESSAGE'; message: ChatMessage }
+  | { type: 'SET_MESSAGES'; messages: ChatMessage[] }
   | { type: 'UPDATE_MESSAGE'; id: string; updates: Partial<ChatMessage> }
+  | { type: 'REPLACE_MESSAGES'; messages: ChatMessage[]; isStreaming?: boolean }
   | { type: 'APPEND_STREAMING_TEXT'; messageId: string; text: string }
   | { type: 'SET_STREAMING'; isStreaming: boolean }
   | { type: 'SET_PENDING_QUESTION'; question: string | null }
   | { type: 'SET_UPLOADED_FILE'; fileName: string | null }
   | { type: 'SET_CURRENT_TASK_TITLE'; title: string }
   | { type: 'SET_CURRENT_SCENARIO'; scenario: string | null; agentName?: string; avatarKey?: string }
-  | { type: 'SWITCH_SCENARIO'; scenarioId: string; agentName: string; avatarKey: string; initialPhase: string; message: ChatMessage }
+  | { type: 'SET_HOME_AGENT'; agentId: string | null }
+  | { type: 'SWITCH_SCENARIO'; scenarioId: string; agentName: string; avatarKey: string; initialPhase: string; message: ChatMessage; taskTitle?: string }
+  | { type: 'START_TASK_REPLAY'; title: string; agentName: string; avatarKey: string; messages: ChatMessage[]; scenarioId?: string }
   | { type: 'UPDATE_MESSAGE_PROGRESS'; messageId: string; progress: number }
-  | { type: 'OPEN_PREVIEW'; readonly: boolean; targetPhase?: string }
+  | { type: 'OPEN_PREVIEW'; readonly: boolean; targetPhase?: string; targetArtifactTitle?: string; delayMs?: number; scrollBeforeOpen?: boolean }
   | { type: 'RESET_OPEN_PREVIEW' }
+  | { type: 'CLOSE_PREVIEW' }
   | { type: 'SET_SCENARIO_STATE'; scenarioId: string; state: unknown }
   | { type: 'RESET'; homeAgentId?: string | null }

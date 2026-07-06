@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   BarChart3,
   Bot,
@@ -94,6 +94,17 @@ const categories: Category[] = [
         embedUrl: '/embedded/approval-form/index.html',
       },
       {
+        name: '流程助手',
+        category: '公共助手',
+        helper: '覆盖流程调试和流程维护，生成分支用例、执行计划和影响分析。',
+        problem: '流程配置、调试和责任人维护分散在不同页面，人工排查路径长、影响范围难判断。',
+        value: '在 Noma 独立工作台中统一演示流程调试和流程维护能力，帮助顾问快速生成用例和维护方案。',
+        demoPrompt: '为采购审批流程生成全分支调试用例，或将张三的所有流程转交给李四',
+        demoOutput: ['识别流程节点和分支条件', '生成调试用例或维护执行计划', '输出影响范围、风险等级和审计记录'],
+        icon: Workflow,
+        embedUrl: '/?view=noma&agent=process-assistant',
+      },
+      {
         name: '流程助手（流程调试）',
         category: '公共助手',
         helper: '自动梳理流程路径并生成全分支调试用例。',
@@ -156,13 +167,13 @@ const categories: Category[] = [
       {
         name: '套打助手',
         category: '公共助手',
-        helper: '上传标准样板后识别字段并生成套打模板配置。',
-        problem: '套打模板配置复杂，制作和反馈周期长。',
-        value: '上传标准样板后自动生成套打模板，大幅提升模板制作效率。',
-        demoPrompt: '根据这份合同样张生成套打模板',
-        demoOutput: ['识别 23 个占位字段', '生成模板结构和字段映射', '提示 2 个需人工确认字段'],
+        helper: '在最新版 Noma 独立工作台中演示套打助手完整流程。',
+        problem: '旧套打 demo 与新版 Noma 工作台分离，无法统一展示对话内选择、字段识别和右侧工作台预览。',
+        value: '保留原有套打业务数据与流程，迁移为 Noma 独立模式的对话卡片和工作台预览。',
+        demoPrompt: '上传租赁合同样张并生成套打模板',
+        demoOutput: ['对话内选择套打数据', '识别 35 个替换字段', '在线预览租赁合同并支持字段替换追问'],
         icon: FileCheck2,
-        embedUrl: '/embedded/print-template/index.html?v=20260603-print-home-title-fix',
+        embedUrl: '/?view=noma&agent=template-printing',
       },
     ],
   },
@@ -173,16 +184,15 @@ const categories: Category[] = [
     icon: Database,
     assistants: [
       {
-        name: '权限检查助手',
-        navLabel: '权限&套打&流程助手',
+        name: '权限助手',
         category: '公共助手',
-        helper: '面向权限配置、授权调整和异常排查，辅助管理员完成权限检查。',
+        helper: '面向功能权限、公司数据权限和项目数据权限，辅助管理员生成最小授权方案。',
         problem: '权限配置项多、角色关系复杂，管理员调整权限时容易遗漏影响范围。',
-        value: '嵌入权限检查 demo，支持直接预览权限检查助手的完整交互与最新能力。',
-        demoPrompt: '帮我检查并调整武汉项目合同台账权限',
-        demoOutput: ['定位用户与角色关系', '识别权限缺口和冲突项', '生成授权调整建议'],
+        value: '在 Noma 独立工作台中完成权限查询、功能权限诊断、公司项目数据权限诊断和授权方案确认。',
+        demoPrompt: '查询李四现在有哪些权限，说明角色、公司和项目数据权限',
+        demoOutput: ['定位用户角色和权限来源', '识别功能权限与数据权限差异', '生成最小授权调整方案'],
         icon: ShieldCheck,
-        embedUrl: '/embedded/permission-check/index.html?shell=sidebar&v=20260609-combo-md-table',
+        embedUrl: '/?view=noma&agent=permission-assistant',
       },
       {
         name: '组织架构调整助手',
@@ -220,9 +230,15 @@ const categories: Category[] = [
 const assistantDirectory = [
   '消息待办技能',
   '文档问答助手',
-  '权限检查助手',
+  '套打助手',
+  '流程助手',
+  '权限助手',
   '执行AI预审',
 ]
+
+const assistantNameAliases: Record<string, string> = {
+  '套打助手独立模式': '套打助手',
+}
 
 const allAssistants = categories.flatMap(category =>
   category.assistants.map(assistant => ({
@@ -248,8 +264,9 @@ function withFreshParam(rawUrl: string): string {
 function App() {
   const [activeAssistantName, setActiveAssistantName] = useState(() => {
     const assistantFromUrl = new URLSearchParams(window.location.search).get('assistant')
-    return allAssistants.some(assistant => assistant.name === assistantFromUrl)
-      ? assistantFromUrl as string
+    const normalizedAssistantFromUrl = assistantFromUrl ? (assistantNameAliases[assistantFromUrl] || assistantFromUrl) : null
+    return allAssistants.some(assistant => assistant.name === normalizedAssistantFromUrl)
+      ? normalizedAssistantFromUrl as string
       : directoryAssistants[0].name
   })
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
@@ -259,6 +276,15 @@ function App() {
     [activeAssistantName]
   )
   const activeAssistantLabel = activeAssistant.navLabel || activeAssistant.name
+
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const assistantFromUrl = url.searchParams.get('assistant')
+    if (assistantFromUrl && assistantNameAliases[assistantFromUrl]) {
+      url.searchParams.set('assistant', assistantNameAliases[assistantFromUrl])
+      window.history.replaceState(null, '', url)
+    }
+  }, [])
 
   const handleAssistantChange = (assistantName: string) => {
     setActiveAssistantName(assistantName)

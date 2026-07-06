@@ -43,6 +43,7 @@ interface ScenarioManifest {
   avatarKey?: string
   scenarioName?: string
   shortcutLabel?: string
+  shortcutPrompt?: string
   shortcutOrder?: number
   hidden?: boolean
 }
@@ -131,6 +132,7 @@ const scenarioRegistry: ScenarioModule[] = [
     agentDescription: manifest.agentDescription || module.agentDescription || doc?.meta?.agentDescription || '',
     avatarKey,
     shortcutLabel: toShortcutLabel(manifest.shortcutLabel || module.shortcutLabel || scenarioName),
+    shortcutPrompt: manifest.shortcutPrompt || module.shortcutPrompt,
     shortcutOrder: manifest.shortcutOrder ?? module.shortcutOrder ?? 999,
     hidden: manifest.hidden ?? module.hidden,
   }
@@ -143,6 +145,12 @@ function buildAgentProfiles(): AgentProfile[] {
     const list = groups.get(scenario.agentId) || []
     list.push(scenario)
     groups.set(scenario.agentId, list)
+  }
+
+  const agentOrder: Record<string, number> = {
+    'template-printing': 1,
+    'process-assistant': 2,
+    'permission-assistant': 3,
   }
 
   return Array.from(groups.entries()).map(([agentId, scenarios]) => {
@@ -160,8 +168,12 @@ function buildAgentProfiles(): AgentProfile[] {
       homeChips: sorted.slice(0, 4).map(s => ({
         label: toShortcutLabel(s.shortcutLabel || s.label),
         scenarioId: s.id,
+        prompt: s.shortcutPrompt,
       })),
     }
+  }).sort((a, b) => {
+    const orderDiff = (agentOrder[a.agentId] ?? 999) - (agentOrder[b.agentId] ?? 999)
+    return orderDiff !== 0 ? orderDiff : a.agentName.localeCompare(b.agentName, 'zh-CN')
   })
 }
 

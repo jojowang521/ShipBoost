@@ -1,8 +1,11 @@
 import type { ParsedBusinessDesign, ParsedStep } from './types'
+import React from 'react'
 import type { ScenarioModule, ScenarioContext, ButtonConfig } from '../scenarios/types'
 import { genMessageId, streamFakeText } from '../shared/utils'
 import GenericPanel from './components/GenericPanel'
 import GenericGateCard from './components/GenericGateCard'
+import TabbedArtifactPanel from './components/TabbedArtifactPanel'
+import StandardControlPriceWorkbench from './components/StandardControlPriceWorkbench'
 
 // ─── phase 推导 ───────────────────────────────────────────────────────────────
 
@@ -31,17 +34,44 @@ function isAutoTrigger(step: ParsedStep): boolean {
 // ─── 核心辅助：播放步骤 AI 台词 + 在流式结束后挂载卡片 ────────────────────────
 // 这是唯一负责"说台词+挂卡片"的地方，onPhaseEnter / handleSend 都复用它
 
-function playStepResponse(step: ParsedStep, dispatch: ScenarioContext['dispatch']): void {
-  if (!step.agentLines.trim()) return
+const playedStepResponseKeys = new Set<string>()
 
+function getStepResponseKey(step: ParsedStep, ctx: ScenarioContext): string {
+  const state = ctx.stateRef.current
+  const firstUserMessage = state.messages?.find((msg: any) => msg.role === 'user')
+  const sessionKey = firstUserMessage?.id || firstUserMessage?.timestamp || 'no-session'
+  return `${state.currentScenario || 'unknown'}:${sessionKey}:${step.stepId}`
+}
+
+function playStepResponse(step: ParsedStep, ctx: ScenarioContext): void {
+  if (!step.agentLines.trim()) return
+  const responseKey = getStepResponseKey(step, ctx)
+  if (playedStepResponseKeys.has(responseKey)) return
+  playedStepResponseKeys.add(responseKey)
+
+  const { dispatch } = ctx
   const msgId = genMessageId()
   dispatch({ type: 'ADD_MESSAGE', message: { id: msgId, role: 'assistant', content: '', timestamp: Date.now() } })
 
-  const hasPanel =
-    step.panelDescription.trim() !== '' &&
-    !step.panelDescription.trim().startsWith('暂无')
+  const hasPanel = hasPanelDescription(step)
+  if (step.generatedArtifacts.length === 0) {
+    dispatch({ type: 'CLOSE_PREVIEW' })
+  }
 
   const afterStream = () => {
+    if (step.suggestedQuestions.length > 0) {
+      dispatch({
+        type: 'UPDATE_MESSAGE',
+        id: msgId,
+        updates: {
+          suggestionCards: step.suggestedQuestions.map(item => ({
+            label: item.label,
+            sendText: item.sendText,
+          })),
+        },
+      })
+    }
+
     if (step.gateNode) {
       // 有确认节点 → GateCard（含按钮），不再叠加 PreviewTriggerCard
       const gateId = genMessageId()
@@ -56,25 +86,29 @@ function playStepResponse(step: ParsedStep, dispatch: ScenarioContext['dispatch'
           componentProps: { gateNode: step.gateNode, stepId: step.stepId },
         },
       })
-    } else if (hasPanel) {
-      // 无确认节点但有面板内容 → PreviewTriggerCard，用户点击后打开右侧面板
-      const preview = getPreviewMeta(step)
-      const triggerId = genMessageId()
-      dispatch({
-        type: 'ADD_MESSAGE',
-        message: {
-          id: triggerId,
-          role: 'assistant',
-          content: '',
-          timestamp: Date.now(),
-          component: 'PreviewTriggerCard' as any,
-          componentProps: {
-            title: preview.title,
-            meta: preview.meta,
-            targetPhase: step.stepId,
+    } else if (step.generatedArtifacts.length > 0) {
+      for (const artifact of step.generatedArtifacts) {
+        const triggerId = genMessageId()
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            id: triggerId,
+            role: 'assistant',
+            content: '',
+            timestamp: Date.now(),
+            component: 'PreviewTriggerCard' as any,
+            componentProps: {
+              title: artifact.title,
+              meta: artifact.meta,
+              icon: artifact.icon,
+              targetPhase: step.stepId,
+            },
           },
-        },
-      })
+        })
+      }
+      if (hasPanel) {
+        dispatch({ type: 'RESET_OPEN_PREVIEW' })
+      }
     }
   }
 
@@ -97,6 +131,16 @@ function stripPreviewMeta(description: string): string {
     .trim()
 }
 
+function hasPanelDescription(step: ParsedStep): boolean {
+  const description = step.panelDescription.trim()
+  return description !== '' && description !== '---' && !description.startsWith('暂无')
+}
+
+function isControlPriceWorkbench(step: ParsedStep): boolean {
+  const marker = `${step.title}\n${step.panelDescription}\n${step.generatedArtifacts.map(item => item.title).join('\n')}`
+  return marker.includes('控制价审核') || marker.includes('招标控制价') || marker.includes('组价')
+}
+
 // ─── onPhaseEnter：进入阶段时决定"直接播台词"还是"发引导语等待用户" ─────────────
 
 function onPhaseEnterForDesign(
@@ -111,7 +155,7 @@ function onPhaseEnterForDesign(
 
   if (isAutoTrigger(step)) {
     // 自动触发：直接播放 AI 台词
-    playStepResponse(step, dispatch)
+    playStepResponse(step, ctx)
   } else {
     // 等待模式：发送触发方式字段的引导语，等待用户输入
     if (step.trigger.trim()) {
@@ -139,7 +183,23 @@ function handleSendForDesign(
     message: { id: genMessageId(), role: 'user', content: text, timestamp: Date.now() },
   })
 
-  // 优先级 1：FAQ 关键词匹配 → 直接回复，不推进步骤
+  // 优先级 1：当前步骤操作按钮关键词匹配 → 推进到目标步骤（onPhaseEnter 接手后续）
+  const currentStep = findStep(doc.steps, phase)
+  const matchedBtn = currentStep?.actionButtons.find(b =>
+    text.includes(b.label) ||
+    b.label.includes(text.slice(0, 4)) ||
+    text.includes(b.sendText) ||
+    b.sendText.includes(text.slice(0, 4))
+  )
+  if (matchedBtn && currentStep) {
+    const targetPhase = matchedBtn.targetStep > 0
+      ? `step_${matchedBtn.targetStep}`
+      : findNextPhase(doc.steps, phase)
+    dispatch({ type: 'SET_PHASE', phase: targetPhase })
+    return
+  }
+
+  // 优先级 2：FAQ 关键词匹配 → 直接回复，不推进步骤
   const matched = doc.faq.find(f =>
     f.question !== '与任务无关的问题' &&
     (text.includes(f.question.slice(0, 6)) || f.question.includes(text.slice(0, 6)))
@@ -151,22 +211,9 @@ function handleSendForDesign(
     return
   }
 
-  // 优先级 2：操作按钮关键词匹配 → 推进到目标步骤（onPhaseEnter 接手后续）
-  const currentStep = findStep(doc.steps, phase)
-  const matchedBtn = currentStep?.actionButtons.find(b =>
-    text.includes(b.label) || b.label.includes(text.slice(0, 4))
-  )
-  if (matchedBtn && currentStep) {
-    const targetPhase = matchedBtn.targetStep > 0
-      ? `step_${matchedBtn.targetStep}`
-      : findNextPhase(doc.steps, phase)
-    dispatch({ type: 'SET_PHASE', phase: targetPhase })
-    return
-  }
-
   // 优先级 3：当前步骤处于"等待用户输入"模式 → 用户任意发消息即触发 AI 台词
   if (currentStep && !isAutoTrigger(currentStep)) {
-    playStepResponse(currentStep, dispatch)
+    playStepResponse(currentStep, ctx)
     return
   }
 
@@ -200,12 +247,13 @@ function handleComponentActionForDesign(
     const currentPhase = stateRef.current.phase as string
     const currentStep = findStep(doc.steps, currentPhase)
     if (currentStep?.gateNode?.primaryButton) {
+      const label = (payload.label as string) || currentStep.gateNode.primaryButton
       dispatch({
         type: 'ADD_MESSAGE',
         message: {
           id: genMessageId(),
           role: 'user',
-          content: currentStep.gateNode.primaryButton,
+          content: label,
           timestamp: Date.now(),
         },
       })
@@ -224,12 +272,13 @@ function handleComponentActionForDesign(
     const currentPhase = stateRef.current.phase as string
     const currentStep = findStep(doc.steps, currentPhase)
     if (currentStep?.gateNode?.secondaryButton) {
+      const label = (payload.label as string) || currentStep.gateNode.secondaryButton
       dispatch({
         type: 'ADD_MESSAGE',
         message: {
           id: genMessageId(),
           role: 'user',
-          content: currentStep.gateNode.secondaryButton,
+          content: label,
           timestamp: Date.now(),
         },
       })
@@ -272,7 +321,7 @@ function actionButtonsMapForDesign(
 
   return step.actionButtons.map((btn, idx) => ({
     label: btn.label,
-    value: btn.label,
+    value: btn.sendText,
     variant: idx === 0 ? 'primary' : 'outline',
   }))
 }
@@ -287,13 +336,31 @@ export function createScenarioFromDesign(
 
   const panelMap: Record<string, React.ComponentType<any>> = {}
   for (const step of doc.steps) {
+    if (!hasPanelDescription(step)) continue
     const description = stripPreviewMeta(step.panelDescription)
     const preview = getPreviewMeta(step)
-    panelMap[step.stepId] = (props: any) => GenericPanel({ ...props, description, title: preview.title })
+    if (isControlPriceWorkbench(step)) {
+      const ControlPricePanel = (props: any) => (
+        React.createElement(StandardControlPriceWorkbench, { ...props, description, artifacts: step.generatedArtifacts })
+      )
+      ;(ControlPricePanel as any).hasInternalClose = true
+      panelMap[step.stepId] = ControlPricePanel
+    } else if (step.generatedArtifacts.length > 1) {
+      const ArtifactPanel = (props: any) => (
+        React.createElement(TabbedArtifactPanel, { ...props, description, artifacts: step.generatedArtifacts })
+      )
+      ;(ArtifactPanel as any).hasInternalClose = true
+      panelMap[step.stepId] = ArtifactPanel
+    } else {
+      panelMap[step.stepId] = (props: any) => (
+        React.createElement(GenericPanel, { ...props, description, title: preview.title })
+      )
+    }
   }
 
   const panelTitleMap: Record<string, string> = {}
   for (const step of doc.steps) {
+    if (!hasPanelDescription(step)) continue
     const preview = getPreviewMeta(step)
     panelTitleMap[step.stepId] = preview.title
   }

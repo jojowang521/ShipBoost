@@ -1,0 +1,11 @@
+{
+  "agentId": "process-assistant",
+  "agentName": "流程助手",
+  "agentDescription": "面向流程配置、流程调试和流程维护，自动识别路径、节点、责任人和规则影响。",
+  "avatarKey": "avatar-ai-2",
+  "scenarioName": "采购审批流程调试",
+  "shortcutLabel": "调试采购流程",
+  "shortcutPrompt": "为采购审批流程生成全分支调试用例",
+  "shortcutOrder": 1,
+  "dataScope": "scenario-only"
+}

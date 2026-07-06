@@ -13,11 +13,19 @@ export function FoldIcon({ mirrored = false, className }: Props) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
+      focusable="false"
       style={mirrored ? { transform: 'scaleX(-1)' } : undefined}
     >
-      <path fillRule="evenodd" clipRule="evenodd" d="M2.6 2C1.93726 2 1.4 2.53726 1.4 3.2V12.8C1.4 13.4627 1.93726 14 2.6 14H12.2C12.8627 14 13.4 13.4627 13.4 12.8V3.2C13.4 2.53726 12.8627 2 12.2 2H2.6Z" stroke="#999999" strokeWidth="1.2" strokeLinejoin="round" />
-      <path d="M5.4 2V14" stroke="#999999" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M8.66602 10L10.666 8L8.66602 6" stroke="#999999" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3.2 2C2.53726 2 2 2.53726 2 3.2V12.8C2 13.4627 2.53726 14 3.2 14H12.8C13.4627 14 14 13.4627 14 12.8V3.2C14 2.53726 13.4627 2 12.8 2H3.2Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path d="M6 2V14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10.666 10L8.66602 8L10.666 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
