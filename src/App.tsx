@@ -94,8 +94,7 @@ const categories: Category[] = [
         embedUrl: '/embedded/approval-form/index.html',
       },
       {
-        name: '流程助手',
-        navLabel: '任务管理助手',
+        name: '任务管理助手',
         category: '公共助手',
         helper: '统一承载套打、流程和权限相关任务，在 Noma 工作台中按问题进入对应业务对话流。',
         problem: '套打、流程、权限能力分散在多个独立入口，演示和协作修改时需要在不同 demo 之间切换。',
@@ -229,14 +228,17 @@ const categories: Category[] = [
 ]
 
 const assistantDirectory = [
-  '流程助手',
+  '任务管理助手',
   '消息待办技能',
   '文档问答助手',
   '执行AI预审',
 ]
 
 const assistantNameAliases: Record<string, string> = {
-  '套打助手独立模式': '套打助手',
+  '流程助手': '任务管理助手',
+  '套打助手': '任务管理助手',
+  '权限助手': '任务管理助手',
+  '套打助手独立模式': '任务管理助手',
 }
 
 const allAssistants = categories.flatMap(category =>
