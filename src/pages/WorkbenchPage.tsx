@@ -29,6 +29,7 @@ function matchScenario(text: string, scenarios: ScenarioModule[]): ScenarioModul
   if (scenarios.length === 1) return scenarios[0]  // 只有一个场景直接进入
 
   const lower = text.toLowerCase()
+  const normalizedText = normalizeIntentText(text)
 
   // 1. 场景名称匹配（含子串）
   const byLabel = scenarios.find(s =>
@@ -36,14 +37,24 @@ function matchScenario(text: string, scenarios: ScenarioModule[]): ScenarioModul
   )
   if (byLabel) return byLabel
 
-  // 2. AI 专员名称匹配，命中后进入该专员的第一个场景
+  // 2. 快捷入口匹配：中文自然语言没有空格，优先使用 manifest 的标准 prompt/label。
+  const byShortcut = scenarios.find(s => {
+    const shortcutTexts = [s.shortcutPrompt, s.shortcutLabel].filter(Boolean) as string[]
+    return shortcutTexts.some(value => {
+      const normalizedValue = normalizeIntentText(value)
+      return normalizedValue && (normalizedText.includes(normalizedValue) || normalizedValue.includes(normalizedText))
+    })
+  })
+  if (byShortcut) return byShortcut
+
+  // 3. AI 专员名称匹配，命中后进入该专员的第一个场景
   const byAgentName = scenarios.find(s =>
     s.agentName &&
     (lower.includes(s.agentName.toLowerCase()) || s.agentName.toLowerCase().includes(lower.slice(0, 4)))
   )
   if (byAgentName) return byAgentName
 
-  // 3. AI专员简介关键词匹配
+  // 4. AI专员简介关键词匹配
   const byDesc = scenarios.find(s => {
     const doc = (s as any)._doc
     const desc: string = s.agentDescription || doc?.meta?.agentDescription || doc?.description || ''
@@ -51,11 +62,16 @@ function matchScenario(text: string, scenarios: ScenarioModule[]): ScenarioModul
   })
   if (byDesc) return byDesc
 
-  // 4. step_1 触发方式关键词匹配
+  // 5. step_1 触发方式关键词匹配
   const byTrigger = scenarios.find(s => {
     const doc = (s as any)._doc
     const trigger: string = doc?.steps?.[0]?.trigger || ''
-    return trigger && lower.split(/[\s，。？！,?.!]+/).some(w => w.length >= 2 && trigger.toLowerCase().includes(w))
+    const normalizedTrigger = normalizeIntentText(trigger)
+    return Boolean(
+      normalizedTrigger &&
+      (normalizedText.includes(normalizedTrigger) || normalizedTrigger.includes(normalizedText)) ||
+      (trigger && lower.split(/[\s，。？！,?.!]+/).some(w => w.length >= 2 && trigger.toLowerCase().includes(w)))
+    )
   })
   if (byTrigger) return byTrigger
 
@@ -1487,12 +1503,26 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       return
     }
 
+    const urlAgentId = new URLSearchParams(window.location.search).get('agent')
+    const urlAgentIsKnown = NATIVE_ASSISTANT_EXPERIENCES.some(assistant => assistant.agentId === urlAgentId)
+    const activeComposerAgentId = urlAgentIsKnown && urlAgentId && urlAgentId !== 'noma-ai'
+      ? urlAgentId
+      : selectedComposerAgent.agentId !== 'noma-ai'
+      ? selectedComposerAgent.agentId
+      : homeExperience.agentId
+    const scopedScenarios = activeComposerAgentId && activeComposerAgentId !== 'noma-ai'
+      ? scenarios.filter(scenario => scenario.agentId === activeComposerAgentId)
+      : scenarios
+    const candidateScenarios = scopedScenarios.length > 0 ? scopedScenarios : scenarios
+
     const mentionTarget = matchHomeMentionScenario(trimmed)
-    const target = mentionTarget ? getScenario(mentionTarget.scenarioId) : matchScenario(trimmed, scenarios)
+    const target = mentionTarget
+      ? getScenario(mentionTarget.scenarioId)
+      : matchScenario(trimmed, candidateScenarios) ?? (candidateScenarios === scenarios ? null : matchScenario(trimmed, scenarios))
     if (target) {
       enterScenario(target.id, trimmed, mentionTarget
         ? { taskTitle: mentionTarget.taskTitle, homeAgentId: 'control-price' }
-        : undefined)
+        : { taskTitle: target.label, homeAgentId: target.agentId ?? activeComposerAgentId })
     } else {
       // 多场景下未命中意图：发用户气泡 + AI 引导选择场景
       dispatch({
@@ -1505,11 +1535,12 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
         type: 'ADD_MESSAGE',
         message: { id: replyId, role: 'assistant', content: `您好！我可以帮助您完成以下任务：${chipNames}。请点击下方快捷入口，或告诉我您需要哪项服务。`, timestamp: Date.now() },
       })
-      // 切换到工作台以显示对话（默认用第一个场景）
-      const defaultScenario = scenarios[0]
-      const defaultAgentName: string = homeExperience.agentName || defaultScenario?.agentName || (defaultScenario as any)?._doc?.meta?.agentName || defaultScenario?.label || 'AI 助手'
-      const defaultAvatarKey: string = homeExperience.avatarKey || defaultScenario?.avatarKey || 'avatar-ai-1'
-      dispatch({ type: 'SET_HOME_AGENT', agentId: homeExperience.agentId })
+      // 切换到工作台以显示对话。默认场景必须跟当前助手一致，避免流程助手误入套打助手。
+      const defaultScenario = candidateScenarios[0]
+      const defaultHomeExperience = getNativeAssistantExperience(defaultScenario?.agentId ?? activeComposerAgentId)
+      const defaultAgentName: string = defaultHomeExperience.agentName || defaultScenario?.agentName || (defaultScenario as any)?._doc?.meta?.agentName || defaultScenario?.label || 'AI 助手'
+      const defaultAvatarKey: string = defaultHomeExperience.avatarKey || defaultScenario?.avatarKey || 'avatar-ai-1'
+      dispatch({ type: 'SET_HOME_AGENT', agentId: defaultHomeExperience.agentId })
       dispatch({ type: 'SET_CURRENT_SCENARIO', scenario: defaultScenario?.id ?? '', agentName: defaultAgentName, avatarKey: defaultAvatarKey })
       // 切换到工作台视图，否则 phase 仍为 'home'，消息不可见
       if (defaultScenario?.phases?.[0]) {
