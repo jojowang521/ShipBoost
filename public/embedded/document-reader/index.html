@@ -12,6 +12,15 @@
         display: none !important;
       }
     </style>
+    <script>
+      window.addEventListener('load', function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('autoOpenAi') !== '1') return;
+        window.setTimeout(function () {
+          window.dispatchEvent(new CustomEvent('open-document-assistant'));
+        }, 280);
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
