@@ -35,6 +35,19 @@ export interface NativeAssistantExperience {
   homeInfoCards: NativeHomeInfoCard[]
 }
 
+export const SYSTEM_MANAGEMENT_ASSISTANT_ID = 'system-management-assistant'
+
+const LEGACY_NATIVE_ASSISTANT_ID_MAP: Record<string, string> = {
+  'template-printing': SYSTEM_MANAGEMENT_ASSISTANT_ID,
+  'process-assistant': SYSTEM_MANAGEMENT_ASSISTANT_ID,
+  'permission-assistant': SYSTEM_MANAGEMENT_ASSISTANT_ID,
+}
+
+export function normalizeNativeAssistantId(agentId: string | null | undefined): string | null | undefined {
+  if (!agentId) return agentId
+  return LEGACY_NATIVE_ASSISTANT_ID_MAP[agentId] ?? agentId
+}
+
 const NOMA_HOME_INFO_CARDS: NativeHomeInfoCard[] = [
   {
     title: '消息',
@@ -66,82 +79,50 @@ export const NATIVE_ASSISTANT_EXPERIENCES: NativeAssistantExperience[] = [
     agentName: 'AI 助手',
     agentDescription: '聚合交付提效场景、业务助手和日常任务协同的默认 AI 助手。',
     homeDescription: '明源云交付提效 AI 助手，串联套打、流程、权限与日常任务',
-    inputPlaceholderExample: '根据合同样张生成套打模板',
+    inputPlaceholderExample: '查看今日待办',
     avatarKey: 'noma_ai',
     dialogues: [
+      { id: 'message-todo__today-todo', title: '查看今日待办', prompt: '查看今日待办' },
       { id: 'template-printing__auto-template-generation', title: '套打模板生成', prompt: '根据标准合同样张生成套打模板' },
       { id: 'process-assistant__process-debug', title: '采购流程调试', prompt: '为采购审批流程生成全分支调试用例' },
       { id: 'process-assistant__handover-flow', title: '流程责任人转交', prompt: '将张三的所有流程转交给李四' },
-      { id: 'permission-assistant__permission-check', title: '用户权限检查', prompt: '查询李四现在有哪些权限，说明角色、公司和项目数据权限' },
+      { id: 'permission-assistant__permission-check', title: '用户权限检查', prompt: 'wm1有哪些权限' },
     ],
     questions: [
-      { label: 'AI新增模板', prompt: '根据标准合同样张生成套打模板' },
+      { label: '查看今日待办', prompt: '查看今日待办' },
       { label: '调试采购流程', prompt: '为采购审批流程生成全分支调试用例' },
       { label: '流程转交', prompt: '将张三的所有流程转交给李四' },
-      { label: '查用户权限', prompt: '查询李四现在有哪些权限，说明角色、公司和项目数据权限' },
+      { label: '查用户权限', prompt: 'wm1有哪些权限' },
     ],
     homeInfoCards: NOMA_HOME_INFO_CARDS,
   },
   {
-    agentId: 'template-printing',
-    agentName: '套打助手',
-    agentDescription: '识别合同样张、生成套打字段配置，并整理模板发布前复核清单。',
-    homeDescription: '上传标准样张后识别字段、生成套打模板配置并整理发布前复核清单',
+    agentId: SYSTEM_MANAGEMENT_ASSISTANT_ID,
+    agentName: '系统管理助手',
+    agentDescription: '聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流。',
+    homeDescription: '覆盖套打模板、流程调试/转交和权限诊断，按问题自动进入对应处理流程',
     inputPlaceholderExample: '根据标准合同样张生成套打模板',
-    avatarKey: 'avatar-ai-1',
+    avatarKey: 'avatar-ai-2',
     dialogues: [
       { id: 'template-printing__auto-template-generation', title: '上传标准合同生成套打模板', prompt: '根据标准合同样张生成套打模板' },
+      { id: 'process-assistant__process-debug', title: '采购审批流程调试', prompt: '为采购审批流程生成全分支调试用例' },
+      { id: 'process-assistant__handover-flow', title: '流程责任人批量转交', prompt: '将张三的所有流程转交给李四' },
+      { id: 'permission-assistant__permission-check', title: '用户权限配置检查', prompt: 'wm1有哪些权限' },
     ],
     questions: [
       { label: 'AI新增模板', prompt: '根据标准合同样张生成套打模板' },
-      { label: '识别合同字段', prompt: '识别这份租赁合同样张里的业务字段' },
-      { label: '生成替换标记', prompt: '生成套打模板字段替换标记' },
-      { label: '发布前复核', prompt: '整理套打模板发布前复核清单' },
-    ],
-    homeInfoCards: [],
-  },
-  {
-    agentId: 'process-assistant',
-    agentName: '流程助手',
-    agentDescription: '支持流程调试、路径覆盖、责任人转交和流程维护影响分析。',
-    homeDescription: '覆盖流程调试和流程维护，生成分支用例、执行计划和影响分析',
-    inputPlaceholderExample: '为采购审批流程生成全分支调试用例',
-    avatarKey: 'avatar-ai-2',
-    dialogues: [
-      { id: 'process-assistant__process-debug', title: '采购审批流程调试', prompt: '为采购审批流程生成全分支调试用例' },
-      { id: 'process-assistant__handover-flow', title: '流程责任人批量转交', prompt: '将张三的所有流程转交给李四' },
-    ],
-    questions: [
       { label: '调试采购流程', prompt: '为采购审批流程生成全分支调试用例' },
       { label: '流程转交', prompt: '将张三的所有流程转交给李四' },
-      { label: '检查分支覆盖', prompt: '检查采购审批流程调试用例是否覆盖所有分支' },
-      { label: '查看影响范围', prompt: '分析张三流程转交给李四的影响范围' },
-    ],
-    homeInfoCards: [],
-  },
-  {
-    agentId: 'permission-assistant',
-    agentName: '权限助手',
-    agentDescription: '查询用户权限、诊断功能权限和数据权限，并生成最小授权方案。',
-    homeDescription: '面向功能权限、公司数据权限和项目数据权限，辅助生成最小授权方案',
-    inputPlaceholderExample: '查询李四现在有哪些权限',
-    avatarKey: 'avatar-ai-3',
-    dialogues: [
-      { id: 'permission-assistant__permission-check', title: '用户权限配置检查', prompt: '查询李四现在有哪些权限，说明角色、公司和项目数据权限' },
-    ],
-    questions: [
-      { label: '查用户权限', prompt: '查询李四现在有哪些权限，说明角色、公司和项目数据权限' },
-      { label: '检查功能权限', prompt: '检查李四是否具备合同台账查看功能权限' },
-      { label: '检查数据权限', prompt: '检查李四在公司和项目上的数据权限范围' },
-      { label: '生成授权方案', prompt: '为李四生成最小授权调整方案' },
+      { label: '查用户权限', prompt: 'wm1有哪些权限' },
     ],
     homeInfoCards: [],
   },
 ]
 
 export function getNativeAssistantExperience(agentId: string | null | undefined): NativeAssistantExperience {
-  if (!agentId) return NATIVE_ASSISTANT_EXPERIENCES[0]
-  return NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentId === agentId) ?? NATIVE_ASSISTANT_EXPERIENCES[0]
+  const normalizedAgentId = normalizeNativeAssistantId(agentId)
+  if (!normalizedAgentId) return NATIVE_ASSISTANT_EXPERIENCES[0]
+  return NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentId === normalizedAgentId) ?? NATIVE_ASSISTANT_EXPERIENCES[0]
 }
 
 export function getNativeAssistantByIdentity(
@@ -149,11 +130,13 @@ export function getNativeAssistantByIdentity(
   agentName: string | null | undefined,
 ): NativeAssistantExperience {
   if (agentName) {
-    const byName = NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentName === agentName)
+    const normalizedAgentName = ['套打助手', '流程助手', '权限助手'].includes(agentName) ? '系统管理助手' : agentName
+    const byName = NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentName === normalizedAgentName)
     if (byName) return byName
   }
   if (agentId) {
-    const byId = NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentId === agentId)
+    const normalizedAgentId = normalizeNativeAssistantId(agentId)
+    const byId = NATIVE_ASSISTANT_EXPERIENCES.find(agent => agent.agentId === normalizedAgentId)
     if (byId) return byId
   }
   return NATIVE_ASSISTANT_EXPERIENCES[0]

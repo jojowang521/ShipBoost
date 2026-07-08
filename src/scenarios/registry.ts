@@ -148,9 +148,8 @@ function buildAgentProfiles(): AgentProfile[] {
   }
 
   const agentOrder: Record<string, number> = {
-    'template-printing': 1,
-    'process-assistant': 2,
-    'permission-assistant': 3,
+    'system-management-assistant': 1,
+    'noma-ai': 2,
   }
 
   return Array.from(groups.entries()).map(([agentId, scenarios]) => {

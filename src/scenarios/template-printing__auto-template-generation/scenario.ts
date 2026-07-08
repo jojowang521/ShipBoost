@@ -4,8 +4,8 @@ import { genMessageId, streamFakeText } from '../../shared/utils'
 import { useApp } from '../../shared/store/AppContext'
 
 const SCENARIO_ID = 'template-printing__auto-template-generation'
-const AGENT_NAME = '套打助手'
-const AVATAR_KEY = 'avatar-ai-1'
+const AGENT_NAME = '系统管理助手'
+const AVATAR_KEY = 'avatar-ai-2'
 
 const templateDataRows = [
   { id: 'service', name: '租赁中心-服务协议文本', scene: '服务协议文本' },
@@ -411,9 +411,9 @@ const ContractPreviewPanel = (props: any) => React.createElement(TemplateDocumen
 const scenario: ScenarioModule = {
   id: SCENARIO_ID,
   label: '上传标准合同生成套打模板',
-  agentId: 'template-printing',
+  agentId: 'system-management-assistant',
   agentName: AGENT_NAME,
-  agentDescription: '懂合同、懂套打字段、懂配置规则的模板生成专家',
+  agentDescription: '聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流',
   avatarKey: AVATAR_KEY,
   shortcutLabel: 'AI新增模板',
   shortcutPrompt: '根据标准合同样张生成套打模板',

@@ -427,6 +427,24 @@ export function AuditHistoryRail({ isCollapsed, onToggle, onNewChat, activeNativ
       setIsNativeSearchOpen(false)
       setNativeSearchKeyword('')
     }
+    const handleSelectNativeAgent = (agentId: string) => {
+      if (agentId === 'other-dialogues') {
+        handleToggleNativeAgentDialogues(agentId)
+        return
+      }
+      setSelectedNativeItemId(getNativeAgentSelectionId(agentId))
+      setOpenAgentId(agentId)
+      setNativeManualOpenAgentId(agentId)
+      setExpandedAgentId(null)
+      setIsNativeSearchOpen(false)
+      setNativeSearchKeyword('')
+      onNativeNavigate?.('home')
+      if (onNativeAgentSelect) {
+        onNativeAgentSelect(agentId)
+      } else {
+        dispatch(state.currentScenario ? { type: 'RESET', homeAgentId: agentId } : { type: 'SET_HOME_AGENT', agentId })
+      }
+    }
     const handleStartNativeAgentDialogue = (agentId: string) => {
       if (agentId === 'other-dialogues') {
         setSelectedNativeItemId(getNativeAgentSelectionId('noma-ai'))
@@ -623,10 +641,10 @@ export function AuditHistoryRail({ isCollapsed, onToggle, onNewChat, activeNativ
                           <button
                             type="button"
                             className="audit-native-agent-row__main"
-                            onClick={() => handleToggleNativeAgentDialogues(agent.agentId)}
+                            onClick={() => handleSelectNativeAgent(agent.agentId)}
                             aria-expanded={isOpen}
                             aria-pressed={isSelected}
-                            aria-label={`${isOpen ? '折叠' : '展开'}${getCompactAgentName(agent)}对话记录`}
+                            aria-label={`切换到${getCompactAgentName(agent)}`}
                           >
                             {agent.isOther ? (
                               <NativeOtherDialogueIcon />

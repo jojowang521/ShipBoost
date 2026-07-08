@@ -10,6 +10,8 @@ import {
   getNativeAssistantExperience,
   getNativeAssistantInputPlaceholder,
   getNativeAssistantQuickActions,
+  normalizeNativeAssistantId,
+  SYSTEM_MANAGEMENT_ASSISTANT_ID,
   nativeAvatarSrc,
 } from '../shared/nativeAssistants'
 import { HOME_SKILL_OPTIONS } from '../shared/homeSkillOptions'
@@ -170,6 +172,57 @@ function matchHomeMentionScenario(text: string): { scenarioId: string; taskTitle
 
 // ─── 工作台视图（选中场景后） ──────────────────────────────────────────────────
 
+const WM1_PERMISSION_OVERVIEW_URL = 'http://127.0.0.1:8765/erp-user-permission-overview.html?v=row-tree-list-20260708'
+const LI_SI_PERMISSION_SUMMARY_URL = '/erp-li-si-permission-summary.html'
+const WORKSPACE_PREVIEW_STORAGE_KEY = 'myy-aui-demo-shell:last-workspace-preview'
+
+function getRestoredWorkspacePreview(currentScenario: string | null): { phase?: string; title: string | null } | null {
+  if (!currentScenario || typeof window === 'undefined') return null
+  try {
+    const rawPreview = window.sessionStorage.getItem(WORKSPACE_PREVIEW_STORAGE_KEY)
+    if (!rawPreview) return null
+    const parsedPreview = JSON.parse(rawPreview) as { scenarioId?: string; phase?: string; title?: string | null }
+    if (parsedPreview.scenarioId !== currentScenario || !parsedPreview.phase) return null
+    return { phase: parsedPreview.phase, title: parsedPreview.title ?? null }
+  } catch {
+    return null
+  }
+}
+
+function persistWorkspacePreview(currentScenario: string | null, phase?: string, title?: string | null): void {
+  if (!currentScenario || !phase || typeof window === 'undefined') return
+  try {
+    window.sessionStorage.setItem(WORKSPACE_PREVIEW_STORAGE_KEY, JSON.stringify({
+      scenarioId: currentScenario,
+      phase,
+      title: title ?? null,
+    }))
+  } catch {
+    // sessionStorage can be unavailable in restricted preview contexts.
+  }
+}
+
+function clearWorkspacePreview(): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.sessionStorage.removeItem(WORKSPACE_PREVIEW_STORAGE_KEY)
+  } catch {
+    // sessionStorage can be unavailable in restricted preview contexts.
+  }
+}
+
+function ExternalPermissionOverviewPanel({ src, title }: { src: string; title: string }) {
+  return (
+    <div className="external-permission-overview-panel">
+      <iframe
+        src={src}
+        title={title}
+        className="external-permission-overview-panel__frame"
+      />
+    </div>
+  )
+}
+
 function useScenarioPanelContent(phaseOverride?: string, targetArtifactTitle?: string | null) {
   const { state, dispatch } = useApp()
   const scenario = getScenario(state.currentScenario)
@@ -188,6 +241,33 @@ function useScenarioPanelContent(phaseOverride?: string, targetArtifactTitle?: s
   }
 
   const panelTitle = scenario?.panelTitleMap?.[phase] ?? '内容预览'
+  const shouldOpenExternalPermissionOverview =
+    state.currentScenario === 'permission-assistant__permission-check' &&
+    phase === 'step_1' &&
+    Boolean(targetArtifactTitle?.includes('wm1 权限总览'))
+  const shouldOpenLiSiPermissionSummary =
+    state.currentScenario === 'permission-assistant__permission-check' &&
+    Boolean(targetArtifactTitle?.includes('李四权限总览'))
+
+  if (shouldOpenExternalPermissionOverview) {
+    return {
+      node: <ExternalPermissionOverviewPanel src={WM1_PERMISSION_OVERVIEW_URL} title="wm1 权限总览" />,
+      hasContent: true,
+      panelTitle: 'wm1 权限总览',
+      panelFooter: null,
+      panelHasInternalClose: false,
+    }
+  }
+
+  if (shouldOpenLiSiPermissionSummary) {
+    return {
+      node: <ExternalPermissionOverviewPanel src={LI_SI_PERMISSION_SUMMARY_URL} title="李四权限总览" />,
+      hasContent: true,
+      panelTitle: '李四权限总览',
+      panelFooter: null,
+      panelHasInternalClose: false,
+    }
+  }
 
   if (scenario && scenario.panelMap[phase]) {
     const PanelComponent = scenario.panelMap[phase]
@@ -1007,9 +1087,14 @@ function TaskReplayControls({
 
 export function AuditWorkspaceView({ onBack, railCollapsed, onRailCollapsedChange, taskReplaySceneId, navHidden = false }: AuditWorkspaceViewProps = {}) {
   const { state, dispatch } = useApp()
-  const [selectedArtifactPhase, setSelectedArtifactPhase] = useState<string | undefined>(undefined)
-  const [selectedArtifactTitle, setSelectedArtifactTitle] = useState<string | null>(null)
+  const restoredWorkspacePreview = useMemo(
+    () => getRestoredWorkspacePreview(state.currentScenario),
+    [state.currentScenario],
+  )
+  const [selectedArtifactPhase, setSelectedArtifactPhase] = useState<string | undefined>(restoredWorkspacePreview?.phase)
+  const [selectedArtifactTitle, setSelectedArtifactTitle] = useState<string | null>(restoredWorkspacePreview?.title ?? null)
   const [nativePage, setNativePage] = useState<NativePage>('home')
+  const restoredPreviewOpenedRef = useRef(false)
   const taskReplayScene = taskReplaySceneId ? getReplayScene(taskReplaySceneId) : null
 
   const handleSelectArtifact = useCallback((targetPhase: string, targetArtifactTitle?: string | null) => {
@@ -1022,16 +1107,36 @@ export function AuditWorkspaceView({ onBack, railCollapsed, onRailCollapsedChang
     })
     setSelectedArtifactPhase(targetPhase)
     setSelectedArtifactTitle(targetArtifactTitle ?? null)
+    persistWorkspacePreview(state.currentScenario, targetPhase, targetArtifactTitle ?? null)
   }, [state.currentScenario, state.phase])
 
   const { node: panelContent, hasContent: hasPanelContent, panelTitle, panelFooter, panelHasInternalClose } =
     useScenarioPanelContent(selectedArtifactPhase, selectedArtifactTitle)
+
+  useEffect(() => {
+    if (!restoredWorkspacePreview?.phase) return
+    setSelectedArtifactPhase(restoredWorkspacePreview.phase)
+    setSelectedArtifactTitle(restoredWorkspacePreview.title ?? null)
+  }, [restoredWorkspacePreview?.phase, restoredWorkspacePreview?.title])
+
+  useEffect(() => {
+    if (restoredPreviewOpenedRef.current || !restoredWorkspacePreview?.phase) return
+    restoredPreviewOpenedRef.current = true
+    dispatch({
+      type: 'OPEN_PREVIEW',
+      readonly: false,
+      targetPhase: restoredWorkspacePreview.phase,
+      targetArtifactTitle: restoredWorkspacePreview.title ?? undefined,
+      scrollBeforeOpen: false,
+    })
+  }, [dispatch, restoredWorkspacePreview?.phase, restoredWorkspacePreview?.title])
 
   const handleNativeAgentSelect = useCallback((agentId: string) => {
     dispatch({ type: 'RESET', homeAgentId: agentId })
   }, [dispatch, taskReplayScene])
 
   const handleBackToHome = useCallback(() => {
+    clearWorkspacePreview()
     setNativePage('home')
     if (taskReplayScene) {
       const url = new URL(window.location.href)
@@ -1123,6 +1228,7 @@ export function AuditWorkspaceView({ onBack, railCollapsed, onRailCollapsedChang
       navHidden={navHidden || Boolean(taskReplayScene)}
       railCollapsed={railCollapsed}
       onRailCollapsedChange={onRailCollapsedChange}
+      defaultPreviewOpen={Boolean(restoredWorkspacePreview?.phase)}
       defaultContextPanelOpen={Boolean(taskReplayScene)}
       chatInputReplacement={taskReplayScene ? (
         <TaskReplayControls
@@ -1145,6 +1251,7 @@ interface WorkbenchPageProps {
   embedMode?: 'native' | 'side-nav'
   navigationMode?: 'top-nav' | 'side-nav' | 'hidden'
   homeDisplayMode?: 'none' | 'info-cards' | 'best-practices'
+  homeResetSignal?: number
 }
 
 const HIDDEN_NAV_PRACTICES = [
@@ -1174,7 +1281,7 @@ const HIDDEN_NAV_PRACTICES = [
   },
 ]
 
-export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode = 'native', navigationMode = 'top-nav', homeDisplayMode = 'best-practices' }: WorkbenchPageProps = {}) {
+export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode = 'native', navigationMode = 'top-nav', homeDisplayMode = 'best-practices', homeResetSignal }: WorkbenchPageProps = {}) {
   const dispatch = useAppDispatch()
   const appState = useAppState()
   const scenarios = getAllScenarios()
@@ -1191,6 +1298,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   const modalTimerRef = useRef<number | null>(null)
   const skillModalTimerRef = useRef<number | null>(null)
   const homeAgentMotionTimerRef = useRef<number | null>(null)
+  const urlAgentAppliedRef = useRef(false)
   const agentDropdownRef = useRef<HTMLDivElement | null>(null)
   const mentionDropdownRef = useRef<HTMLDivElement | null>(null)
   const skillDropdownRef = useRef<HTMLDivElement | null>(null)
@@ -1329,8 +1437,27 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   useEffect(() => () => clearHomeAgentMotionTimer(), [clearHomeAgentMotionTimer])
   useEffect(() => setSelectedComposerAgentId(homeExperience.agentId), [homeExperience.agentId])
 
+  const lastHomeResetSignalRef = useRef(homeResetSignal)
+
   useEffect(() => {
-    const agentId = new URLSearchParams(window.location.search).get('agent')
+    if (homeResetSignal === undefined || lastHomeResetSignalRef.current === homeResetSignal) return
+    lastHomeResetSignalRef.current = homeResetSignal
+    clearModalTimer()
+    clearSkillModalTimer()
+    clearHomeAgentMotionTimer()
+    setAgentModalState('closed')
+    setSkillModalState('closed')
+    setHomeAgentMotionDirection(null)
+    setText('')
+    setSelectedComposerAgentId('noma-ai')
+    setNativePage('home')
+    dispatch({ type: 'RESET', homeAgentId: 'noma-ai' })
+  }, [clearHomeAgentMotionTimer, clearModalTimer, clearSkillModalTimer, dispatch, homeResetSignal])
+
+  useEffect(() => {
+    if (urlAgentAppliedRef.current) return
+    urlAgentAppliedRef.current = true
+    const agentId = normalizeNativeAssistantId(new URLSearchParams(window.location.search).get('agent'))
     const isKnownAssistant = NATIVE_ASSISTANT_EXPERIENCES.some(assistant => assistant.agentId === agentId)
     if (!agentId || !isKnownAssistant || appState.homeAgentId === agentId) return
     dispatch({ type: 'RESET', homeAgentId: agentId })
@@ -1402,6 +1529,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     })
     const scenarioAgentName: string = targetHomeExperience.agentName || scenario.agentName || (scenario as any)?._doc?.meta?.agentName || scenario.label
     const avatarKey: string = targetHomeExperience.avatarKey || scenario.avatarKey || 'avatar-ai-1'
+    clearWorkspacePreview()
     dispatch({
       type: 'SWITCH_SCENARIO',
       scenarioId,
@@ -1421,7 +1549,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   }, [dispatch, homeExperience.agentId])
 
   const handleTemplateAttachmentDemo = useCallback((file?: File) => {
-    const scenario = scenarios.find(item => item.agentId === 'template-printing')
+    const scenario = getScenario('template-printing__auto-template-generation')
     if (!scenario) return
     const fileName = file?.name || '武汉光谷未来中心租赁合同样张.docx'
     const fileSize = file ? `${Math.max(1, Math.round(file.size / 1024))} KB` : '186 KB'
@@ -1430,11 +1558,11 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       `上传《${fileName}》，并根据这份标准租赁合同样张生成套打模板`,
       {
         taskTitle: scenario.label,
-        homeAgentId: 'template-printing',
+        homeAgentId: SYSTEM_MANAGEMENT_ASSISTANT_ID,
         attachment: { name: fileName, size: fileSize, type: 'word' },
       },
     )
-  }, [enterScenario, scenarios])
+  }, [enterScenario])
 
   const fillHomePrompt = useCallback((prompt: string) => {
     setText(prompt)
@@ -1448,8 +1576,28 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   }, [fillHomePrompt])
 
   const handleQuickAction = useCallback((prompt: string) => {
+    if (normalizeIntentText(prompt) === normalizeIntentText('wm1有哪些权限')) {
+      fillHomePrompt(prompt)
+      return
+    }
+    if (normalizeIntentText(prompt) === normalizeIntentText('查看今日待办')) {
+      const todayTodoScenario = getScenario('message-todo__today-todo')
+      if (todayTodoScenario) {
+        enterScenario(todayTodoScenario.id, prompt, { taskTitle: todayTodoScenario.label, homeAgentId: 'noma-ai' })
+        return
+      }
+    }
+    const matchedScenario = matchScenario(prompt, scenarios)
+    if (matchedScenario) {
+      enterScenario(
+        matchedScenario.id,
+        prompt,
+        { taskTitle: matchedScenario.label, homeAgentId: matchedScenario.agentId ?? homeExperience.agentId },
+      )
+      return
+    }
     fillHomePrompt(prompt)
-  }, [fillHomePrompt])
+  }, [enterScenario, fillHomePrompt, homeExperience.agentId, scenarios])
 
   const handleSelectHistoryScenario = useCallback((scenarioId: string) => {
     const scenario = getScenario(scenarioId)
@@ -1503,11 +1651,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       return
     }
 
-    const urlAgentId = new URLSearchParams(window.location.search).get('agent')
-    const urlAgentIsKnown = NATIVE_ASSISTANT_EXPERIENCES.some(assistant => assistant.agentId === urlAgentId)
-    const activeComposerAgentId = urlAgentIsKnown && urlAgentId && urlAgentId !== 'noma-ai'
-      ? urlAgentId
-      : selectedComposerAgent.agentId !== 'noma-ai'
+    const activeComposerAgentId = selectedComposerAgent.agentId !== 'noma-ai'
       ? selectedComposerAgent.agentId
       : homeExperience.agentId
     const scopedScenarios = activeComposerAgentId && activeComposerAgentId !== 'noma-ai'
@@ -1782,7 +1926,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
                   type="button"
                   className="home-tool-btn"
                   onClick={() => {
-                    if (homeExperience.agentId === 'template-printing' || selectedComposerAgent.agentId === 'template-printing') {
+                    if (homeExperience.agentId === SYSTEM_MANAGEMENT_ASSISTANT_ID || selectedComposerAgent.agentId === SYSTEM_MANAGEMENT_ASSISTANT_ID) {
                       handleTemplateAttachmentDemo()
                       return
                     }
@@ -1847,7 +1991,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
               style={{ display: 'none' }}
               onChange={event => {
                 const file = event.currentTarget.files?.[0]
-                if (file && (homeExperience.agentId === 'template-printing' || selectedComposerAgent.agentId === 'template-printing')) {
+                if (file && (homeExperience.agentId === SYSTEM_MANAGEMENT_ASSISTANT_ID || selectedComposerAgent.agentId === SYSTEM_MANAGEMENT_ASSISTANT_ID)) {
                   handleTemplateAttachmentDemo(file)
                 }
                 event.currentTarget.value = ''

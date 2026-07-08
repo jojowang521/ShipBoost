@@ -23,12 +23,38 @@ function findNextPhase(steps: ParsedStep[], currentPhase: string): string {
   return steps[idx + 1].stepId
 }
 
+function normalizeTriggerText(text: string): string {
+  return text.replace(/\s+/g, '').trim()
+}
+
+function triggerMatchesUserText(trigger: string, userText: string): boolean {
+  const normalizedUserText = normalizeTriggerText(userText)
+  if (!normalizedUserText) return false
+
+  const quotedTriggers = Array.from(trigger.matchAll(/「([^」]+)」/g)).map(match => normalizeTriggerText(match[1]))
+  const candidates = quotedTriggers.length > 0 ? quotedTriggers : [normalizeTriggerText(trigger)]
+  return candidates.some(candidate =>
+    candidate.length > 0 &&
+    (normalizedUserText.includes(candidate) || candidate.includes(normalizedUserText.slice(0, 8)))
+  )
+}
+
+function findTriggeredStep(steps: ParsedStep[], currentPhase: string, userText: string): ParsedStep | undefined {
+  const currentIndex = steps.findIndex(step => step.stepId === currentPhase)
+  const laterSteps = currentIndex >= 0 ? steps.slice(currentIndex + 1) : steps
+  return laterSteps.find(step => triggerMatchesUserText(step.trigger, userText))
+}
+
 // ─── 判断步骤是否为自动触发（无需等待用户输入） ──────────────────────────────
 // 触发方式字段含"自动"或为空 → 进入步骤后直接播放 AI 台词
 // 否则 → 发送引导语后等待用户输入，用户任意输入再播放 AI 台词
 
 function isAutoTrigger(step: ParsedStep): boolean {
   return step.trigger.trim() === '' || step.trigger.includes('自动')
+}
+
+function stripAssistantNamePrefix(text: string): string {
+  return text.replace(/^\s*(?:[\u4e00-\u9fa5A-Za-z0-9_\s]{1,24}(?:助手|专员)|AI)\s*[：:]\s*/, '')
 }
 
 // ─── 核心辅助：播放步骤 AI 台词 + 在流式结束后挂载卡片 ────────────────────────
@@ -43,10 +69,38 @@ function getStepResponseKey(step: ParsedStep, ctx: ScenarioContext): string {
   return `${state.currentScenario || 'unknown'}:${sessionKey}:${step.stepId}`
 }
 
+function hasRenderedStepResponse(step: ParsedStep, ctx: ScenarioContext): boolean {
+  const messages = ctx.stateRef.current.messages ?? []
+  const expectedText = normalizeTriggerText(stripAssistantNamePrefix(step.agentLines)).slice(0, 24)
+  const hasResponseText = expectedText.length > 0 && messages.some((message: any) =>
+    message.role === 'assistant' &&
+    normalizeTriggerText(message.content || '').includes(expectedText)
+  )
+  if (hasResponseText) return true
+
+  const hasGeneratedArtifact = step.generatedArtifacts.some(artifact =>
+    messages.some((message: any) =>
+      message.component === 'PreviewTriggerCard' &&
+      message.componentProps?.targetPhase === step.stepId &&
+      message.componentProps?.title === artifact.title
+    )
+  )
+  if (hasGeneratedArtifact) return true
+
+  return Boolean(step.gateNode && messages.some((message: any) =>
+    message.component === 'GenericGateCard' &&
+    message.componentProps?.stepId === step.stepId
+  ))
+}
+
 function playStepResponse(step: ParsedStep, ctx: ScenarioContext): void {
   if (!step.agentLines.trim()) return
   const responseKey = getStepResponseKey(step, ctx)
   if (playedStepResponseKeys.has(responseKey)) return
+  if (hasRenderedStepResponse(step, ctx)) {
+    playedStepResponseKeys.add(responseKey)
+    return
+  }
   playedStepResponseKeys.add(responseKey)
 
   const { dispatch } = ctx
@@ -54,9 +108,6 @@ function playStepResponse(step: ParsedStep, ctx: ScenarioContext): void {
   dispatch({ type: 'ADD_MESSAGE', message: { id: msgId, role: 'assistant', content: '', timestamp: Date.now() } })
 
   const hasPanel = hasPanelDescription(step)
-  if (step.generatedArtifacts.length === 0) {
-    dispatch({ type: 'CLOSE_PREVIEW' })
-  }
 
   const afterStream = () => {
     if (step.suggestedQuestions.length > 0) {
@@ -112,7 +163,7 @@ function playStepResponse(step: ParsedStep, ctx: ScenarioContext): void {
     }
   }
 
-  streamFakeText(step.agentLines, msgId, dispatch, afterStream)
+  streamFakeText(stripAssistantNamePrefix(step.agentLines), msgId, dispatch, afterStream)
 }
 
 function getPreviewMeta(step: ParsedStep): { title: string; meta?: string } {
@@ -196,6 +247,12 @@ function handleSendForDesign(
       ? `step_${matchedBtn.targetStep}`
       : findNextPhase(doc.steps, phase)
     dispatch({ type: 'SET_PHASE', phase: targetPhase })
+    return
+  }
+
+  const triggeredStep = findTriggeredStep(doc.steps, phase, text)
+  if (triggeredStep) {
+    dispatch({ type: 'SET_PHASE', phase: triggeredStep.stepId })
     return
   }
 

@@ -11678,6 +11678,21 @@ button.template-contract-table__row:hover,
   background: #F7F8FA;
 }
 
+.external-permission-overview-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: #F7F8FA;
+}
+
+.external-permission-overview-panel__frame {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  border: 0;
+  background: #F7F8FA;
+}
+
 .v4-workbench-shell {
   position: relative;
   height: 100%;

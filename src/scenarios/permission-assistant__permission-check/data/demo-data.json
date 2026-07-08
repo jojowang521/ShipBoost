@@ -1,19 +1,70 @@
 {
-  "queryUser": "李四",
-  "diagnosisUser": "张三",
+  "queryUser": "wm1",
+  "account": "wm1",
+  "mobile": "15549087191",
+  "isAdmin": false,
+  "isDisabled": false,
+  "primaryOrg": "集团 - 武汉公司 - 销售部门",
+  "partTimeOrg": "集团 - 武汉公司",
   "roles": [
-    "销售经理",
-    "财务只读"
+    "集团角色 - 全部权限",
+    "公司角色 - 流程用户"
   ],
-  "companies": [
-    "华东分公司",
-    "华南分公司"
+  "companyDataPermissions": [
+    "集团 - 武汉公司",
+    "集团 - 上海公司"
   ],
-  "projects": [
-    "P-1001 华东直营项目",
-    "P-2008 华南渠道项目",
-    "P-3016 集团大客户项目"
+  "projectDataPermissions": [
+    "武汉项目一期",
+    "武汉项目二期",
+    "上海项目一期",
+    "深圳相关项目"
   ],
-  "missingPermission": "inventory.report.export",
-  "recommendedRole": "库存报表员"
+  "contractEntryCandidates": [
+    {
+      "portal": "员工站点",
+      "menuPath": "售楼管理 / 交易管理 / 签订认购合同",
+      "page": "签订认购合同",
+      "button": "新增合同"
+    },
+    {
+      "portal": "员工站点",
+      "menuPath": "成本投资 / 合同管理 / 合同登记",
+      "page": "合同登记",
+      "button": "新增"
+    },
+    {
+      "portal": "员工站点",
+      "menuPath": "成本投资 / 合同管理 / 合同登记",
+      "page": "合同登记",
+      "button": "新增联合体合同"
+    },
+    {
+      "portal": "员工站点",
+      "menuPath": "成本投资 / 合同管理 / 合同登记",
+      "page": "合同登记",
+      "button": "新增补充合同"
+    },
+    {
+      "portal": "员工站点",
+      "menuPath": "租赁中心 / 合同管理 / 新签合同",
+      "page": "新签合同",
+      "button": "新增（承租方）"
+    }
+  ],
+  "confirmedEntry": {
+    "portal": "员工站点",
+    "menuPath": "成本投资 / 合同管理 / 合同登记",
+    "page": "合同登记",
+    "button": "新增",
+    "diagnosisResult": "有权限",
+    "sourceRole": "集团角色 - 全部权限"
+  },
+  "followUpAdvice": [
+    "项目/公司数据范围",
+    "业务状态",
+    "合同类型控制",
+    "流程",
+    "页面前端业务规则"
+  ]
 }

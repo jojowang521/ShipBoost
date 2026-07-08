@@ -1,7 +1,7 @@
 {
-  "agentId": "process-assistant",
-  "agentName": "流程助手",
-  "agentDescription": "面向流程配置、流程调试和流程维护，自动识别路径、节点、责任人和规则影响。",
+  "agentId": "system-management-assistant",
+  "agentName": "系统管理助手",
+  "agentDescription": "聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流。",
   "avatarKey": "avatar-ai-2",
   "scenarioName": "采购审批流程调试",
   "shortcutLabel": "调试采购流程",

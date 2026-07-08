@@ -1,0 +1,55 @@
+{
+  "date": "2026-07-08",
+  "weekday": "周三",
+  "userName": "Bright",
+  "summary": {
+    "total": 8,
+    "urgent": 2,
+    "reminded": 2,
+    "overdue": 2
+  },
+  "todos": [
+    {
+      "title": "保利花园三期 · 进度款第 5 期",
+      "submitTime": "今天",
+      "tags": ["急", "催"],
+      "amount": "¥1,856,420.00",
+      "owner": "项目成本经理"
+    },
+    {
+      "title": "中粮祥云国际 · 设计费第 2 期",
+      "submitTime": "今天",
+      "tags": ["催"]
+    },
+    {
+      "title": "保利花园三期 · 弱电分包合同",
+      "submitTime": "7 天内",
+      "tags": []
+    },
+    {
+      "title": "万科翡翠公园 · VC-0231",
+      "submitTime": "7 天内",
+      "tags": ["超"]
+    },
+    {
+      "title": "全公司在建项目",
+      "submitTime": "30 天内",
+      "tags": []
+    },
+    {
+      "title": "龙湖天街 · 农民工工资专户",
+      "submitTime": "30 天内",
+      "tags": ["急"]
+    },
+    {
+      "title": "中粮祥云国际 · 精装修招标",
+      "submitTime": "30 天以上",
+      "tags": []
+    },
+    {
+      "title": "万科翡翠公园 · 园林工程",
+      "submitTime": "30 天以上",
+      "tags": ["超"]
+    }
+  ]
+}

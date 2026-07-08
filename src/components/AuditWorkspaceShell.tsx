@@ -46,6 +46,7 @@ interface Props {
   navHidden?: boolean
   chatInputReplacement?: React.ReactNode
   defaultContextPanelOpen?: boolean
+  defaultPreviewOpen?: boolean
 }
 
 export function AuditWorkspaceShell({
@@ -68,6 +69,7 @@ export function AuditWorkspaceShell({
   navHidden = false,
   chatInputReplacement,
   defaultContextPanelOpen = false,
+  defaultPreviewOpen = false,
 }: Props) {
   const isHome = !!homeContent
   const isMarketPage = !isHome && activeNativePage !== 'home' && !!marketContent
@@ -76,7 +78,7 @@ export function AuditWorkspaceShell({
   const appDispatch = useAppDispatch()
   const [uncontrolledRailCollapsed, setUncontrolledRailCollapsed] = useState(false)
   const railCollapsed = controlledRailCollapsed ?? uncontrolledRailCollapsed
-  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(defaultPreviewOpen)
   const [contextPanelOpen, setContextPanelOpen] = useState(defaultContextPanelOpen)
   const [contextPanelAnchor, setContextPanelAnchor] = useState({ left: 0, top: 0 })
   // 记录当前预览是否以只读模式打开（通过已操作的卡片打开）
@@ -86,6 +88,11 @@ export function AuditWorkspaceShell({
   const bodyRef = useRef<HTMLDivElement | null>(null)
   const contextToggleRef = useRef<HTMLButtonElement | null>(null)
   const lastContextPanelConversationKeyRef = useRef<string | null>(null)
+
+  React.useEffect(() => {
+    if (!defaultPreviewOpen || !hasPanelContent) return
+    setPreviewOpen(true)
+  }, [defaultPreviewOpen, hasPanelContent])
 
   const clearPreviewOpenTimer = useCallback(() => {
     if (previewOpenTimerRef.current !== null) {
@@ -532,6 +539,41 @@ const CONTEXT_PANEL_SECTIONS: ContextPanelSection[] = [
 ]
 
 function getContextPanelSections(currentScenario: string | null, currentAgentName: string): ContextPanelSection[] {
+  if (currentScenario?.startsWith('message-todo')) {
+    return [
+      {
+        id: 'progress',
+        title: '任务进展',
+        meta: '3/3',
+        items: [
+          { label: '1.汇总今日待办任务', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+          { label: '2.识别紧急、催办和超期标记', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+          { label: '3.生成处理优先级建议', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+        ],
+      },
+      {
+        id: 'documents',
+        title: '产出文档',
+        meta: '2',
+        items: [
+          { label: '今日待办清单.md', icon: <FileText size={16} strokeWidth={1.7} /> },
+          { label: '待办优先级建议.html', icon: <Link2 size={16} strokeWidth={1.7} /> },
+        ],
+      },
+      {
+        id: 'resources',
+        title: '相关资源',
+        meta: '4',
+        items: [
+          { label: '消息待办技能', icon: <ClipboardList size={16} strokeWidth={1.7} /> },
+          { label: '今日待办样例数据', icon: <FileText size={16} strokeWidth={1.7} /> },
+          { label: '催办与超期标记规则', icon: <Link2 size={16} strokeWidth={1.7} /> },
+          { label: '审批单摘要模板', icon: <FileText size={16} strokeWidth={1.7} /> },
+        ],
+      },
+    ]
+  }
+
   if (currentScenario?.startsWith('template-printing') || currentAgentName.includes('套打')) {
     return [
       {
@@ -612,22 +654,20 @@ function getContextPanelSections(currentScenario: string | null, currentAgentNam
       {
         id: 'progress',
         title: '任务进展',
-        meta: '4/4',
+        meta: '3/3',
         items: [
-          { label: '1.定位用户和角色来源', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
-          { label: '2.检查功能权限', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
-          { label: '3.检查公司和项目数据权限', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
-          { label: '4.生成最小授权方案', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+          { label: '1.生成 wm1 权限总览', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+          { label: '2.匹配新增合同入口', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
+          { label: '3.输出入口权限诊断', icon: <CircleCheck size={16} strokeWidth={1.7} /> },
         ],
       },
       {
         id: 'documents',
         title: '产出文档',
-        meta: '3',
+        meta: '2',
         items: [
-          { label: '李四权限诊断报告.md', icon: <FileText size={16} strokeWidth={1.7} /> },
-          { label: '角色与权限来源清单.xlsx', icon: <FileText size={16} strokeWidth={1.7} /> },
-          { label: '最小授权调整方案.html', icon: <Link2 size={16} strokeWidth={1.7} /> },
+          { label: 'wm1 权限总览.md', icon: <FileText size={16} strokeWidth={1.7} /> },
+          { label: '新增合同入口权限诊断.md', icon: <FileText size={16} strokeWidth={1.7} /> },
         ],
       },
       {
@@ -635,8 +675,8 @@ function getContextPanelSections(currentScenario: string | null, currentAgentNam
         title: '相关资源',
         meta: '4',
         items: [
-          { label: '李四当前用户权限快照', icon: <ClipboardList size={16} strokeWidth={1.7} /> },
-          { label: '张三权限对照样本', icon: <FileText size={16} strokeWidth={1.7} /> },
+          { label: 'wm1 当前用户权限快照', icon: <ClipboardList size={16} strokeWidth={1.7} /> },
+          { label: '新增合同权限点候选清单', icon: <FileText size={16} strokeWidth={1.7} /> },
           { label: '公司数据权限范围', icon: <FileText size={16} strokeWidth={1.7} /> },
           { label: '项目数据权限范围', icon: <FileText size={16} strokeWidth={1.7} /> },
         ],

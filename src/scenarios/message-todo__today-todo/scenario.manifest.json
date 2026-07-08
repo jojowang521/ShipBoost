@@ -1,0 +1,11 @@
+{
+  "agentId": "noma-ai",
+  "agentName": "Noma 助手",
+  "agentDescription": "聚合消息、待办、流程、权限和套打能力，帮助用户快速查看并处理当天任务。",
+  "avatarKey": "noma_ai",
+  "scenarioName": "查看今日待办",
+  "shortcutLabel": "查看今日待办",
+  "shortcutPrompt": "查看今日待办",
+  "shortcutOrder": 1,
+  "dataScope": "scenario-only"
+}
