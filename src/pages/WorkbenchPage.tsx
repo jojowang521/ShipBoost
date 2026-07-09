@@ -196,7 +196,7 @@ function matchHomeMentionScenario(text: string): { scenarioId: string; taskTitle
 
 // ─── 工作台视图（选中场景后） ──────────────────────────────────────────────────
 
-const WM1_PERMISSION_OVERVIEW_URL = '/erp-user-permission-overview.html'
+const WM1_PERMISSION_OVERVIEW_URL = '/erp-user-permission-overview-v2.html'
 const LI_SI_PERMISSION_SUMMARY_URL = '/erp-li-si-permission-summary.html'
 const WORKSPACE_PREVIEW_STORAGE_KEY = 'myy-aui-demo-shell:last-workspace-preview'
 

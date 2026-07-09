@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>单用户权限画像</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --line: #d8e1ea;
+      --text: #17202a;
+      --muted: #667386;
+      --soft: #f8fafc;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #a15c07;
+      --green: #147a48;
+      --radius: 8px;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% -12%, rgba(80, 128, 255, 0.2), transparent 34%),
+        radial-gradient(circle at 88% 2%, rgba(80, 178, 255, 0.16), transparent 30%),
+        linear-gradient(180deg, #edf5ff 0%, #f7fbff 36%, #f6f8fb 100%);
+      color: var(--text);
+      letter-spacing: 0;
+    }
+
+    .page {
+      width: calc(100% - 60px);
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 26px 0 28px;
+    }
+
+    .header {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      margin-bottom: 14px;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .profile-head {
+      display: block;
+    }
+
+    .basic {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .basic strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .divider {
+      width: 1px;
+      height: 18px;
+      background: #d9e2ed;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 22px;
+      margin-left: 6px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #dff7e8;
+      color: #16a34a;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .profile-roles {
+      margin-top: 16px;
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.9);
+      border: 0;
+      border-radius: 12px;
+      margin-top: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(58, 86, 130, 0.08);
+    }
+
+    .section-title {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding: 10px 14px;
+    }
+
+    .roles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role {
+      min-height: 76px;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      border: 1px solid #dfe6ef;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+    }
+
+    .role.sales {
+      background: #fff;
+    }
+
+    .role.report {
+      background: #fff;
+    }
+
+    .role.temp {
+      background: #fff;
+    }
+
+    .role-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .role-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .role.sales .role-icon {
+      color: #2f80ed;
+      background: linear-gradient(145deg, #dbeaff 0%, #c8ddff 100%);
+    }
+
+    .role.report .role-icon {
+      color: #12b8a6;
+      background: linear-gradient(145deg, #ddf8f2 0%, #c8f0e7 100%);
+    }
+
+    .role.temp .role-icon {
+      color: #f59a23;
+      background: linear-gradient(145deg, #fff0d7 0%, #ffe2b8 100%);
+    }
+
+    .role strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .desc {
+      color: #666;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.65;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #eef3f7;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .tag.green {
+      background: #e8f6ee;
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: #fff4df;
+      color: var(--amber);
+    }
+
+    .tree,
+    .tree ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .tree ul {
+      margin-left: 18px;
+      padding-left: 16px;
+      border-left: 1px solid #dfe6ef;
+    }
+
+    .tree li {
+      position: relative;
+      margin: 7px 0;
+      line-height: 1.4;
+    }
+
+    .tree ul li::before {
+      content: "";
+      position: absolute;
+      left: -16px;
+      top: 12px;
+      width: 12px;
+      border-top: 1px solid #dfe6ef;
+    }
+
+    .node {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-width: 100%;
+      min-height: 24px;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .node.root {
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .node.branch {
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .node small {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 400;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #f1f5f9;
+    }
+
+    .permission-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .permission-item::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border: 0;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex: 0 0 auto;
+    }
+
+    .permission-content {
+      padding: 18px 14px 16px;
+    }
+
+    .interactive-tree > li {
+      margin: 0;
+    }
+
+    .interactive-tree > li:last-child {
+      margin-bottom: 0;
+    }
+
+    .interactive-tree ul {
+      margin-left: 0;
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .interactive-tree li {
+      margin: 0;
+    }
+
+    .interactive-tree ul li::before {
+      display: none;
+    }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      min-height: 36px;
+      gap: 8px;
+      padding: 0 10px;
+      border-bottom: 1px solid #e6edf5;
+      font-size: 14px;
+      color: #17202a;
+    }
+
+    .tree-row.toggleable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tree-row.toggleable:hover {
+      background: #f8fbff;
+    }
+
+    .interactive-tree li.collapsed > ul {
+      display: none;
+    }
+
+    .tree-row.level-1 {
+      padding-left: 32px;
+    }
+
+    .tree-row.level-2 {
+      padding-left: 66px;
+    }
+
+    .tree-row.feature-row {
+      min-height: 44px;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: nowrap;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+    }
+
+    .tree-arrow {
+      width: 14px;
+      color: #94a3b8;
+      font-size: 17px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .tree-file {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      color: #c0c4cc;
+      flex: 0 0 auto;
+    }
+
+    .tree-file::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 2px;
+      width: 10px;
+      height: 12px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .tree-file::after {
+      content: "";
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      border-left: 5px solid rgba(255, 255, 255, 0.72);
+      border-top: 5px solid transparent;
+    }
+
+    .feature-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 112px;
+      flex: 0 0 auto;
+    }
+
+    .tree-name {
+      font-weight: 400;
+      color: #222;
+    }
+
+    .tree-count {
+      margin-left: 8px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .interactive-tree .node.root {
+      color: #222;
+      background: transparent;
+      border: 0;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .interactive-tree .node.branch {
+      color: #222;
+      background: transparent;
+      border: 0;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .interactive-tree .node small {
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #eef2f7;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .interactive-tree .permission-item {
+      gap: 0;
+      color: #222;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .interactive-tree .permission-item::before {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: calc(100% - 60px);
+        padding-top: 10px;
+      }
+
+      .header {
+        padding: 0;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .basic {
+        font-size: 14px;
+      }
+
+      .divider {
+        display: none;
+      }
+
+      .roles {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="header">
+      <div class="profile-head">
+        <div>
+          <h1>李娜的权限画像</h1>
+          <div class="basic">
+            <div>用户编号：<strong>U10021</strong></div>
+            <span class="divider" aria-hidden="true"></span>
+            <div>账号状态：<span class="status-pill">启用</span></div>
+            <span class="divider" aria-hidden="true"></span>
+            <div>授予角色：<strong>3个</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-roles">
+        <div class="roles">
+          <div class="role sales">
+            <span class="role-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M10.2 11.5a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0 0 7.6Z" fill="currentColor"/>
+                <path d="M3.8 20.1c.42-3.34 3.17-5.85 6.4-5.85 1.72 0 3.28.7 4.43 1.84-.18.45-.28.93-.28 1.44 0 .92.31 1.76.83 2.43H3.8Z" fill="currentColor"/>
+                <path d="M18.2 13.4 20.6 14.4v2.1c0 1.92-1.06 3.68-2.4 4.27-1.34-.59-2.4-2.35-2.4-4.27v-2.1l2.4-1Z" fill="currentColor" opacity=".55"/>
+              </svg>
+            </span>
+            <div>
+              <strong>华东销售主管</strong>
+              <div class="desc">岗位角色，包含客户、订单、销售报表相关权限。</div>
+            </div>
+          </div>
+          <div class="role report">
+            <span class="role-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 3.5h8.2L18 7.4v13.1H6v-17Z" fill="currentColor" opacity=".2"/>
+                <path d="M14.2 3.5v4h3.9M8.8 11.2h6.4M8.8 14.4h6.4M8.8 17.6h4.1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 3.5h8.2L18 7.4v13.1H6v-17Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div>
+              <strong>销售报表查看</strong>
+              <div class="desc">部门授权，用于查看销售经营数据和团队业绩报表。</div>
+            </div>
+          </div>
+          <div class="role temp">
+            <span class="role-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5.5 18.4h13v2.1h-13v-2.1Z" fill="currentColor"/>
+                <path d="M12 3.8v10.8m0 0 4-4m-4 4-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div>
+              <strong>销售专员</strong>
+              <div class="desc">岗位角色，补充客户跟进、订单处理和销售业务执行权限。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>功能权限</h2>
+      </div>
+      <div class="content permission-content">
+        <ul class="tree permission-tree interactive-tree">
+          <li>
+            <div class="tree-row level-0">
+              <span class="tree-arrow">▾</span>
+              <span class="tree-file"></span>
+              <span class="node root">销售管理 <small>子系统</small></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">客户管理 <small>模块</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2 feature-row">
+                      <span class="feature-option"><span class="permission-item">客户查看</span></span>
+                      <span class="feature-option"><span class="permission-item">客户新增</span></span>
+                      <span class="feature-option"><span class="permission-item">客户编辑</span></span>
+                      <span class="feature-option"><span class="permission-item">客户分配</span></span>
+                      <span class="feature-option"><span class="permission-item">客户转移</span></span>
+                      <span class="feature-option"><span class="permission-item">客户跟进</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">订单管理 <small>模块</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2 feature-row">
+                      <span class="feature-option"><span class="permission-item">订单查看</span></span>
+                      <span class="feature-option"><span class="permission-item">订单新建</span></span>
+                      <span class="feature-option"><span class="permission-item">订单修改</span></span>
+                      <span class="feature-option"><span class="permission-item">订单审批</span></span>
+                      <span class="feature-option"><span class="permission-item">订单驳回</span></span>
+                      <span class="feature-option"><span class="permission-item">订单作废</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">销售报表 <small>模块</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2 feature-row">
+                      <span class="feature-option"><span class="permission-item">团队业绩查看</span></span>
+                      <span class="feature-option"><span class="permission-item">销售日报查看</span></span>
+                      <span class="feature-option"><span class="permission-item">项目销售看板</span></span>
+                      <span class="feature-option"><span class="permission-item">报表导出</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <div class="tree-row level-0">
+              <span class="tree-arrow">▾</span>
+              <span class="tree-file"></span>
+              <span class="node root">系统管理 <small>子系统</small></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">个人中心 <small>模块</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2 feature-row">
+                      <span class="feature-option"><span class="permission-item">密码修改</span></span>
+                      <span class="feature-option"><span class="permission-item">个人信息维护</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>组织权限</h2>
+      </div>
+      <div class="content permission-content">
+        <ul class="tree interactive-tree">
+          <li>
+            <div class="tree-row level-0">
+              <span class="tree-arrow">▾</span>
+              <span class="tree-file"></span>
+              <span class="node root">地产集团 <small>集团</small></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">华东置业有限公司 <small>公司</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2">
+                      <span class="tree-file"></span>
+                      <span class="node branch">销售管理部 <small>本部门及下级数据</small> <span class="tag amber">可处理</span></span>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="tree-row level-2">
+                      <span class="tree-file"></span>
+                      <span class="node branch">客户服务部 <small>协同部门</small> <span class="tag green">只读</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>项目权限</h2>
+      </div>
+      <div class="content permission-content">
+        <ul class="tree interactive-tree">
+          <li>
+            <div class="tree-row level-0">
+              <span class="tree-arrow">▾</span>
+              <span class="tree-file"></span>
+              <span class="node root">星河湾项目群 <small>一级项目</small></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">星河湾一期 <small>二级项目</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2">
+                      <span class="tree-file"></span>
+                      <span class="node branch">销售数据查看 <span class="tag green">查看</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">星河湾二期 <small>二级项目</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2">
+                      <span class="tree-file"></span>
+                      <span class="node branch">订单审批 <span class="tag amber">审批</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <div class="tree-row level-0">
+              <span class="tree-arrow">▾</span>
+              <span class="tree-file"></span>
+              <span class="node root">云麓府项目群 <small>一级项目</small></span>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-row level-1">
+                  <span class="tree-arrow">▾</span>
+                  <span class="tree-file"></span>
+                  <span class="node branch">云麓府一期 <small>二级项目</small></span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="tree-row level-2">
+                      <span class="tree-file"></span>
+                      <span class="node branch">销售报表查看 <span class="tag green">查看</span></span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('.interactive-tree li').forEach((item) => {
+      const childList = item.querySelector(':scope > ul');
+      const row = item.querySelector(':scope > .tree-row');
+      const arrow = row?.querySelector('.tree-arrow');
+
+      if (!childList || !row || !arrow) return;
+
+      row.classList.add('toggleable');
+      row.setAttribute('role', 'button');
+      row.setAttribute('tabindex', '0');
+      row.setAttribute('aria-expanded', 'true');
+
+      const toggle = () => {
+        const collapsed = item.classList.toggle('collapsed');
+        arrow.textContent = collapsed ? '▸' : '▾';
+        row.setAttribute('aria-expanded', String(!collapsed));
+      };
+
+      row.addEventListener('click', toggle);
+      row.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          toggle();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -32,6 +32,7 @@ for (const file of [
   'avatar-contract-advisor.svg',
   'erp-li-si-permission-summary.html',
   'erp-user-permission-overview.html',
+  'erp-user-permission-overview-v2.html',
   'gpt-entry.png',
   'home-bg.png',
 ]) {
