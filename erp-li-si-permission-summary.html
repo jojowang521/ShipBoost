@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>李四权限摘要</title>
+  <title>李娜权限摘要</title>
   <style>
     :root {
       --page-bg: #f7f9fc;
@@ -74,7 +74,7 @@
 
     .profile-roles {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-top: 16px;
     }
@@ -114,6 +114,11 @@
     .role.finance .role-icon {
       color: #12b8a6;
       background: linear-gradient(145deg, #ddf8f2 0%, #c8f0e7 100%);
+    }
+
+    .role.temporary .role-icon {
+      color: #f59e0b;
+      background: linear-gradient(145deg, #fff2cf 0%, #ffe3a1 100%);
     }
 
     .role strong {
@@ -287,15 +292,6 @@
       border-top: 5px solid transparent;
     }
 
-    .tree-checkbox {
-      width: 18px;
-      height: 18px;
-      border: 1px solid #d1d9e5;
-      border-radius: 4px;
-      background: #fff;
-      flex: 0 0 auto;
-    }
-
     .feature-option {
       display: inline-flex;
       align-items: center;
@@ -369,13 +365,15 @@
   </style>
 </head>
 <body>
-  <main class="page" aria-label="李四权限摘要">
+  <main class="page" aria-label="李娜权限摘要">
     <section class="profile" aria-label="信息简档">
-      <h1>李四的权限画像</h1>
+      <h1>李娜的权限画像</h1>
       <div class="basic">
-        <div>用户：<strong>李四 · 销售管理部 · 销售经理</strong></div>
+        <div>用户编号：<strong>U10021</strong></div>
         <span class="divider" aria-hidden="true"></span>
-        <div>拥有角色：<strong>2个</strong></div>
+        <div>账号状态：<span class="tag green">启用</span></div>
+        <span class="divider" aria-hidden="true"></span>
+        <div>授予角色：<strong>3个</strong></div>
       </div>
       <div class="profile-roles">
         <div class="role sales">
@@ -387,8 +385,8 @@
             </svg>
           </span>
           <div>
-            <strong>销售经理</strong>
-            <div class="desc">岗位角色，包含销售订单、客户档案和库存报表相关权限。</div>
+            <strong>华东销售主管</strong>
+            <div class="desc">岗位角色，包含客户、订单、销售报表相关权限。</div>
           </div>
         </div>
         <div class="role finance">
@@ -400,8 +398,21 @@
             </svg>
           </span>
           <div>
-            <strong>财务只读</strong>
-            <div class="desc">只读角色，用于查看发票和付款单信息，不包含编辑与审批权限。</div>
+            <strong>销售报表查看</strong>
+            <div class="desc">部门授权，用于查看销售经营数据和团队业绩报表。</div>
+          </div>
+        </div>
+        <div class="role temporary">
+          <span class="role-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 4v10.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="m8.2 10.9 3.8 3.8 3.8-3.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6.5 19.2h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <div>
+            <strong>销售专员</strong>
+            <div class="desc">手工补充，有效期至 2026-09-30，到期后建议自动回收。</div>
           </div>
         </div>
       </div>
@@ -429,10 +440,10 @@
                 <ul>
                   <li>
                     <div class="tree-row level-2 feature-row">
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">销售订单查看</span></span>
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">销售订单新建</span></span>
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">销售订单修改</span></span>
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">销售订单导出</span></span>
+                      <span class="feature-option"><span class="permission-item">销售订单查看</span></span>
+                      <span class="feature-option"><span class="permission-item">销售订单新建</span></span>
+                      <span class="feature-option"><span class="permission-item">销售订单修改</span></span>
+                      <span class="feature-option"><span class="permission-item">销售订单导出</span></span>
                     </div>
                   </li>
                 </ul>
@@ -446,8 +457,8 @@
                 <ul>
                   <li>
                     <div class="tree-row level-2 feature-row">
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">客户档案查看</span></span>
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">客户档案维护</span></span>
+                      <span class="feature-option"><span class="permission-item">客户档案查看</span></span>
+                      <span class="feature-option"><span class="permission-item">客户档案维护</span></span>
                     </div>
                   </li>
                 </ul>
@@ -461,7 +472,7 @@
                 <ul>
                   <li>
                     <div class="tree-row level-2 feature-row">
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">库存报表查看</span></span>
+                      <span class="feature-option"><span class="permission-item">库存报表查看</span></span>
                     </div>
                   </li>
                 </ul>
@@ -484,7 +495,7 @@
                 <ul>
                   <li>
                     <div class="tree-row level-2 feature-row">
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">发票查看</span></span>
+                      <span class="feature-option"><span class="permission-item">发票查看</span></span>
                     </div>
                   </li>
                 </ul>
@@ -498,7 +509,7 @@
                 <ul>
                   <li>
                     <div class="tree-row level-2 feature-row">
-                      <span class="feature-option"><span class="tree-checkbox"></span><span class="permission-item">付款单查看</span></span>
+                      <span class="feature-option"><span class="permission-item">付款单查看</span></span>
                     </div>
                   </li>
                 </ul>
