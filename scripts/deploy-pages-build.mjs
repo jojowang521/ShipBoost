@@ -30,6 +30,8 @@ for (const file of [
   'avatar-ai-3.png',
   'avatar-ai-4.png',
   'avatar-contract-advisor.svg',
+  'erp-li-si-permission-summary.html',
+  'erp-user-permission-overview.html',
   'gpt-entry.png',
   'home-bg.png',
 ]) {

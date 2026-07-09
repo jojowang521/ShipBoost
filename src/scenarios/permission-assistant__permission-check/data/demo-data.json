@@ -25,40 +25,86 @@
       "portal": "员工站点",
       "menuPath": "售楼管理 / 交易管理 / 签订认购合同",
       "page": "签订认购合同",
-      "button": "新增合同"
+      "button": "新增合同",
+      "diagnosisResult": "有权限",
+      "sourceRole": "集团角色 - 全部权限"
     },
     {
       "portal": "员工站点",
       "menuPath": "成本投资 / 合同管理 / 合同登记",
       "page": "合同登记",
-      "button": "新增"
+      "button": "新增",
+      "diagnosisResult": "有权限",
+      "sourceRole": "集团角色 - 全部权限"
     },
     {
       "portal": "员工站点",
       "menuPath": "成本投资 / 合同管理 / 合同登记",
       "page": "合同登记",
-      "button": "新增联合体合同"
+      "button": "新增联合体合同",
+      "diagnosisResult": "无权限"
     },
     {
       "portal": "员工站点",
       "menuPath": "成本投资 / 合同管理 / 合同登记",
       "page": "合同登记",
-      "button": "新增补充合同"
+      "button": "新增补充合同",
+      "diagnosisResult": "无权限"
     },
     {
       "portal": "员工站点",
       "menuPath": "租赁中心 / 合同管理 / 新签合同",
       "page": "新签合同",
-      "button": "新增（承租方）"
+      "button": "新增（承租方）",
+      "diagnosisResult": "无权限"
     }
   ],
   "confirmedEntry": {
     "portal": "员工站点",
-    "menuPath": "成本投资 / 合同管理 / 合同登记",
-    "page": "合同登记",
-    "button": "新增",
+    "menuPath": "售楼管理 / 交易管理 / 签订认购合同",
+    "page": "签订认购合同",
+    "button": "新增合同",
     "diagnosisResult": "有权限",
     "sourceRole": "集团角色 - 全部权限"
+  },
+  "noPermissionAdvice": [
+    "給张三绑定销售合同专员这个角色",
+    "給销售专员这个角色增加新增合同功能权限"
+  ],
+  "strategyOneResult": {
+    "user": "张三",
+    "account": "wm1",
+    "org": "武汉公司 / 销售部门",
+    "boundRole": "销售合同专员",
+    "roleStatus": "已生效",
+    "addedPermission": "合同登记 / 新增联合体合同、合同登记 / 新增补充合同、新签合同 / 新增（承租方）",
+    "effectiveScope": "成本投资 / 合同管理、租赁中心 / 合同管理"
+  },
+  "liSiPermissionSummary": {
+    "user": "李四",
+    "userNo": "U10021",
+    "accountStatus": "启用",
+    "roles": [
+      "华东销售主管",
+      "销售报表查看",
+      "临时数据导出"
+    ],
+    "functionPermissions": [
+      "客户查看",
+      "客户新增",
+      "客户编辑",
+      "订单查看",
+      "订单新建",
+      "订单修改",
+      "订单审批",
+      "销售报表查看",
+      "团队业绩查看",
+      "报表导出",
+      "密码修改",
+      "个人信息维护"
+    ],
+    "orgPermission": "华东区域销售组织及下属团队",
+    "artifactTitle": "李四权限总览"
   },
   "followUpAdvice": [
     "项目/公司数据范围",

@@ -24,7 +24,25 @@ import ControlPriceReplayPanel from '../engine/components/ControlPriceReplayPane
 import AgentAvatar from '../shared/chat/components/AgentAvatar'
 
 // ─── 场景意图识别 ──────────────────────────────────────────────────────────────
-// 匹配优先级：场景名称 → AI专员简介 → step_1 触发方式关键词
+function triggerTextMatchesIntent(trigger: string, normalizedText: string): boolean {
+  if (!trigger || !normalizedText) return false
+  const quotedTriggers = Array.from(trigger.matchAll(/「([^」]+)」/g)).map(match => normalizeIntentText(match[1]))
+  const candidates = quotedTriggers.length > 0 ? quotedTriggers : [normalizeIntentText(trigger)]
+  return candidates.some(candidate =>
+    candidate &&
+    (normalizedText.includes(candidate) || candidate.includes(normalizedText))
+  )
+}
+
+function getTriggeredPhaseForText(scenario: ScenarioModule, text: string): string | null {
+  const normalizedText = normalizeIntentText(text)
+  const doc = (scenario as any)._doc
+  const steps: Array<{ stepId?: string; trigger?: string }> = doc?.steps || []
+  const matched = steps.find(step => step.stepId && triggerTextMatchesIntent(step.trigger || '', normalizedText))
+  return matched?.stepId || null
+}
+
+// 匹配优先级：场景名称 → AI专员简介 → 触发方式关键词
 
 function matchScenario(text: string, scenarios: ScenarioModule[]): ScenarioModule | null {
   if (scenarios.length === 0) return null
@@ -68,14 +86,20 @@ function matchScenario(text: string, scenarios: ScenarioModule[]): ScenarioModul
   const byTrigger = scenarios.find(s => {
     const doc = (s as any)._doc
     const trigger: string = doc?.steps?.[0]?.trigger || ''
-    const normalizedTrigger = normalizeIntentText(trigger)
     return Boolean(
-      normalizedTrigger &&
-      (normalizedText.includes(normalizedTrigger) || normalizedTrigger.includes(normalizedText)) ||
+      triggerTextMatchesIntent(trigger, normalizedText) ||
       (trigger && lower.split(/[\s，。？！,?.!]+/).some(w => w.length >= 2 && trigger.toLowerCase().includes(w)))
     )
   })
   if (byTrigger) return byTrigger
+
+  // 6. 任一步触发方式匹配。用于支持“查看李四的权限”这类并行追问从首页直接进入场景。
+  const byAnyStepTrigger = scenarios.find(s => {
+    const doc = (s as any)._doc
+    const steps: Array<{ trigger?: string }> = doc?.steps || []
+    return steps.some(step => triggerTextMatchesIntent(step.trigger || '', normalizedText))
+  })
+  if (byAnyStepTrigger) return byAnyStepTrigger
 
   return null
 }
@@ -172,7 +196,7 @@ function matchHomeMentionScenario(text: string): { scenarioId: string; taskTitle
 
 // ─── 工作台视图（选中场景后） ──────────────────────────────────────────────────
 
-const WM1_PERMISSION_OVERVIEW_URL = 'http://127.0.0.1:8765/erp-user-permission-overview.html?v=row-tree-list-20260708'
+const WM1_PERMISSION_OVERVIEW_URL = '/erp-user-permission-overview.html'
 const LI_SI_PERMISSION_SUMMARY_URL = '/erp-li-si-permission-summary.html'
 const WORKSPACE_PREVIEW_STORAGE_KEY = 'myy-aui-demo-shell:last-workspace-preview'
 
@@ -1513,6 +1537,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     options?: {
       taskTitle?: string
       homeAgentId?: string | null
+      initialPhase?: string
       attachment?: { name: string; size?: string; type?: 'pdf' | 'word' | 'excel' | 'xml' | 'file' }
     },
   ) => {
@@ -1520,9 +1545,10 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     if (!scenario) return
     const targetHomeExperience = getNativeAssistantExperience(options?.homeAgentId ?? scenario.agentId ?? homeExperience.agentId)
     const userMessageContent = userText || scenario.label
+    const initialPhase = options?.initialPhase || scenario.phases[0] || 'step_1'
     trackEvent('scenario_entered', {
       scenarioId,
-      phase: scenario.phases[0] || 'step_1',
+      phase: initialPhase,
       label: scenario.label,
       source: userText ? 'user_input' : 'home',
       value: userMessageContent,
@@ -1535,7 +1561,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       scenarioId,
       agentName: scenarioAgentName,
       avatarKey,
-      initialPhase: scenario.phases[0] || 'step_1',
+      initialPhase,
       taskTitle: options?.taskTitle || summarizeTaskTitle(userMessageContent),
       message: {
         id: genMessageId(),
@@ -1664,9 +1690,10 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       ? getScenario(mentionTarget.scenarioId)
       : matchScenario(trimmed, candidateScenarios) ?? (candidateScenarios === scenarios ? null : matchScenario(trimmed, scenarios))
     if (target) {
+      const initialPhase = getTriggeredPhaseForText(target, trimmed) || target.phases[0] || 'step_1'
       enterScenario(target.id, trimmed, mentionTarget
         ? { taskTitle: mentionTarget.taskTitle, homeAgentId: 'control-price' }
-        : { taskTitle: target.label, homeAgentId: target.agentId ?? activeComposerAgentId })
+        : { taskTitle: target.label, homeAgentId: target.agentId ?? activeComposerAgentId, initialPhase })
     } else {
       // 多场景下未命中意图：发用户气泡 + AI 引导选择场景
       dispatch({

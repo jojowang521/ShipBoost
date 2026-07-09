@@ -33,16 +33,24 @@ function triggerMatchesUserText(trigger: string, userText: string): boolean {
 
   const quotedTriggers = Array.from(trigger.matchAll(/「([^」]+)」/g)).map(match => normalizeTriggerText(match[1]))
   const candidates = quotedTriggers.length > 0 ? quotedTriggers : [normalizeTriggerText(trigger)]
-  return candidates.some(candidate =>
-    candidate.length > 0 &&
-    (normalizedUserText.includes(candidate) || candidate.includes(normalizedUserText.slice(0, 8)))
-  )
+  return candidates.some(candidate => {
+    if (!candidate) return false
+    if (/^\d+$/.test(candidate)) {
+      return normalizedUserText === candidate ||
+        normalizedUserText === `选择${candidate}` ||
+        normalizedUserText === `序号${candidate}`
+    }
+    return normalizedUserText.includes(candidate) || candidate.includes(normalizedUserText.slice(0, 8))
+  })
 }
 
 function findTriggeredStep(steps: ParsedStep[], currentPhase: string, userText: string): ParsedStep | undefined {
   const currentIndex = steps.findIndex(step => step.stepId === currentPhase)
   const laterSteps = currentIndex >= 0 ? steps.slice(currentIndex + 1) : steps
-  return laterSteps.find(step => triggerMatchesUserText(step.trigger, userText))
+  const laterMatch = laterSteps.find(step => triggerMatchesUserText(step.trigger, userText))
+  if (laterMatch) return laterMatch
+
+  return steps.find(step => triggerMatchesUserText(step.trigger, userText))
 }
 
 // ─── 判断步骤是否为自动触发（无需等待用户输入） ──────────────────────────────
