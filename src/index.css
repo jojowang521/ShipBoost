@@ -6829,18 +6829,35 @@ button[aria-disabled="true"],
 }
 
 .sidebar-shell__overlay {
-  position: fixed;
-  inset: 0;
+  position: relative;
   z-index: 90;
   display: flex;
-  justify-content: flex-end;
+  flex: 0 0 0;
+  width: 0;
+  height: 100dvh;
+  min-width: 0;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 180ms ease;
+  opacity: 1;
+  overflow: hidden;
+  transition: flex-basis 250ms ease, width 250ms ease;
 }
 
 .sidebar-shell--open .sidebar-shell__overlay {
-  opacity: 1;
+  flex-basis: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  width: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  pointer-events: auto;
+}
+
+.sidebar-shell__overlay::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 1px;
+  background: #d8dde6;
+  pointer-events: none;
 }
 
 .sidebar-shell__panel-group {
@@ -6849,8 +6866,9 @@ button[aria-disabled="true"],
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  width: min(100vw, 1180px);
-  max-width: 100vw;
+  flex: 0 0 var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  width: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  max-width: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
   height: 100dvh;
   transform: translateX(100%);
   transition: transform 250ms ease, width 250ms ease;
@@ -6868,8 +6886,22 @@ button[aria-disabled="true"],
 }
 
 .sidebar-shell--maximized .sidebar-shell__panel-group {
+  flex-basis: 100vw;
   width: 100vw;
+  max-width: 100vw;
   background: #f7f8fa;
+}
+
+.sidebar-shell--maximized .sidebar-shell__overlay {
+  position: absolute;
+  inset: 0;
+  flex-basis: 100vw;
+  width: 100vw;
+  height: 100dvh;
+}
+
+.sidebar-shell--maximized .sidebar-shell__overlay::before {
+  display: none;
 }
 
 .sidebar-shell--maximized.sidebar-shell--home .sidebar-shell__panel-group {
@@ -6890,13 +6922,14 @@ button[aria-disabled="true"],
   position: relative;
   display: flex;
   flex-direction: column;
-  width: clamp(360px, 32vw, 480px);
-  max-width: 100vw;
+  flex: 0 0 var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  width: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
+  max-width: var(--process-debug-drawer-width, clamp(360px, 32vw, 480px));
   height: 100dvh;
   background: #f7f8fa;
-  border-left: 1px solid rgba(255, 255, 255, 0.96);
-  border-radius: 16px 0 0 16px;
-  box-shadow: -10px 0 26px rgba(15, 23, 42, 0.12);
+  border-left: 1px solid #d8dde6;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
   flex-shrink: 0;
   transition: width 250ms ease, max-width 250ms ease, box-shadow 250ms ease, border-color 250ms ease, border-radius 250ms ease;
@@ -13206,6 +13239,12 @@ button.template-contract-table__row:hover,
   height: 100%;
   transform: none;
   background: transparent;
+}
+
+.native-global-shell__content .sidebar-shell__overlay {
+  top: 0;
+  bottom: 0;
+  height: 100dvh;
 }
 
 .native-global-shell__content .sidebar-shell__drawer {

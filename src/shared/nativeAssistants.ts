@@ -100,7 +100,7 @@ export const NATIVE_ASSISTANT_EXPERIENCES: NativeAssistantExperience[] = [
     agentId: SYSTEM_MANAGEMENT_ASSISTANT_ID,
     agentName: '系统管理助手',
     agentDescription: '聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流。',
-    homeDescription: '覆盖套打模板、流程调试/转交和权限诊断，按问题自动进入对应处理流程',
+    homeDescription: '你好，我是系统管理助手，可以帮你快速生成套打模板、诊断权限问题、调试审批流程、调整流程数据。',
     inputPlaceholderExample: '根据标准合同样张生成套打模板',
     avatarKey: 'avatar-ai-2',
     dialogues: [
@@ -110,10 +110,10 @@ export const NATIVE_ASSISTANT_EXPERIENCES: NativeAssistantExperience[] = [
       { id: 'permission-assistant__permission-check', title: '用户权限配置检查', prompt: 'wm1有哪些权限' },
     ],
     questions: [
-      { label: 'AI新增模板', prompt: '根据标准合同样张生成套打模板' },
-      { label: '调试采购流程', prompt: '为采购审批流程生成全分支调试用例' },
-      { label: '流程转交', prompt: '将张三的所有流程转交给李四' },
-      { label: '查用户权限', prompt: 'wm1有哪些权限' },
+      { label: '生成套打模板', prompt: '根据标准合同样张生成套打模板' },
+      { label: '查询和诊断用户权限', prompt: 'wm1有哪些权限' },
+      { label: '调试审批流程', prompt: '为采购审批流程生成全分支调试用例' },
+      { label: '调整流程数据', prompt: '将张三的所有流程转交给李四' },
     ],
     homeInfoCards: [],
   },
