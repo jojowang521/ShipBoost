@@ -8,11 +8,11 @@ const AGENT_NAME = '系统管理助手'
 const AVATAR_KEY = 'avatar-ai-2'
 
 const templateDataRows = [
-  { id: 'service', name: '租赁中心-服务协议文本', scene: '服务协议文本' },
-  { id: 'notice', name: '租赁中心-催缴通知单-v001', scene: '催缴通知单' },
-  { id: 'handover', name: '租赁中心-物业交房联系单-v001', scene: '物业交房联系单' },
-  { id: 'intent', name: '租赁中心-意向协议文本-v001', scene: '意向协议文本' },
-  { id: 'new-contract', name: '租赁中心-新签合同文本-v001', scene: '新签合同文本' },
+  { id: 'service', name: '租赁中心 - 服务协议文本', helper: '套打数据ID：lease_service_agreement ｜ 场景：服务协议' },
+  { id: 'notice', name: '租赁中心 - 催缴通知单 - v001', helper: '套打数据ID：lease_overdue_notice_v001 ｜ 场景：租金催缴' },
+  { id: 'handover', name: '租赁中心 - 物业交房联系单 - v001', helper: '套打数据ID：lease_handover_contact_v001 ｜ 场景：物业交房' },
+  { id: 'intent', name: '租赁中心 - 意向协议文本 - v001', helper: '套打数据ID：lease_intention_agreement_v001 ｜ 场景：意向签约' },
+  { id: 'new-contract', name: '租赁中心 - 新签合同文本 - v001', helper: '套打数据ID：lease_new_contract_v001 ｜ 场景：新签合同' },
 ]
 
 const fieldRows = [
@@ -31,21 +31,13 @@ const fieldRows = [
 const contractRows = [
   {
     id: 'WL-YY-2025111104',
-    tenant: '广州市捷博物流有限公司',
-    name: '龙光大道中路13号1502房租赁合同',
-    status: '履约中',
+    name: '合同编号：WL-YY-2025111104',
+    helper: '承租方：广州市捷诺物流有限公司',
   },
   {
-    id: 'WL-YY-2025111105',
-    tenant: '广州沙园同和教育有限公司',
-    name: '龙光大道中路13号1502房租赁合同',
-    status: '待签署',
-  },
-  {
-    id: 'WL-YY-2025111106',
-    tenant: '广州联运物流有限公司',
-    name: '龙光大道中路13号1608房租赁合同',
-    status: '审批中',
+    id: 'default-template-data',
+    name: '使用套打数据默认的样例数据预览',
+    helper: '样例数据来源于业务系统内置套打数据的默认值',
   },
 ]
 
@@ -94,7 +86,7 @@ function TemplateDataSelectCard({ handled, onAction, messageId }: any) {
     React.createElement('div', { className: `template-flow-card template-flow-card--choice-list${handled ? ' is-handled' : ''}` },
       React.createElement('div', { className: 'template-flow-card__head' },
         React.createElement('div', null,
-          React.createElement('h3', null, '请选择套打数据')
+          React.createElement('h3', null, '推荐套打数据（可以在补充说明中输入套打数据名称）')
         )
       ),
       React.createElement('div', { className: 'template-choice-list' },
@@ -108,8 +100,8 @@ function TemplateDataSelectCard({ handled, onAction, messageId }: any) {
           },
             React.createElement('span', { className: 'template-choice-table__radio' }),
             React.createElement('span', { className: 'template-choice-list__copy' },
-              React.createElement('strong', null, row.name.replace(/-/g, ' - ')),
-              React.createElement('em', null, `套打场景：${row.scene}`)
+              React.createElement('strong', null, row.name),
+              React.createElement('em', null, row.helper)
             )
           )
         ))
@@ -118,7 +110,7 @@ function TemplateDataSelectCard({ handled, onAction, messageId }: any) {
         React.createElement('span', null, '补充说明'),
         React.createElement('input', {
           type: 'text',
-          placeholder: '请输入补充信息',
+          placeholder: '请输入补充说明描述',
           value: supplement,
           disabled: handled,
           onChange: (event: React.ChangeEvent<HTMLInputElement>) => setSupplement(event.target.value),
@@ -191,7 +183,7 @@ const generatedTemplateMeta: Record<GeneratedTemplateVariant, {
 }> = {
   templateDraft: {
     title: '租赁合同套打文档_AI 初稿',
-    description: '35 处字段替换，含待复核提示',
+    description: '35 处字段替换，含字段配置',
     targetPhase: 'template_doc',
     targetArtifactTitle: '租赁合同套打文档_AI 初稿',
   },
@@ -242,7 +234,7 @@ function ContractDataSelectCard({ handled, onAction, messageId }: any) {
     React.createElement('div', { className: `template-flow-card template-flow-card--choice-list${handled ? ' is-handled' : ''}` },
       React.createElement('div', { className: 'template-flow-card__head' },
         React.createElement('div', null,
-          React.createElement('h3', null, '请选择合同数据')
+          React.createElement('h3', null, '选择预览套打数据来源（可以在补充说明输入预览模板参数businessId值）')
         )
       ),
       React.createElement('div', { className: 'template-choice-list' },
@@ -257,7 +249,7 @@ function ContractDataSelectCard({ handled, onAction, messageId }: any) {
             React.createElement('span', { className: 'template-choice-table__radio' }),
             React.createElement('span', { className: 'template-choice-list__copy' },
               React.createElement('strong', null, item.name),
-              React.createElement('em', null, `${item.id} / ${item.tenant} / ${item.status}`)
+              React.createElement('em', null, item.helper)
             )
           )
         ))
@@ -266,7 +258,7 @@ function ContractDataSelectCard({ handled, onAction, messageId }: any) {
         React.createElement('span', null, '补充说明'),
         React.createElement('input', {
           type: 'text',
-          placeholder: '请输入补充信息',
+          placeholder: '请输入补充说明描述',
           value: supplement,
           disabled: handled,
           onChange: (event: React.ChangeEvent<HTMLInputElement>) => setSupplement(event.target.value),
@@ -280,7 +272,7 @@ function ContractDataSelectCard({ handled, onAction, messageId }: any) {
           onClick: () => onAction?.('branchSelect', {
             messageId,
             to: 'contract_preview',
-            label: `合同编号：${row.id}`,
+            label: row.id === 'default-template-data' ? '使用套打数据默认的样例数据预览' : row.name,
             contractId: row.id,
           }),
         }, '选择合同数据确认')
@@ -442,7 +434,7 @@ const scenario: ScenarioModule = {
     if (phase === 'upload_received') {
       addAssistantMessage(
         ctx,
-        '已收到你上传的标准合同文档。为了继续生成套打模板，还需要补充本次使用的套打数据。\n\n当前推荐套打数据为：**租赁合同**。选择套打数据后，我会自动解析文档并识别套打字段。',
+        '已收到上传的标准合同文档。请选择本次使用的套打数据，我会自动解析文档并匹配套打字段，并根据识别结果生成套打模板。\n\n当前推荐套打数据为：**租赁合同**。确认后我会继续解析合同正文。',
         () => addComponentMessage(ctx, 'TemplateDataSelectCard')
       )
       return
@@ -450,7 +442,7 @@ const scenario: ScenarioModule = {
     if (phase === 'field_recognition') {
       addAssistantMessage(
         ctx,
-        '已收到原始文档和本次确认信息。我开始解析上传的合同正文，并同步识别可替换为套打字段的内容。\n\n**套打模板字段替换结果**\n\n请根据以下识别结果复核确认。本次共识别 **35 个标记**。',
+        '已收到原始文档，已选择套打数据：**租赁合同**。我开始解析上传的合同正文，并识别可替换为套打字段的内容。\n\n文档解析与字段识别已完成。共识别 **35 个可生成替换套打字段的标记**，请根据套打模板替换字段结果复核确认。',
         () => addComponentMessage(ctx, 'FieldRecognitionCard')
       )
       return
@@ -458,7 +450,7 @@ const scenario: ScenarioModule = {
     if (phase === 'template_generated') {
       addAssistantMessage(
         ctx,
-        '我会把合同中的实际内容替换为套打字段标记，并同步生成字段配置。套打模板已生成，已完成 **35 处字段替换**，请仔细检查文档中生成替换的字段。\n\n提示：如果套打模板中有替换的字段不准确，可以通过对话的方式直接调整，例如：请将 ${租赁中心_新签合同文本.合同编号} 改成 ${租赁中心_新签合同文本.合同名称}。',
+        '我会把合同中的实际内容替换为套打字段标记，并同步生成字段配置。\n\n套打模板已生成。已完成 **35 处字段替换**，请重点检查字段替换是否准确，确认无误后可继续在线预览套打效果。\n\n提示：如果套打模板中有替换字段不准确，可以通过对话直接调整，例如：请将 ${租赁中心_新签合同文本.合同编号} 改成 ${租赁中心_新签合同文本.合同名称}。',
         () => {
           addComponentMessage(ctx, 'GeneratedTemplateCard', { variant: 'templateDraft' })
           ctx.dispatch({ type: 'OPEN_PREVIEW', readonly: false, targetPhase: 'template_doc', targetArtifactTitle: '租赁合同套打文档_AI 初稿', scrollBeforeOpen: false })
@@ -469,7 +461,7 @@ const scenario: ScenarioModule = {
     if (phase === 'contract_data_select') {
       addAssistantMessage(
         ctx,
-        '请选择一条合同数据，系统将使用该数据在线预览套打模板。',
+        '请选择一条合同数据，系统将使用该数据在线预览套打模板效果。',
         () => addComponentMessage(ctx, 'ContractDataSelectCard')
       )
       return
@@ -477,7 +469,7 @@ const scenario: ScenarioModule = {
     if (phase === 'contract_preview') {
       addAssistantMessage(
         ctx,
-        '套打模板根据选择合同数据已经生成正式的租赁合同，请点击租赁合同查看详情。',
+        '套打模板已根据你选择的合同数据生成正式租赁合同。请点击租赁合同查看详情，重点核对金额、日期、合同主体和表格字段是否替换准确。',
         () => {
           addComponentMessage(ctx, 'GeneratedTemplateCard', { variant: 'formalContract' })
           ctx.dispatch({ type: 'OPEN_PREVIEW', readonly: false, targetPhase: 'contract_preview', targetArtifactTitle: '租赁合同在线预览', scrollBeforeOpen: false })
@@ -491,7 +483,7 @@ const scenario: ScenarioModule = {
       ctx.dispatch({ type: 'SET_SCENARIO_STATE', scenarioId: SCENARIO_ID, state: { replacementChanged: true } })
       addAssistantMessage(
         ctx,
-        '我会把套打模板中${租赁中心_新签合同文本.合同编号}改成${租赁中心_新签合同文本.合同名称}，字段已替换完成，请检查文档的字段替换效果；',
+        '我会把套打模板中 ${租赁中心_新签合同文本.合同编号} 改成 ${租赁中心_新签合同文本.合同名称}。字段已替换完成，请检查文档中的字段替换效果。',
         () => {
           addComponentMessage(ctx, 'GeneratedTemplateCard', { variant: 'replacementUpdated' })
           ctx.dispatch({ type: 'OPEN_PREVIEW', readonly: false, targetPhase: 'contract_preview', targetArtifactTitle: '租赁合同在线预览', scrollBeforeOpen: false })
@@ -499,7 +491,7 @@ const scenario: ScenarioModule = {
       )
       return
     }
-    addAssistantMessage(ctx, '我主要处理当前套打模板的字段识别、在线预览和字段替换调整。请继续描述需要调整的套打字段。')
+    addAssistantMessage(ctx, '我主要负责当前套打模板的自动生成、字段识别、在线预览和字段替换调整。请继续描述需要解析、识别或调整的套打字段。')
   },
   handleComponentAction(action, payload, ctx) {
     if (action === 'branchSelect') {

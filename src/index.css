@@ -8921,8 +8921,8 @@ button[aria-disabled="true"],
 
 .template-flow-card--choice-list {
   box-sizing: border-box;
-  width: min(416px, 100%);
-  min-height: 274px;
+  width: min(560px, 100%);
+  min-height: 350px;
   padding: 0;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -8968,15 +8968,28 @@ button[aria-disabled="true"],
 }
 
 .template-flow-card--choice-list .template-flow-card__head {
-  padding: 22px 16px 6px;
+  padding: 24px 24px 12px;
 }
 
 .template-flow-card--choice-list .template-flow-card__head h3 {
+  position: relative;
   margin: 0;
+  padding-left: 12px;
   color: #252a31;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 22px;
+  line-height: 24px;
+}
+
+.template-flow-card--choice-list .template-flow-card__head h3::before {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 3px;
+  height: 18px;
+  content: "";
+  background: #6257ff;
+  border-radius: 99px;
 }
 
 .template-count-pill {
@@ -9064,18 +9077,18 @@ button[aria-disabled="true"],
 .template-choice-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 6px 16px 2px;
+  gap: 16px;
+  padding: 8px 24px 10px;
 }
 
 .template-choice-list__item {
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: 30px minmax(0, 1fr);
   align-items: flex-start;
-  gap: 6px;
+  gap: 10px;
   width: 100%;
-  min-height: 34px;
-  padding: 4px 0;
+  min-height: 52px;
+  padding: 0;
   color: #1f2937;
   text-align: left;
   cursor: pointer;
@@ -9087,47 +9100,55 @@ button[aria-disabled="true"],
   cursor: not-allowed;
 }
 
+.template-choice-list__item:hover:not(:disabled) {
+  background: transparent;
+}
+
+.template-choice-list__item.is-selected .template-choice-list__copy strong {
+  color: #1f2633;
+  font-weight: 600;
+}
+
 .template-choice-list__item .template-choice-table__radio {
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .template-choice-list__copy {
   display: flex;
   min-width: 0;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 3px 0;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .template-choice-list__copy strong {
   width: 100%;
   overflow: hidden;
   color: #2c3138;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
-  line-height: 22px;
+  line-height: 24px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .template-choice-list__copy em {
-  display: none;
+  display: block;
   overflow: hidden;
-  color: #98a2b3;
-  font-size: 14px;
+  color: #8a9099;
+  font-size: 13px;
   font-style: normal;
-  line-height: 22px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 20px;
+  white-space: normal;
+  word-break: break-all;
 }
 
 .template-supplement-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 4px 16px 0;
+  gap: 8px;
+  padding: 8px 24px 0;
   color: #2c3138;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 22px;
 }
 
@@ -9138,11 +9159,11 @@ button[aria-disabled="true"],
 .template-supplement-field input {
   box-sizing: border-box;
   width: 100%;
-  height: 32px;
-  padding: 0 12px;
+  height: 40px;
+  padding: 0 14px;
   color: #2c3138;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   background: #fff;
   border: 1px solid #e2e5ea;
   border-radius: 6px;
@@ -9261,14 +9282,14 @@ button.template-contract-table__row:hover,
 
 .template-card-footer--choice-list {
   justify-content: flex-start;
-  padding: 8px 16px;
+  padding: 18px 24px 24px;
 }
 
 .template-card-footer--choice-list .template-primary-btn {
-  min-width: 80px;
-  height: 32px;
-  border-radius: 6px;
-  font-size: 13px;
+  min-width: 112px;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 16px;
   background: #5147ff;
   border-color: #5147ff;
 }
