@@ -102,7 +102,7 @@ const categories: Category[] = [
         demoPrompt: '查看 wm1 权限、调试采购流程，或上传租赁合同样张生成套打模板',
         demoOutput: ['统一进入系统管理助手', '按问题自动匹配套打、流程或权限场景', '打开右侧文档和业务工作台预览'],
         icon: Workflow,
-        embedUrl: '/?view=noma',
+        embedUrl: '/embedded/task-management/index.html?view=noma&t=shell-final-20260715',
       },
       {
         name: '流程助手（流程调试）',
@@ -254,6 +254,15 @@ const directoryAssistants = assistantDirectory
   .filter((assistant): assistant is Assistant & { serviceName: string; serviceHelper: string } => Boolean(assistant))
 
 function withFreshParam(rawUrl: string): string {
+  if (
+    rawUrl.startsWith('/embedded/task-management/')
+    && ['127.0.0.1', 'localhost'].includes(window.location.hostname)
+  ) {
+    const localDemoUrl = new URL('http://127.0.0.1:5174/')
+    localDemoUrl.searchParams.set('_fresh', Date.now().toString())
+    return localDemoUrl.toString()
+  }
+
   const url = new URL(rawUrl, window.location.origin)
   if (['127.0.0.1', 'localhost'].includes(url.hostname) && !['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
     url.hostname = window.location.hostname
@@ -306,7 +315,7 @@ function App() {
   }
 
   return (
-    <main className={`assistant-hub${isSidebarCollapsed ? ' assistant-hub--collapsed' : ''}`}>
+    <main className={`assistant-hub${isSidebarCollapsed ? ' assistant-hub--collapsed' : ''}${activeAssistant.embedUrl ? ' assistant-hub--embedded-active' : ''}`}>
       <aside className="assistant-sidebar">
         <div className="brand-block">
           <div className="brand-mark">

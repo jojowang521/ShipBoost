@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import GenericPanel from '../../engine/components/GenericPanel'
 import type { ScenarioContext, ScenarioModule } from '../types'
 import { genMessageId, streamFakeText } from '../../shared/utils'
 
@@ -8,15 +7,22 @@ const AGENT_NAME = '系统管理助手'
 const AVATAR_KEY = 'avatar-ai-2'
 
 const flowTemplateRows = [
-  { id: 'product-contract-approval', name: '产品立项申请与合同审批', helper: '状态：已发布' },
-  { id: 'lease-contract-renewal', name: '租赁合同续签流程', helper: '状态：修订中' },
-  { id: 'expense-contract-settlement', name: '费用合同结算流程', helper: '状态：草稿' },
+  { id: 'product-contract-approval', name: '产品立项申请与合同审批', status: '已发布' },
+  { id: 'lease-contract-renewal', name: '租赁合同续签流程', status: '修订中' },
+  { id: 'expense-contract-settlement', name: '费用合同结算流程', status: '草稿' },
 ]
 
 const debugUserRows = [
-  { id: 'debug-user-1', name: '张三', helper: '所属组织：集团-武汉分公司-信息部' },
-  { id: 'debug-user-2', name: '李四', helper: '所属组织：集团-武汉分公司-财务部' },
-  { id: 'debug-user-3', name: '王五', helper: '所属组织：集团-武汉分公司-成本部' },
+  { id: 'debug-user-1', name: '张三', org: '集团-武汉分公司-信息部' },
+  { id: 'debug-user-2', name: '李四', org: '集团-武汉分公司-财务部' },
+  { id: 'debug-user-3', name: '王五', org: '集团-武汉分公司-成本部' },
+]
+
+const debugCaseRows = [
+  { scene: '正常流程', caseNo: 'TC-001', params: '产品类型=智能硬件；当前阶段=交付；销售公司=集团/武汉分公司', path: '发起申请 → 部门负责人审批 → 流程结束', result: '通过' },
+  { scene: '异常流程', caseNo: 'TC-002', params: '产品类型=智能硬件；当前阶段=售前；销售公司=集团/深圳分公司', path: '发起申请 → 部门负责人审批 → 驳回结束', result: '通过' },
+  { scene: '边界条件', caseNo: 'TC-003', params: '产品类型=SaaS软件；当前阶段=交付；销售公司=集团/武汉分公司', path: '发起申请 → 表单校验 → 阻断提交', result: '不通过' },
+  { scene: '特殊场景', caseNo: 'TC-004', params: '产品类型=SaaS软件；当前阶段=售前；销售公司=集团/深圳分公司', path: '发起申请 → 权限校验 → 组织规则匹配', result: '通过' },
 ]
 
 function addAssistantMessage(ctx: ScenarioContext, text: string, onComplete?: () => void) {
@@ -55,13 +61,13 @@ function FlowTemplateSelectCard({ handled, onAction, messageId }: any) {
   const [selected, setSelected] = useState(flowTemplateRows[0].id)
   const [supplement, setSupplement] = useState('')
   const selectedRow = flowTemplateRows.find(row => row.id === selected) || flowTemplateRows[0]
-  const label = supplement.trim() || selectedRow.name
+  const templateName = supplement.trim() || selectedRow.name
 
   return (
     React.createElement('div', { className: `template-flow-card template-flow-card--choice-list process-debug-choice-card${handled ? ' is-handled' : ''}` },
       React.createElement('div', { className: 'template-flow-card__head' },
         React.createElement('div', null,
-          React.createElement('h3', null, '选择调试流程（可以在补充说明中输入要调试流程名称）')
+          React.createElement('h3', null, '请选择要调试的流程模板')
         )
       ),
       React.createElement('div', { className: 'template-choice-list' },
@@ -76,16 +82,16 @@ function FlowTemplateSelectCard({ handled, onAction, messageId }: any) {
             React.createElement('span', { className: 'template-choice-table__radio' }),
             React.createElement('span', { className: 'template-choice-list__copy' },
               React.createElement('strong', null, row.name),
-              React.createElement('em', null, row.helper)
+              React.createElement('em', null, `状态：${row.status}`)
             )
           )
         ))
       ),
       React.createElement('label', { className: 'template-supplement-field' },
-        React.createElement('span', null, '补充说明'),
+        React.createElement('span', null, '请输入流程名称'),
         React.createElement('input', {
           type: 'text',
-          placeholder: '请输入补充信息',
+          placeholder: '请输入流程名称',
           value: supplement,
           disabled: handled,
           onChange: (event: React.ChangeEvent<HTMLInputElement>) => setSupplement(event.target.value),
@@ -99,8 +105,8 @@ function FlowTemplateSelectCard({ handled, onAction, messageId }: any) {
           onClick: () => onAction?.('branchSelect', {
             messageId,
             to: 'debug_user_select',
-            label,
-            selectedTemplate: selectedRow.name,
+            label: `已选择流程模版：${templateName}`,
+            selectedTemplate: templateName,
           }),
         }, '确定')
       )
@@ -112,13 +118,14 @@ function DebugUserSelectCard({ handled, onAction, messageId }: any) {
   const [selected, setSelected] = useState(debugUserRows[0].id)
   const [supplement, setSupplement] = useState('')
   const selectedRow = debugUserRows.find(row => row.id === selected) || debugUserRows[0]
-  const label = supplement.trim() || selectedRow.name
+  const userName = supplement.trim() || selectedRow.name
+  const userOrg = supplement.trim() ? '手动输入用户所属组织待识别' : selectedRow.org
 
   return (
     React.createElement('div', { className: `template-flow-card template-flow-card--choice-list process-debug-choice-card${handled ? ' is-handled' : ''}` },
       React.createElement('div', { className: 'template-flow-card__head' },
         React.createElement('div', null,
-          React.createElement('h3', null, '选择调试的发起人（可以在补充说明输入用户姓名）')
+          React.createElement('h3', null, '请选择调试用户')
         )
       ),
       React.createElement('div', { className: 'template-choice-list' },
@@ -133,16 +140,16 @@ function DebugUserSelectCard({ handled, onAction, messageId }: any) {
             React.createElement('span', { className: 'template-choice-table__radio' }),
             React.createElement('span', { className: 'template-choice-list__copy' },
               React.createElement('strong', null, row.name),
-              React.createElement('em', null, row.helper)
+              React.createElement('em', null, `所属组织：${row.org}`)
             )
           )
         ))
       ),
       React.createElement('label', { className: 'template-supplement-field' },
-        React.createElement('span', null, '补充说明'),
+        React.createElement('span', null, '请输入要调试的发起人'),
         React.createElement('input', {
           type: 'text',
-          placeholder: '请输入补充信息',
+          placeholder: '请输入要调试的发起人姓名',
           value: supplement,
           disabled: handled,
           onChange: (event: React.ChangeEvent<HTMLInputElement>) => setSupplement(event.target.value),
@@ -155,9 +162,10 @@ function DebugUserSelectCard({ handled, onAction, messageId }: any) {
           disabled: handled,
           onClick: () => onAction?.('branchSelect', {
             messageId,
-            to: 'case_result',
-            label,
-            selectedUser: selectedRow.name,
+            to: 'execution_result',
+            label: `已选择调试用户：${userName}`,
+            selectedUser: userName,
+            selectedUserOrg: userOrg,
           }),
         }, '执行调试')
       )
@@ -166,63 +174,125 @@ function DebugUserSelectCard({ handled, onAction, messageId }: any) {
 }
 
 function DebugCaseListCard() {
-  const rows = [
-    ['TC-001', '产品类型=SaaS软件；当前阶段=交付；销售公司=集团/武汉分公司', '发起申请 → 表单校验 → 部门提交'],
-    ['TC-002', '产品类型=SaaS软件；当前阶段=售前；销售公司=集团/深圳分公司', '发起申请 → 权限校验 → 组织规则匹配'],
-    ['TC-003', '产品类型=智能硬件；附件缺失；销售公司=集团/武汉分公司', '发起申请 → 表单校验 → 阻断提交'],
-    ['TC-004', '产品类型=SaaS软件；预算不足；销售公司=集团/武汉分公司', '发起申请 → 部门负责人审批 → 驳回结束'],
-  ]
-
   return (
-    React.createElement('div', { className: 'template-md-table-wrap template-md-table-wrap--standalone' },
-      React.createElement('table', { className: 'template-md-table' },
-        React.createElement('thead', null,
-          React.createElement('tr', null,
-            React.createElement('th', null, '用例编号'),
-            React.createElement('th', null, '流程调试模拟参数'),
-            React.createElement('th', null, '流程预测路径')
-          )
+    React.createElement('section', { className: 'debug-case-list-card', 'aria-label': '流程测试用例清单' },
+      React.createElement('div', { className: 'debug-case-list-card__title' },
+        React.createElement('strong', null, '流程测试用例清单'),
+        React.createElement('span', null, '共 4 条')
+      ),
+      React.createElement('div', { className: 'debug-case-list-table' },
+        React.createElement('div', { className: 'debug-case-list-table__head' },
+          React.createElement('span', null, '用例编号'),
+          React.createElement('span', null, '流程调试模拟参数'),
+          React.createElement('span', null, '流程预测路径')
         ),
-        React.createElement('tbody', null,
-          rows.map(row => (
-            React.createElement('tr', { key: row[0] },
-              React.createElement('td', null, row[0]),
-              React.createElement('td', null, row[1]),
-              React.createElement('td', null, row[2])
-            )
-          ))
+        debugCaseRows.map(row => (
+          React.createElement('div', { className: 'debug-case-list-table__row', key: row.caseNo },
+            React.createElement('span', null, row.caseNo),
+            React.createElement('strong', null, row.params),
+            React.createElement('small', null, row.path)
+          )
+        ))
+      )
+    )
+  )
+}
+
+function DebugExecutionResultCard() {
+  return (
+    React.createElement('section', { className: 'debug-execution-result-card', 'aria-label': '流程测试用例执行结果' },
+      React.createElement('div', { className: 'debug-execution-result-card__title' },
+        React.createElement('strong', null, '流程测试用例执行结果'),
+        React.createElement('span', null, '3 通过 / 1 不通过')
+      ),
+      React.createElement('div', { className: 'debug-execution-result-table' },
+        React.createElement('div', { className: 'debug-execution-result-table__head' },
+          React.createElement('span', null, '用例编号'),
+          React.createElement('span', null, '流程调试模拟参数'),
+          React.createElement('span', null, '流程预测路径'),
+          React.createElement('span', null, '执行结果')
+        ),
+        debugCaseRows.map(row => (
+          React.createElement('div', { className: `debug-execution-result-table__row ${row.result === '通过' ? 'is-pass' : 'is-fail'}`, key: row.caseNo },
+            React.createElement('span', null, row.caseNo),
+            React.createElement('strong', null, row.params),
+            React.createElement('small', null, row.path),
+            React.createElement('em', null, row.result)
+          )
+        ))
+      )
+    )
+  )
+}
+
+function FlowDebugReportCard({ handled, onAction }: any) {
+  return (
+    React.createElement('section', { className: `flow-debug-report-card${handled ? ' is-handled' : ''}`, 'aria-label': '流程调试报告' },
+      React.createElement('button', {
+        type: 'button',
+        onClick: () => onAction?.('openPreview', {
+          targetPhase: 'debug_report',
+          targetArtifactTitle: '产品立项申请与合同审批流程调试报告',
+          scrollBeforeOpen: false,
+        }),
+      },
+        React.createElement('span', { className: 'flow-debug-report-card__icon' }, 'M'),
+        React.createElement('span', { className: 'flow-debug-report-card__copy' },
+          React.createElement('strong', null, '产品立项申请与合同审批流程调试报告'),
+          React.createElement('em', null, '5 个流程实例')
         )
       )
     )
   )
 }
 
-const panels = {
-  flow_select: `**流程模板识别**
-
-| 字段 | 内容 |
-|---|---|
-| 推荐流程 | 产品立项申请与合同审批 |
-| 可选流程 | 租赁合同续签流程、费用合同结算流程 |
-| 调试目标 | 选择流程模板后生成调试路径与测试用例 |`,
-  debug_user_select: `**调试流程摘要**
-
-| 用例 | 说明 | 预测路径 |
-|---|---|---|
-| TC-003 | 产品类型=SaaS软件；当前阶段=交付；销售公司=集团/武汉分公司 | 发起申请 → 表单校验 → 阻断提交 |
-| TC-004 | 产品类型=SaaS软件；当前阶段=售前；销售公司=集团/深圳分公司 | 发起申请 → 权限校验 → 组织规则匹配 |`,
-  case_result: `**流程调试测试用例**
-
-| 用例编号 | 流程调试模拟参数 | 流程预测路径 |
-|---|---|---|
-| TC-001 | 产品类型=SaaS软件；当前阶段=交付；销售公司=集团/武汉分公司 | 发起申请 → 表单校验 → 部门提交 |
-| TC-002 | 产品类型=SaaS软件；当前阶段=售前；销售公司=集团/深圳分公司 | 发起申请 → 权限校验 → 组织规则匹配 |
-| TC-003 | 附件缺失；销售公司=集团/武汉分公司 | 发起申请 → 表单校验 → 阻断提交 |
-| TC-004 | 预算不足；销售公司=集团/武汉分公司 | 发起申请 → 部门负责人审批 → 驳回结束 |`,
+function FlowDebugReportPanel({ onClosePreview }: { onClosePreview?: () => void }) {
+  return (
+    React.createElement('div', { className: 'flow-debug-report-panel' },
+      React.createElement('header', { className: 'template-workbench-topbar' },
+        React.createElement('div', { className: 'template-workbench-title' },
+          React.createElement('span', null, '产品立项申请与合同审批流程调试报告')
+        ),
+        React.createElement('div', { className: 'template-workbench-actions' },
+          React.createElement('button', { type: 'button', 'aria-label': '刷新' }, '↻'),
+          React.createElement('button', { type: 'button', 'aria-label': '放大' }, '↗'),
+          React.createElement('button', { type: 'button', 'aria-label': '关闭', onClick: onClosePreview }, '×')
+        )
+      ),
+      React.createElement('div', { className: 'flow-debug-report-panel__body' },
+        React.createElement('h2', null, '流程调试报告'),
+        React.createElement('p', null, '产品立项申请与合同审批流程已完成调试，共生成 5 个流程实例，4 条测试用例中 3 条通过、1 条不通过。'),
+        React.createElement('table', null,
+          React.createElement('tbody', null,
+            [['执行成功率', '100%'], ['执行耗时', '2.3s'], ['发起流程实例数量', '5 个流程实例'], ['测试用例结果', '3 通过 / 1 不通过']].map(row =>
+              React.createElement('tr', { key: row[0] },
+                React.createElement('th', null, row[0]),
+                React.createElement('td', null, row[1])
+              )
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
-function panel(title: string, description: string) {
-  return (props: any) => React.createElement(GenericPanel, { ...props, title, description })
+;(FlowDebugReportPanel as any).hasInternalClose = true
+
+function addFlowDebugReport(ctx: ScenarioContext) {
+  addAssistantMessage(
+    ctx,
+    `**执行结果**
+
+| 指标 | 结果 |
+|---|---|
+| 执行成功率 | **100%** |
+| 执行耗时 | **2.3s** |
+| 发起流程实例数量 | **5 个流程实例** |
+
+我已经将本次流程调试生成报告，点击报告可以查看流程调试详情。`,
+    () => addComponentMessage(ctx, 'FlowDebugReportCard')
+  )
 }
 
 const scenario: ScenarioModule = {
@@ -232,33 +302,31 @@ const scenario: ScenarioModule = {
   agentName: AGENT_NAME,
   agentDescription: '聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流',
   avatarKey: AVATAR_KEY,
-  shortcutLabel: '调试采购流程',
+  shortcutLabel: '调试审批流程',
   shortcutPrompt: '我要调试合同审批流程',
   shortcutOrder: 1,
-  phases: ['flow_select', 'debug_user_select', 'case_result', 'complete'],
+  phases: ['flow_select', 'debug_user_select', 'execution_result', 'complete'],
   initialState: {},
-  chatVisibleComponents: ['FlowTemplateSelectCard', 'DebugUserSelectCard', 'DebugCaseListCard'],
+  chatVisibleComponents: ['FlowTemplateSelectCard', 'DebugUserSelectCard', 'DebugCaseListCard', 'DebugExecutionResultCard', 'FlowDebugReportCard'],
   extraComponentMap: {
     FlowTemplateSelectCard,
     DebugUserSelectCard,
     DebugCaseListCard,
+    DebugExecutionResultCard,
+    FlowDebugReportCard,
   },
   homeChips: [{ label: '调试审批流程', scenarioId: SCENARIO_ID, prompt: '我要调试合同审批流程' }],
   panelMap: {
-    flow_select: panel('流程模板识别', panels.flow_select),
-    debug_user_select: panel('调试流程摘要', panels.debug_user_select),
-    case_result: panel('流程调试测试用例', panels.case_result),
+    debug_report: FlowDebugReportPanel,
   },
   panelTitleMap: {
-    flow_select: '流程模板识别',
-    debug_user_select: '调试流程摘要',
-    case_result: '流程调试测试用例',
+    debug_report: '产品立项申请与合同审批流程调试报告',
   },
   onPhaseEnter(phase, ctx) {
     if (phase === 'flow_select') {
       addAssistantMessage(
         ctx,
-        '已查询到系统有多个合同流程模板，请选择要调试的流程模板。',
+        '已查询到系统有多个"合同"流程模板，请选择要调试的流程模板',
         () => addComponentMessage(ctx, 'FlowTemplateSelectCard')
       )
       return
@@ -266,16 +334,35 @@ const scenario: ScenarioModule = {
     if (phase === 'debug_user_select') {
       addAssistantMessage(
         ctx,
-        '如果要进行流程调试，请选择以哪个用户作为发起人进行调试。',
-        () => addComponentMessage(ctx, 'DebugUserSelectCard')
+        `产品立项申请与合同审批已分析完成，流程调试信息如下：
+
+- 流程节点：2个（审批节点0个、条件/网关节点0个）
+- 独立路径：1条（正常流程1条、异常流程0条）
+- 预计生成：4条测试用例`,
+        () => {
+          addComponentMessage(ctx, 'DebugCaseListCard')
+          addAssistantMessage(
+            ctx,
+            '如果要进行流程调试，请选择以哪个用户作为发起人进行调试。',
+            () => addComponentMessage(ctx, 'DebugUserSelectCard')
+          )
+        }
       )
       return
     }
-    if (phase === 'case_result') {
+    if (phase === 'execution_result') {
+      const scenarioState = ctx.stateRef.current.scenarioStates?.[SCENARIO_ID] as { selectedUser?: string; selectedUserOrg?: string } | undefined
+      const userName = scenarioState?.selectedUser || '张三'
+      const userOrg = scenarioState?.selectedUserOrg || '集团-武汉分公司-信息部'
       addAssistantMessage(
         ctx,
-        '已完成流程分析。\n\n分析结果：\n- 流程节点：8 个\n- 独立流程路径：5 条\n- 预计生成流程用例：12 条\n- 调试用户：张三\n\n我已生成本次流程调试用例清单，可用于验证正常流程、异常流程、边界条件和特殊场景。',
-        () => addComponentMessage(ctx, 'DebugCaseListCard')
+        `已选择调试用户，我会以${userName}作为发起人、${userOrg}作为发起组织生成流程调试用例。`,
+        () => {
+          addAssistantMessage(ctx, '已完成流程测试用例批量执行，以下为每条测试用例的执行结果。', () => {
+            addComponentMessage(ctx, 'DebugExecutionResultCard')
+            addFlowDebugReport(ctx)
+          })
+        }
       )
     }
   },
@@ -303,6 +390,7 @@ const scenario: ScenarioModule = {
       state: {
         selectedTemplate: payload.selectedTemplate,
         selectedUser: payload.selectedUser,
+        selectedUserOrg: payload.selectedUserOrg,
       },
     })
     ctx.dispatch({ type: 'SET_PHASE', phase: String(payload.to || 'complete') })

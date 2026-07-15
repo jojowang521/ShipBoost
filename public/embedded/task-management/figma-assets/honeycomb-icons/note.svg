@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 14 16.3333" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 47916">
+<path id="&#231;&#159;&#169;&#229;&#189;&#162;" fill-rule="evenodd" clip-rule="evenodd" d="M1.75 0H9.76362C10.2351 0 10.6873 0.187301 11.0207 0.520699L13.4793 2.9793C13.8127 3.3127 14 3.76488 14 4.23638V14.5833C14 15.5498 13.2165 16.3333 12.25 16.3333H1.75C0.783502 16.3333 0 15.5498 0 14.5833V1.75C0 0.783502 0.783502 0 1.75 0Z" fill="url(#paint0_linear_19922_104787)"/>
+<path id="&#232;&#183;&#175;&#229;&#190;&#132;" fill-rule="evenodd" clip-rule="evenodd" d="M10.5 0L14 3.5H11.0833C10.7612 3.5 10.5 3.23883 10.5 2.91667V0Z" fill="var(--fill-0, #A6ECD5)"/>
+<path id="Rectangle 4712" d="M10.1 6.16675C10.5971 6.16675 11 6.56969 11 7.06675C11 7.5638 10.5971 7.96675 10.1 7.96675L3.9 7.96675C3.40294 7.96675 3 7.5638 3 7.06675C3 6.56969 3.40294 6.16675 3.9 6.16675L10.1 6.16675Z" fill="var(--fill-0, white)" fill-opacity="0.9"/>
+<path id="Rectangle 34624550" d="M6.10021 10.1667C6.59727 10.1667 7.00021 10.5697 7.00021 11.0667C7.00021 11.5638 6.59727 11.9667 6.10021 11.9667L3.90021 11.9667C3.40316 11.9667 3.00021 11.5638 3.00021 11.0667C3.00021 10.5697 3.40316 10.1667 3.90021 10.1667L6.10021 10.1667Z" fill="var(--fill-0, white)" fill-opacity="0.9"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_19922_104787" x1="14" y1="1.36111" x2="-2.92101" y2="6.27519" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6FE1B1"/>
+<stop offset="1" stop-color="#7BE6E3"/>
+</linearGradient>
+</defs>
+</svg>

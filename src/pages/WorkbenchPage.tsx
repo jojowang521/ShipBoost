@@ -1319,6 +1319,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   const [selectedComposerAgentId, setSelectedComposerAgentId] = useState(appState.homeAgentId ?? 'noma-ai')
   const [skillHighlightIndex, setSkillHighlightIndex] = useState(0)
   const [homeAgentMotionDirection, setHomeAgentMotionDirection] = useState<HomeAgentSwitchDirection | null>(null)
+  const [homeStagedAttachment, setHomeStagedAttachment] = useState<{ name: string; size?: string; type?: 'pdf' | 'word' | 'excel' | 'xml' | 'file' } | null>(null)
   const modalTimerRef = useRef<number | null>(null)
   const skillModalTimerRef = useRef<number | null>(null)
   const homeAgentMotionTimerRef = useRef<number | null>(null)
@@ -1473,6 +1474,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     setSkillModalState('closed')
     setHomeAgentMotionDirection(null)
     setText('')
+    setHomeStagedAttachment(null)
     setSelectedComposerAgentId('noma-ai')
     setNativePage('home')
     dispatch({ type: 'RESET', homeAgentId: 'noma-ai' })
@@ -1575,20 +1577,24 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   }, [dispatch, homeExperience.agentId])
 
   const handleTemplateAttachmentDemo = useCallback((file?: File) => {
-    const scenario = getScenario('template-printing__auto-template-generation')
-    if (!scenario) return
-    const fileName = file?.name || '武汉光谷未来中心租赁合同样张.docx'
-    const fileSize = file ? `${Math.max(1, Math.round(file.size / 1024))} KB` : '186 KB'
-    enterScenario(
-      scenario.id,
-      `上传《${fileName}》，并根据这份标准租赁合同样张生成套打模板`,
-      {
-        taskTitle: scenario.label,
-        homeAgentId: SYSTEM_MANAGEMENT_ASSISTANT_ID,
-        attachment: { name: fileName, size: fileSize, type: 'word' },
-      },
-    )
-  }, [enterScenario])
+    const fileName = file?.name || '租赁合同标准模板.docx'
+    const fileSize = file ? `${Math.max(1, Math.round(file.size / 1024))} KB` : '126 KB'
+    const prompt = '@系统管理助手 帮我根据这份租赁合同生成套打模板'
+    setSelectedComposerAgentId(SYSTEM_MANAGEMENT_ASSISTANT_ID)
+    setHomeStagedAttachment({ name: fileName, size: fileSize, type: 'word' })
+    setText(prompt)
+    focusHomeTextareaAtEnd(prompt)
+  }, [focusHomeTextareaAtEnd])
+
+  const handleFlowDataAdjustAttachmentDemo = useCallback((file?: File) => {
+    const fileName = file?.name || '流程表单数据调整标注截图.png'
+    const fileSize = file ? `${Math.max(1, Math.round(file.size / 1024))} KB` : ''
+    const prompt = '请上传需要调整流程数据的截图（需要标注调整字段的值）'
+    setSelectedComposerAgentId(SYSTEM_MANAGEMENT_ASSISTANT_ID)
+    setHomeStagedAttachment({ name: fileName, size: fileSize, type: 'word' })
+    setText(prompt)
+    focusHomeTextareaAtEnd(prompt)
+  }, [focusHomeTextareaAtEnd])
 
   const fillHomePrompt = useCallback((prompt: string) => {
     setText(prompt)
@@ -1602,11 +1608,29 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
   }, [fillHomePrompt])
 
   const handleQuickAction = useCallback((prompt: string) => {
-    if (normalizeIntentText(prompt) === normalizeIntentText('wm1有哪些权限')) {
+    const normalizedPrompt = normalizeIntentText(prompt)
+    if (
+      normalizedPrompt.includes(normalizeIntentText('根据这份租赁合同生成套打模板')) ||
+      normalizedPrompt.includes(normalizeIntentText('根据标准合同样张生成套打模板')) ||
+      (normalizedPrompt.includes('生成套打模板') && normalizedPrompt.includes('合同'))
+    ) {
+      handleTemplateAttachmentDemo()
+      return
+    }
+    if (normalizedPrompt === normalizeIntentText('wm1有哪些权限')) {
       fillHomePrompt(prompt)
       return
     }
-    if (normalizeIntentText(prompt) === normalizeIntentText('查看今日待办')) {
+    if (normalizedPrompt === normalizeIntentText('我要调试合同审批流程')) {
+      setSelectedComposerAgentId(SYSTEM_MANAGEMENT_ASSISTANT_ID)
+      fillHomePrompt(prompt)
+      return
+    }
+    if (normalizedPrompt === normalizeIntentText('请上传需要调整流程数据的截图（需要标注调整字段的值）')) {
+      handleFlowDataAdjustAttachmentDemo()
+      return
+    }
+    if (normalizedPrompt === normalizeIntentText('查看今日待办')) {
       const todayTodoScenario = getScenario('message-todo__today-todo')
       if (todayTodoScenario) {
         enterScenario(todayTodoScenario.id, prompt, { taskTitle: todayTodoScenario.label, homeAgentId: 'noma-ai' })
@@ -1623,7 +1647,7 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
       return
     }
     fillHomePrompt(prompt)
-  }, [enterScenario, fillHomePrompt, homeExperience.agentId, scenarios])
+  }, [enterScenario, fillHomePrompt, handleFlowDataAdjustAttachmentDemo, handleTemplateAttachmentDemo, homeExperience.agentId, scenarios])
 
   const handleSelectHistoryScenario = useCallback((scenarioId: string) => {
     const scenario = getScenario(scenarioId)
@@ -1664,6 +1688,8 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     const trimmed = text.trim()
     if (!trimmed) return
     setText('')
+    const stagedAttachment = homeStagedAttachment
+    setHomeStagedAttachment(null)
 
     if (scenarios.length === 0) {
       dispatch({
@@ -1686,14 +1712,20 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
     const candidateScenarios = scopedScenarios.length > 0 ? scopedScenarios : scenarios
 
     const mentionTarget = matchHomeMentionScenario(trimmed)
-    const target = mentionTarget
+    const isTemplateAttachmentIntent = !!stagedAttachment && normalizeIntentText(trimmed).includes('生成套打模板')
+    const isFlowDataAdjustAttachmentIntent = !!stagedAttachment && normalizeIntentText(trimmed).includes(normalizeIntentText('上传需要调整流程数据的截图'))
+    const target = isTemplateAttachmentIntent
+      ? getScenario('template-printing__auto-template-generation')
+      : isFlowDataAdjustAttachmentIntent
+      ? getScenario('process-assistant__handover-flow')
+      : mentionTarget
       ? getScenario(mentionTarget.scenarioId)
       : matchScenario(trimmed, candidateScenarios) ?? (candidateScenarios === scenarios ? null : matchScenario(trimmed, scenarios))
     if (target) {
       const initialPhase = getTriggeredPhaseForText(target, trimmed) || target.phases[0] || 'step_1'
       enterScenario(target.id, trimmed, mentionTarget
         ? { taskTitle: mentionTarget.taskTitle, homeAgentId: 'control-price' }
-        : { taskTitle: target.label, homeAgentId: target.agentId ?? activeComposerAgentId, initialPhase })
+        : { taskTitle: target.label, homeAgentId: target.agentId ?? activeComposerAgentId, initialPhase, attachment: stagedAttachment || undefined })
     } else {
       // 多场景下未命中意图：发用户气泡 + AI 引导选择场景
       dispatch({
@@ -1933,6 +1965,27 @@ export function WorkbenchPage({ railCollapsed, onRailCollapsedChange, embedMode 
 
         <div className="home-content__input-container">
           <div className="workbench-input-wrapper home-composer" ref={skillDropdownRef}>
+            {homeStagedAttachment && (
+              <div className="home-staged-attachment" aria-label="已选择附件">
+                <div className="workbench-file-tag">
+                  <span className="workbench-file-tag__icon" aria-hidden="true">W</span>
+                  <span className="workbench-file-tag__info">
+                    <span className="workbench-file-tag__name">{homeStagedAttachment.name}</span>
+                    {homeStagedAttachment.size ? (
+                      <span className="workbench-file-tag__meta">{homeStagedAttachment.size}</span>
+                    ) : null}
+                  </span>
+                  <button
+                    type="button"
+                    className="file-tag-close"
+                    onClick={() => setHomeStagedAttachment(null)}
+                    aria-label="移除附件"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            )}
             <textarea
               ref={homeTextareaRef}
               value={text}

@@ -3,9 +3,9 @@
   "agentName": "系统管理助手",
   "agentDescription": "聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流。",
   "avatarKey": "avatar-ai-2",
-  "scenarioName": "流程责任人批量转交",
-  "shortcutLabel": "流程转交",
-  "shortcutPrompt": "将张三的所有流程转交给李四",
+  "scenarioName": "流程数据调整",
+  "shortcutLabel": "调整流程数据",
+  "shortcutPrompt": "请上传需要调整流程数据的截图（需要标注调整字段的值）",
   "shortcutOrder": 2,
   "dataScope": "scenario-only"
 }

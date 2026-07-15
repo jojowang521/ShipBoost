@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>产品立项申请与合同审批流程｜流程调试报告</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --soft: #f6f8fb;
+      --ink: #1f2937;
+      --muted: #667085;
+      --line: #d8e0ec;
+      --blue: #2f6df6;
+      --green: #079455;
+      --orange: #dc6803;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 32px 28px 56px; }
+    header { padding-bottom: 18px; border-bottom: 2px solid var(--ink); }
+    h1 { margin: 0 0 8px; font-size: 26px; line-height: 1.25; }
+    .desc { margin: 0; color: var(--muted); }
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .summary-card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--soft); }
+    .summary-card b { display: block; margin-bottom: 4px; font-size: 20px; color: var(--blue); }
+    .summary-card span { color: var(--muted); font-size: 13px; }
+    section { margin-top: 28px; }
+    h2 { margin: 0 0 12px; padding-bottom: 7px; border-bottom: 1px solid var(--line); font-size: 18px; }
+    h3 { margin: 18px 0 10px; font-size: 15px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    .pass { color: var(--green); font-weight: 700; }
+    .warn { color: var(--orange); font-weight: 700; }
+    .tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #eef4ff; color: #255ed8; font-size: 12px; font-weight: 600; }
+    .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .case-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: #fff; }
+    .case-card h3 { margin-top: 0; }
+    .case-card ul { margin: 8px 0 0; padding-left: 20px; }
+    .path-list { display: grid; gap: 12px; }
+    details { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+    summary { cursor: pointer; padding: 12px 14px; background: var(--soft); font-weight: 700; }
+    .path-detail { padding: 14px; }
+    .path-detail ol { margin: 0; padding-left: 22px; }
+    .path-detail li { margin: 6px 0; }
+    footer { margin-top: 34px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 760px) {
+      main { padding: 20px 14px 40px; }
+      .summary, .case-grid { grid-template-columns: 1fr; }
+      table { min-width: 680px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>产品立项申请与合同审批流程调试报告</h1>
+    <p class="desc">基于调试用户发起权限，对产品立项申请与合同审批流程按项目类型覆盖开发项目、运营项目两类场景进行测试用例执行与结果汇总。</p>
+    <div class="summary">
+      <div class="summary-card"><b>产品立项申请与合同审批流程</b><span>调试流程</span></div>
+      <div class="summary-card"><b>张三</b><span>调试用户</span></div>
+      <div class="summary-card"><b>集团-武汉分公司-信息部</b><span>调试用户所属组织</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>一、调试基础信息</h2>
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr><th>调试流程</th><td>产品立项申请与合同审批流程</td></tr>
+          <tr><th>调试用户</th><td>张三、集团-武汉分公司-信息部</td></tr>
+          <tr><th>调试范围</th><td>按项目类型覆盖开发项目、运营项目，并分别执行对应测试用例。</td></tr>
+          <tr><th>调试结论</th><td class="pass">开发项目与运营项目主路径均通过，异常校验用例按预期阻断。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>二、调试流程覆盖场景</h2>
+    <div class="case-grid">
+      <div class="case-card">
+        <h3><span class="tag">项目类型 = 开发项目</span></h3>
+        <ul>
+          <li>验证开发项目发起后进入项目负责人确认节点。</li>
+          <li>验证开发项目预算金额校验与附件必填规则。</li>
+          <li>验证开发项目审批通过后生成项目立项记录。</li>
+        </ul>
+      </div>
+      <div class="case-card">
+        <h3><span class="tag">项目类型 = 运营项目</span></h3>
+        <ul>
+          <li>验证运营项目发起后进入运营负责人确认节点。</li>
+          <li>验证运营项目费用类型校验与组织权限匹配。</li>
+          <li>验证运营项目审批通过后同步运营台账。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>三、测试用例执行明细</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>用例编号</th><th>项目类型</th><th>流程调试模拟参数</th><th>执行结果</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>TC-001</td><td>开发项目</td><td>项目类型=开发项目；合同金额=80万；附件=完整</td><td class="pass">通过</td></tr>
+          <tr><td>TC-002</td><td>开发项目</td><td>项目类型=开发项目；合同金额=120万；审批意见=驳回</td><td class="pass">通过</td></tr>
+          <tr><td>TC-003</td><td>运营项目</td><td>项目类型=运营项目；附件=缺失；合同金额=30万</td><td class="pass">通过</td></tr>
+          <tr><td>TC-004</td><td>运营项目</td><td>项目类型=运营项目；发起组织=跨组织；权限=已授权</td><td class="pass">通过</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>四、流程路径明细</h2>
+    <div class="path-list">
+      <details open>
+        <summary>TC-001｜开发项目正常流程路径</summary>
+        <div class="path-detail">
+          <ol>
+            <li>张三在集团-武汉分公司-信息部下发起产品立项申请与合同审批流程，选择项目类型为“开发项目”。</li>
+            <li>系统校验发起人组织、岗位权限和项目基础资料完整性。</li>
+            <li>进入项目负责人确认节点，确认开发项目立项信息。</li>
+            <li>进入预算校验节点，校验开发项目预算金额与附件。</li>
+            <li>审批通过后生成项目立项记录，流程正常结束。</li>
+          </ol>
+        </div>
+      </details>
+      <details>
+        <summary>TC-002｜开发项目异常流程路径</summary>
+        <div class="path-detail">
+          <ol>
+            <li>张三发起产品立项申请与合同审批流程，项目类型选择“开发项目”。</li>
+            <li>系统进入表单完整性校验，发现缺少必要附件。</li>
+            <li>流程在提交前阻断，不进入项目负责人确认节点。</li>
+            <li>页面返回缺少附件的提示信息，用户需补齐附件后重新提交。</li>
+          </ol>
+        </div>
+      </details>
+      <details>
+        <summary>TC-003｜运营项目正常流程路径</summary>
+        <div class="path-detail">
+          <ol>
+            <li>张三在集团-武汉分公司-信息部下发起产品立项申请与合同审批流程，选择项目类型为“运营项目”。</li>
+            <li>系统校验运营项目费用类型、组织权限和项目基础资料。</li>
+            <li>进入运营负责人确认节点，确认运营项目审批信息。</li>
+            <li>审批通过后同步运营台账，并写入运营项目审批结果。</li>
+          </ol>
+        </div>
+      </details>
+      <details>
+        <summary>TC-004｜运营项目边界条件路径</summary>
+        <div class="path-detail">
+          <ol>
+            <li>张三发起产品立项申请与合同审批流程，项目类型选择“运营项目”。</li>
+            <li>系统识别当前发起组织与项目归属组织存在差异。</li>
+            <li>进入跨组织权限校验，校验用户是否具备目标组织发起权限。</li>
+            <li>权限匹配通过后继续流转；若权限不匹配则阻断并提示组织权限不足。</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <h2>五、调试结论</h2>
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr><th>覆盖完整性</th><td>已覆盖项目类型为开发项目、运营项目的关键主路径与异常路径。</td></tr>
+          <tr><th>用户权限</th><td>张三在集团-武汉分公司-信息部下具备发起产品立项申请与合同审批流程的权限。</td></tr>
+          <tr><th>建议</th><td>后续可补充更细颗粒度的金额、组织、附件组合条件，以扩大回归测试覆盖范围。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>报告文件：flow-debug-report.html</footer>
+</main>
+</body>
+</html>

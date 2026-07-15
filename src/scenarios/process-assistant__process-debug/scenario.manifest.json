@@ -3,9 +3,9 @@
   "agentName": "系统管理助手",
   "agentDescription": "聚合套打、流程和权限管理能力，根据用户问题进入对应业务对话流。",
   "avatarKey": "avatar-ai-2",
-  "scenarioName": "采购审批流程调试",
-  "shortcutLabel": "调试采购流程",
-  "shortcutPrompt": "为采购审批流程生成全分支调试用例",
+  "scenarioName": "流程模板调试",
+  "shortcutLabel": "调试审批流程",
+  "shortcutPrompt": "我要调试合同审批流程",
   "shortcutOrder": 1,
   "dataScope": "scenario-only"
 }
